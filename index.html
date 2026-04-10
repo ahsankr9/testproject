@@ -1,0 +1,1902 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Network Management Suite - AHSANUL KABIR</title>
+    <link rel="icon" href="oltfavicon.ico" type="image/x-icon">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;700;900&family=Exo+2:wght@400;500;600;700;800&family=Space+Mono:wght@400;700&family=Bebas+Neue&family=Rajdhani:wght@500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --sb-bg: linear-gradient(175deg, #0f172a 0%, #1e1b4b 60%, #0f172a 100%);
+            --sb-border: rgba(139,92,246,0.2);
+            --sb-accent: #a78bfa;
+            --sb-accent2: #38bdf8;
+            --sb-text: #e0e7ff;
+            --sb-muted: rgba(199,210,254,0.4);
+            --sb-active-bg: rgba(167,139,250,0.15);
+
+            --body-bg: #f0f4ff;
+            --body-mesh: radial-gradient(ellipse at 20% 0%, rgba(139,92,246,0.08) 0%, transparent 50%),
+                         radial-gradient(ellipse at 80% 100%, rgba(56,189,248,0.07) 0%, transparent 50%),
+                         #f0f4ff;
+
+            --card-bg: #ffffff;
+            --card-border: rgba(139,92,246,0.12);
+            --card-shadow: 0 4px 24px rgba(99,102,241,0.08), 0 1px 4px rgba(0,0,0,0.05);
+
+            --input-bg: #f8f7ff;
+            --input-border: #ddd6fe;
+            --input-focus: #8b5cf6;
+            --input-text: #1e1b4b;
+            --label: #6d5fa6;
+            --text-primary: #1e1b4b;
+
+            --output-bg: #0f0a2a;
+            --output-text: #e2d9f3;
+            --output-border: rgba(139,92,246,0.35);
+
+            --docs-bg: linear-gradient(135deg, #021B35 0%, #034B5D 50%, #067D7D 100%);
+            --docs-glass: rgba(255,255,255,0.95);
+            --docs-code-bg: #000000;
+            --docs-code-text: #00ff00;
+
+            --radio-primary: linear-gradient(135deg, #1a6fa8 0%, #2389cc 50%, #3ba3e0 100%);
+            --radio-accent: #1a7fcb;
+            --radio-bg: #e8f3fc;
+            --radio-card: #ffffff;
+            --radio-border: rgba(26,127,203,0.15);
+            --radio-sidebar: #f0f7ff;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; outline: none; -webkit-tap-highlight-color: transparent; }
+        html { height: 100%; overscroll-behavior: none; }
+
+        body {
+            font-family: 'Exo 2', sans-serif;
+            background: var(--body-mesh);
+            color: var(--text-primary);
+            height: 100vh;
+            display: flex;
+            overflow: hidden;
+        }
+
+        /* ════ DOCS sub-group ════ */
+        .docs-sub-group { margin: 2px 0; }
+        .docs-sub-group-header {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 0.8em; font-weight: 700; letter-spacing: 0.8px;
+            color: rgba(153,246,228,0.85); padding: 6px 10px; cursor: pointer;
+            border-radius: 6px; display: flex; align-items: center;
+            justify-content: space-between; transition: background 0.2s, border-left-color 0.2s;
+            border-left: 2px solid transparent;
+        }
+        .docs-sub-group-header:hover { background: rgba(0,255,157,0.07); border-left-color: rgba(0,255,157,0.3); }
+        .docs-sub-group-header.open { color: #fff; background: rgba(0,255,157,0.1); border-left-color: rgba(0,255,157,0.5); }
+        .sub-arrow2 { font-size: 0.75em; color: rgba(0,255,157,0.4); transition: transform 0.2s; }
+        .docs-sub-group-header.open .sub-arrow2 { transform: rotate(90deg); color: #00ff9d; }
+        .docs-sub-group-items { display: none; padding: 2px 0 4px 14px; flex-direction: column; gap: 2px; border-left: 1px solid rgba(0,255,157,0.1); margin-left: 10px; }
+        .docs-sub-group-items.open { display: flex; }
+        .docs-sub-btn-leaf { font-size: 0.76em !important; padding: 5px 10px !important; color: rgba(153,246,228,0.6) !important; }
+        .docs-sub-btn-leaf:hover { color: #fff !important; }
+        .docs-sub-btn-leaf.active { color: #00ff9d !important; }
+
+        /* ════ SIDEBAR ════ */
+        .sidebar {
+            width: 225px; min-width: 225px;
+            background: var(--sb-bg);
+            display: flex; flex-direction: column;
+            padding: 20px 14px;
+            border-right: 1px solid var(--sb-border);
+            z-index: 100; position: relative;
+            overflow: hidden; overflow-y: auto;
+        }
+        .sidebar::before {
+            content: ''; position: absolute; top: -70px; left: -70px;
+            width: 230px; height: 230px;
+            background: radial-gradient(circle, rgba(167,139,250,0.13) 0%, transparent 70%);
+            pointer-events: none;
+        }
+        .sidebar::after {
+            content: ''; position: absolute; bottom: 90px; right: -50px;
+            width: 170px; height: 170px;
+            background: radial-gradient(circle, rgba(56,189,248,0.09) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .sidebar-brand {
+            text-align: center; padding-bottom: 18px; margin-bottom: 18px;
+            border-bottom: 1px solid rgba(167,139,250,0.15); flex-shrink: 0;
+            animation: brandFadeIn 0.7s ease forwards;
+        }
+        @keyframes brandFadeIn { from{opacity:0;transform:translateY(-10px)} to{opacity:1;transform:translateY(0)} }
+
+        .brand-title {
+            font-family: 'Orbitron', monospace; font-size: 0.82em; font-weight: 900;
+            letter-spacing: 3px; color: #a78bfa;
+            text-shadow: 0 0 28px rgba(167,139,250,0.55); margin-top: 6px;
+        }
+        .brand-sub {
+            font-family: 'Rajdhani', sans-serif; font-size: 0.75em;
+            color: var(--sb-muted); letter-spacing: 2.5px; text-transform: uppercase; margin-top: 4px;
+        }
+
+        .nav-section-label {
+            font-family: 'Orbitron', monospace; font-size: 0.6em; letter-spacing: 2.5px;
+            color: rgba(167,139,250,0.38); padding: 0 8px; margin-bottom: 8px;
+            text-transform: uppercase; flex-shrink: 0;
+        }
+        .nav-group { display: flex; flex-direction: column; gap: 7px; position: relative; }
+
+        .nav-btn {
+            background: transparent; border: 1px solid transparent;
+            color: var(--sb-muted); padding: 12px 14px; text-align: left;
+            cursor: pointer; border-radius: 11px; display: flex; align-items: center;
+            gap: 12px; position: relative; overflow: visible; width: 100%;
+            opacity: 0; transform: translateX(-20px);
+            animation: navSlideIn 0.5s cubic-bezier(0.34,1.08,0.64,1) forwards;
+            transition: background 0.25s ease, border-color 0.25s ease,
+                        color 0.25s ease, transform 0.3s cubic-bezier(0.34,1.3,0.64,1),
+                        box-shadow 0.25s ease;
+        }
+        .nav-btn:nth-child(1) { animation-delay: 0.08s; }
+        .nav-btn:nth-child(2) { animation-delay: 0.18s; }
+        .nav-btn:nth-child(3) { animation-delay: 0.28s; }
+        .nav-btn:nth-child(4) { animation-delay: 0.36s; }
+        .nav-btn:nth-child(5) { animation-delay: 0.44s; }
+
+        @keyframes navSlideIn {
+            0%   { opacity:0; transform:translateX(-22px) scale(0.96); }
+            60%  { opacity:1; }
+            100% { opacity:1; transform:translateX(0) scale(1); }
+        }
+
+        .nav-btn-glow {
+            position: absolute; left: 0; top: 0; bottom: 0; width: 3px;
+            border-radius: 0 2px 2px 0;
+            background: linear-gradient(180deg, #a78bfa, #60a5fa);
+            opacity: 0; transition: opacity 0.3s ease;
+        }
+        .nav-btn:hover {
+            background: rgba(167,139,250,0.1); color: #e0d4ff;
+            border-color: rgba(167,139,250,0.22); transform: translateX(5px);
+            box-shadow: 0 2px 18px rgba(139,92,246,0.13);
+        }
+        .nav-btn.active {
+            background: var(--sb-active-bg); border-color: rgba(167,139,250,0.38);
+            color: #c4b5fd; box-shadow: 0 2px 14px rgba(167,139,250,0.18); transform: translateX(0);
+        }
+        .nav-btn.active .nav-btn-glow { opacity: 1; }
+        .nav-btn.active::after {
+            content: ''; position: absolute; inset: 0; border-radius: 11px;
+            background: rgba(167,139,250,0.06);
+            animation: navActivePulse 2.4s ease-in-out infinite;
+        }
+        @keyframes navActivePulse { 0%,100%{opacity:0} 50%{opacity:1} }
+
+        .nav-icon-wrap {
+            width: 32px; height: 32px; border-radius: 9px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1em; flex-shrink: 0;
+            transition: transform 0.3s cubic-bezier(0.34,1.5,0.64,1), background 0.25s ease;
+        }
+        .icon-v { background: rgba(139,92,246,0.15); color: #a78bfa; }
+        .icon-s { background: rgba(56,189,248,0.15); color: #38bdf8; }
+        .icon-g { background: rgba(0,255,157,0.12); color: #00ff9d; }
+        .icon-r { background: rgba(26,127,203,0.18); color: #38bdf8; }
+        .nav-btn:hover .nav-icon-wrap { transform: scale(1.15) rotate(-5deg); }
+        .nav-btn.active .icon-v { background: rgba(139,92,246,0.28); }
+        .nav-btn.active .icon-s { background: rgba(56,189,248,0.28); }
+        .nav-btn.active .icon-g { background: rgba(0,255,157,0.22); }
+        .nav-btn.active .icon-r { background: rgba(26,127,203,0.3); }
+
+        .nav-text .tab-name {
+            font-family: 'Orbitron', monospace; font-size: 0.8em; font-weight: 900;
+            letter-spacing: 1.8px; display: block; line-height: 1.25;
+            color: rgba(224,215,255,0.95); text-shadow: 0 0 12px rgba(167,139,250,0.3);
+        }
+        .nav-btn.active .nav-text .tab-name { color: #e0d4ff; text-shadow: 0 0 16px rgba(167,139,250,0.6); }
+        .nav-text .tab-desc {
+            font-family: 'Exo 2', sans-serif; font-size: 0.72em; font-weight: 600;
+            opacity: 0.55; display: block; margin-top: 2px; letter-spacing: 0.3px;
+        }
+
+        /* ════ OLT GROUP NAV ════ */
+        .nav-group-wrapper {
+            display: flex; flex-direction: column; gap: 0;
+        }
+        .nav-group-header {
+            background: transparent; border: 1px solid transparent;
+            color: var(--sb-muted); padding: 10px 14px; text-align: left;
+            cursor: pointer; border-radius: 11px; display: flex; align-items: center;
+            gap: 12px; position: relative; width: 100%;
+            transition: background 0.25s ease, border-color 0.25s ease,
+                        color 0.25s ease, transform 0.3s cubic-bezier(0.34,1.3,0.64,1),
+                        box-shadow 0.25s ease;
+            animation: navSlideIn 0.5s cubic-bezier(0.34,1.08,0.64,1) 0.08s forwards;
+            opacity: 0; transform: translateX(-20px);
+        }
+        .nav-group-header:hover {
+            background: rgba(167,139,250,0.1); color: #e0d4ff;
+            border-color: rgba(167,139,250,0.22); transform: translateX(5px);
+        }
+        .nav-group-header.open {
+            background: rgba(167,139,250,0.12); color: #c4b5fd;
+            border-color: rgba(167,139,250,0.3); transform: translateX(0);
+            border-radius: 11px 11px 6px 6px;
+        }
+        .nav-group-arrow {
+            margin-left: auto; font-size: 0.65em; color: rgba(167,139,250,0.45);
+            transition: transform 0.3s cubic-bezier(0.34,1.2,0.64,1), color 0.25s ease;
+        }
+        .nav-group-header.open .nav-group-arrow { transform: rotate(180deg); color: #a78bfa; }
+        .nav-group-header .nav-icon-wrap {
+            transition: transform 0.3s cubic-bezier(0.34,1.5,0.64,1), background 0.25s ease;
+        }
+        .nav-group-header:hover .nav-icon-wrap { transform: scale(1.15) rotate(-5deg); }
+
+        .nav-group-children {
+            display: none; flex-direction: column; gap: 3px;
+            padding: 4px 6px 8px 6px;
+            background: rgba(167,139,250,0.05);
+            border: 1px solid rgba(167,139,250,0.15);
+            border-top: none;
+            border-radius: 0 0 11px 11px;
+            margin-bottom: 4px;
+        }
+        .nav-group-children.open { display: flex; }
+
+        .nav-child-btn {
+            background: transparent; border: 1px solid transparent;
+            color: rgba(199,210,254,0.5); padding: 9px 12px; text-align: left;
+            cursor: pointer; border-radius: 8px; display: flex; align-items: center;
+            gap: 10px; width: 100%; position: relative;
+            transition: background 0.22s ease, border-color 0.22s ease,
+                        color 0.22s ease, transform 0.28s cubic-bezier(0.34,1.3,0.64,1);
+        }
+        .nav-child-btn:hover {
+            background: rgba(167,139,250,0.1); color: #e0d4ff;
+            border-color: rgba(167,139,250,0.2); transform: translateX(4px);
+        }
+        .nav-child-btn.active {
+            background: rgba(167,139,250,0.18); color: #c4b5fd;
+            border-color: rgba(167,139,250,0.35);
+        }
+        .nav-child-btn.active::before {
+            content: ''; position: absolute; left: 0; top: 3px; bottom: 3px;
+            width: 2px; background: #a78bfa; border-radius: 0 2px 2px 0;
+        }
+        .nav-child-icon {
+            width: 24px; height: 24px; border-radius: 6px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 0.8em; flex-shrink: 0;
+            transition: transform 0.28s cubic-bezier(0.34,1.5,0.64,1);
+        }
+        .nav-child-btn:hover .nav-child-icon { transform: scale(1.12) rotate(-4deg); }
+        .nav-child-name {
+            font-family: 'Orbitron', monospace; font-size: 0.68em; font-weight: 700;
+            letter-spacing: 1.5px; color: inherit;
+        }
+
+        /* ════ OLT DOCS sub-nav in sidebar ════ */
+        .docs-subnav {
+            display: none; flex-direction: column; gap: 0;
+            margin-top: 4px; padding-left: 10px;
+            border-left: 2px solid rgba(0,255,157,0.15);
+            margin-left: 12px;
+        }
+        .docs-subnav.open { display: flex; }
+        .docs-subnav-group { display: flex; flex-direction: column; }
+        .docs-subnav-header {
+            font-family: 'Orbitron', monospace; font-size: 0.6em; font-weight: 700;
+            letter-spacing: 1.5px; color: rgba(0,212,255,0.6);
+            padding: 7px 8px 3px; text-transform: uppercase;
+            cursor: pointer; display: flex; align-items: center; justify-content: space-between;
+            border-radius: 6px; transition: background 0.18s;
+        }
+        .docs-subnav-header:hover { background: rgba(0,212,255,0.07); }
+        .docs-subnav-header .sub-arrow { font-size: 0.9em; transition: transform 0.25s; color: rgba(0,255,157,0.4); }
+        .docs-subnav-header.open .sub-arrow { transform: rotate(180deg); }
+        .docs-subnav-items { display: none; flex-direction: column; gap: 2px; padding: 2px 0 4px 8px; }
+        .docs-subnav-items.open { display: flex; }
+        .docs-sub-btn {
+            background: transparent; border: none;
+            color: rgba(153,246,228,0.7); font-family: 'Rajdhani', sans-serif;
+            font-size: 0.79em; font-weight: 600; letter-spacing: 0.5px;
+            padding: 6px 10px; text-align: left; cursor: pointer;
+            border-radius: 6px; transition: all 0.18s; border-left: 2px solid transparent;
+        }
+        .docs-sub-btn:hover { background: rgba(0,255,157,0.08); color: #fff; border-left-color: rgba(0,255,157,0.4); }
+        .docs-sub-btn.active { background: rgba(0,255,157,0.12); color: #00ff9d; border-left-color: #00ff9d; }
+
+        .sidebar-footer {
+            margin-top: auto; border-top: 1px solid rgba(167,139,250,0.1);
+            padding-top: 16px; text-align: center; flex-shrink: 0;
+            animation: brandFadeIn 0.9s ease forwards;
+        }
+        .author-name { font-family: 'Orbitron', monospace; font-size: 0.62em; letter-spacing: 2px; color: #40E0D0; margin-bottom: 4px; }
+        .author-role { font-family: 'Exo 2', sans-serif; font-size: 0.8em; color: rgba(153,246,228,0.7); letter-spacing: 1px; }
+
+        /* ════ MAIN CONTENT ════ */
+        .main-content {
+            flex: 1; overflow-y: auto; padding: 20px 22px;
+            scrollbar-width: thin; scrollbar-color: rgba(139,92,246,0.25) transparent;
+        }
+        body.docs-mode .main-content {
+            background: linear-gradient(135deg, #021B35 0%, #034B5D 50%, #067D7D 100%);
+            background-attachment: fixed; padding: 0; overflow-y: hidden;
+            display: flex; flex-direction: column;
+        }
+        body.docs-mode .docs-content-scroll {
+            flex: 1; overflow-y: auto; padding: 30px;
+            -webkit-overflow-scrolling: touch; overscroll-behavior: contain;
+        }
+        body.radio-mode .main-content {
+            padding: 0; overflow: hidden;
+            display: flex; flex-direction: column;
+        }
+
+        .app-wrapper { display: none; animation: fadeUp 0.32s ease; max-width: 1040px; margin: 0 auto; }
+        .app-wrapper.active { display: block; }
+        #app-docs { display: none; max-width: none; margin: 0; height: 100%; }
+        #app-docs.active { display: flex; flex-direction: column; height: 100%; }
+        #app-radio { display: none; max-width: none; margin: 0; flex: 1; }
+        #app-radio.active { display: flex; flex: 1; height: 100%; overflow: hidden; }
+
+        @keyframes fadeUp { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)} }
+
+        .app-header { text-align: center; margin-bottom: 18px; }
+        .title-onu {
+            font-family: 'Orbitron', monospace; font-size: 1.7em; font-weight: 900; letter-spacing: 5px;
+            background: linear-gradient(90deg, #7c3aed 0%, #2563eb 50%, #0ea5e9 100%);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+            filter: drop-shadow(0 2px 10px rgba(124,58,237,0.2));
+        }
+        .title-lp {
+            font-family: 'Orbitron', monospace; font-size: 1.7em; font-weight: 900; letter-spacing: 7px;
+            background: linear-gradient(90deg, #0ea5e9 0%, #8b5cf6 50%, #ec4899 100%);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+            filter: drop-shadow(0 2px 10px rgba(139,92,246,0.2));
+        }
+        .app-subtitle { font-family: 'Rajdhani', sans-serif; font-size: 0.88em; font-weight: 600; letter-spacing: 3.5px; color: #9ca3af; text-transform: uppercase; margin-top: 3px; }
+
+        .card-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+        .card {
+            background: var(--card-bg); border: 1px solid var(--card-border);
+            border-radius: 16px; padding: 18px; box-shadow: var(--card-shadow);
+            display: flex; flex-direction: column; position: relative; overflow: hidden;
+        }
+        .card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; border-radius: 16px 16px 0 0; }
+        .card.violet-stripe::before { background: linear-gradient(90deg, #7c3aed, #4f46e5, #2563eb); }
+        .card.sky-stripe::before    { background: linear-gradient(90deg, #0ea5e9, #06b6d4, #10b981); }
+        .card.indigo-stripe::before { background: linear-gradient(90deg, #4f46e5, #7c3aed, #ec4899); }
+
+        .card-head { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid rgba(139,92,246,0.1); }
+        .ch-icon { width: 32px; height: 32px; border-radius: 9px; display: flex; align-items: center; justify-content: center; font-size: 0.92em; flex-shrink: 0; }
+        .chi-v { background: linear-gradient(135deg,#ede9fe,#ddd6fe); color: #6d28d9; }
+        .chi-s { background: linear-gradient(135deg,#e0f2fe,#bae6fd); color: #0369a1; }
+        .chi-i { background: linear-gradient(135deg,#ede9fe,#e0e7ff); color: #4338ca; }
+        .chi-g { background: linear-gradient(135deg,#d1fae5,#a7f3d0); color: #065f46; }
+        .card-head-text { font-family: 'Orbitron', monospace; font-size: 0.72em; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: #4c1d95; }
+
+        .input-row { display: grid; gap: 11px; margin-bottom: 11px; }
+        .col-2 { grid-template-columns: 1fr 1fr; }
+        .col-3 { grid-template-columns: 1fr 1fr 1fr; }
+        .col-4 { grid-template-columns: 1fr 1fr 1fr 1fr; }
+        .field { display: flex; flex-direction: column; gap: 5px; }
+
+        label { font-family: 'Rajdhani', sans-serif; font-size: 0.82em; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--label); }
+        input, select {
+            background: var(--input-bg); border: 1.5px solid var(--input-border);
+            border-radius: 9px; color: var(--input-text); font-family: 'Exo 2', sans-serif;
+            font-size: 0.92em; font-weight: 600; padding: 8px 11px; width: 100%;
+            transition: border-color 0.2s, box-shadow 0.2s; outline: none;
+        }
+        input::placeholder { color: #c4b5fd; font-weight: 400; }
+        input:focus, select:focus { border-color: var(--input-focus); box-shadow: 0 0 0 3px rgba(139,92,246,0.1); }
+        select { cursor: pointer; color: #3730a3; }
+        select option { color: #1e1b4b; font-weight: 500; }
+
+        .section-chip {
+            display: inline-flex; align-items: center; gap: 5px;
+            font-family: 'Orbitron', monospace; font-size: 0.62em; font-weight: 700;
+            letter-spacing: 2px; text-transform: uppercase; color: #7c3aed;
+            background: #ede9fe; border-radius: 20px; padding: 4px 12px;
+            margin-bottom: 9px; margin-top: 5px;
+        }
+
+        .btn-row { display: flex; gap: 10px; margin-top: 14px; }
+        .btn { padding: 9px 18px; border: none; border-radius: 9px; font-family: 'Rajdhani', sans-serif; font-size: 0.92em; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; cursor: pointer; display: flex; align-items: center; gap: 7px; transition: all 0.2s; }
+        .btn:hover { transform: translateY(-2px); box-shadow: 0 8px 22px rgba(0,0,0,0.14); }
+        .btn:active { transform: translateY(0); }
+        .btn-gen { background: linear-gradient(135deg, #059669, #10b981); color: #fff; box-shadow: 0 3px 12px rgba(16,185,129,0.32); }
+        .btn-clr { background: linear-gradient(135deg, #dc2626, #ef4444); color: #fff; box-shadow: 0 3px 12px rgba(239,68,68,0.32); }
+        .btn-cpy { background: linear-gradient(135deg, #1d4ed8, #3b82f6); color: #fff; box-shadow: 0 3px 12px rgba(59,130,246,0.32); }
+        .btn-cpy.copied { background: linear-gradient(135deg, #065f46, #10b981); }
+
+        .output-wrap { background: var(--output-bg); border: 1.5px solid var(--output-border); border-radius: 11px; padding: 14px 16px; flex-grow: 1; position: relative; overflow: hidden; }
+        .output-wrap::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, #7c3aed, #2563eb, #0ea5e9); opacity: 0.75; }
+        .output-dots { display: flex; gap: 6px; margin-bottom: 11px; }
+        .output-dots span { width: 9px; height: 9px; border-radius: 50%; }
+        .dot-red { background: #f87171; } .dot-amber { background: #fbbf24; } .dot-green { background: #34d399; }
+
+        pre.output-area { background: transparent; border: none; padding: 0; font-family: 'Space Mono', monospace; font-size: 0.86em; font-weight: 700; line-height: 1.8; color: #ede9fe; white-space: pre-wrap; overflow-x: auto; min-height: 150px; letter-spacing: 0.2px; }
+        textarea.output-area { background: transparent; border: none; padding: 0; font-family: 'Space Mono', monospace; font-size: 0.86em; font-weight: 700; line-height: 1.8; color: #ede9fe; width: 100%; height: 200px; resize: vertical; outline: none; letter-spacing: 0.2px; }
+        textarea.output-area::placeholder { color: rgba(167,139,250,0.28); font-weight: 400; font-style: italic; }
+
+        .toast {
+            position: fixed; bottom: 24px; left: 50%;
+            transform: translateX(-50%) translateY(70px);
+            background: linear-gradient(135deg, #059669, #10b981);
+            color: #fff; padding: 10px 26px; border-radius: 30px;
+            font-family: 'Rajdhani', sans-serif; font-size: 0.95em; font-weight: 700; letter-spacing: 1px;
+            box-shadow: 0 8px 28px rgba(16,185,129,0.38); z-index: 2000; opacity: 0;
+            transition: all 0.35s cubic-bezier(0.34,1.56,0.64,1);
+        }
+        .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+
+        /* ════ OLT DOCS STYLES ════ */
+        .docs-content-scroll { flex: 1; overflow-y: auto; padding: 30px; -webkit-overflow-scrolling: touch; overscroll-behavior: contain; }
+        .docs-tab-content { display: none; max-width: 1100px; margin: 0 auto; animation: fadeUp 0.4s ease-out; }
+        .docs-tab-content.active { display: block; }
+        .docs-card { background: var(--docs-glass); backdrop-filter: blur(10px); border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,0.2); padding: 30px; margin-bottom: 30px; border: 1px solid rgba(255,255,255,0.4); position: relative; overflow: hidden; }
+        .docs-card::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 4px; background: linear-gradient(90deg, #00d4ff 0%, #00ff9d 100%); }
+        .docs-card-header { margin-bottom: 25px; padding-bottom: 15px; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
+        .docs-card-title { font-size: 1.3rem; font-weight: 700; color: #0f172a; margin: 0; display: flex; align-items: center; gap: 10px; font-family: 'Exo 2', sans-serif; }
+        .docs-card-title::before { content: ''; display: block; width: 6px; height: 24px; background: linear-gradient(180deg, #00d4ff, #00ff9d); border-radius: 3px; }
+        .docs-olt-select, .docs-search-input { width: 100%; padding: 12px 16px; border: 2px solid #cbd5e1; border-radius: 6px; background-color: #fff; color: #334155; font-weight: 600; transition: all 0.3s ease; cursor: pointer; font-family: 'Exo 2', sans-serif; margin-bottom: 10px; font-size: 1rem; }
+        .docs-olt-select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%2300ff9d' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 15px top 50%; background-size: 18px auto; }
+        .docs-olt-select:focus, .docs-search-input:focus { border-color: #00d4ff; box-shadow: 0 0 0 3px rgba(0,212,255,0.1); outline: none; }
+        .docs-search-wrapper { position: relative; margin-bottom: 25px; }
+        .docs-search-icon { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: #94a3b8; }
+        .docs-search-input { padding-left: 45px; margin-bottom: 0; }
+        .docs-cmd-label { font-weight: bold; margin-bottom: 5px; color: #0f172a; border-left: 4px solid #00ff9d; padding: 8px 12px; background: #f0fdf4; border-radius: 0 6px 6px 0; font-size: 0.95rem; margin-top: 25px; font-family: 'Exo 2', sans-serif; display: block; }
+        .docs-code { display: block; padding: 18px; background: #000; border: 1px solid #1e293b; border-radius: 6px; margin-bottom: 30px; white-space: pre-wrap; font-family: 'Space Mono', monospace; font-size: 0.88rem; color: #00ff00; position: relative; overflow-x: auto; line-height: 1.6; box-shadow: 0 4px 6px rgba(0,0,0,0.3), 0 0 10px rgba(0,255,0,0.1); word-break: break-word; transition: all 0.2s; }
+        .docs-code:hover { border-color: #00ff9d; box-shadow: 0 8px 15px rgba(0,0,0,0.4), 0 0 15px rgba(0,255,157,0.2); transform: translateX(2px); }
+        .docs-code.highlighted { background: #002200; border-color: #00ff9d; color: #fff; box-shadow: 0 0 20px rgba(0,255,157,0.4); }
+        .docs-olt-table { width: 100%; border-collapse: separate; border-spacing: 0; margin-top: 10px; background: #fff; border-radius: 8px; overflow: hidden; border: 1px solid #cbd5e1; font-size: 0.9rem; }
+        .docs-olt-table th, .docs-olt-table td { padding: 14px 16px; text-align: center; border-bottom: 1px solid #e2e8f0; font-family: 'Exo 2', sans-serif; }
+        .docs-olt-table th { background: #f1f5f9; color: #00A36C; font-weight: 700; text-transform: uppercase; font-size: 0.9rem; border-bottom: 2px solid #cbd5e1; }
+        .docs-olt-table tr:hover { background-color: #f8fafc; }
+        .docs-olt-table td:nth-child(2) { color: #008793; font-weight: 700; }
+
+        /* ONU compact */
+        #app-onu { max-width: 1040px; margin: 0 auto; }
+        #app-onu .app-header { margin-bottom: 30px; }
+        #app-onu .app-header .title-onu { font-size: 1.85em; letter-spacing: 4px; }
+        #app-onu .app-header .app-subtitle { font-size: 0.78em; margin-top: 1px; }
+        #app-onu .card-grid { gap: 22px; }
+        #app-onu .card { padding: 14px 16px; }
+        #app-onu .card-head { margin-bottom: 10px; padding-bottom: 8px; }
+        #app-onu .input-row { gap: 8px; margin-bottom: 8px; }
+        #app-onu input, #app-onu select { padding: 6px 10px; font-size: 0.80em; }
+        #app-onu label { font-size: 0.90em; }
+        #app-onu .section-chip { font-size: 0.57em; padding: 3px 10px; margin-bottom: 7px; margin-top: 3px; }
+        #app-onu .btn-row { margin-top: 10px; gap: 8px; }
+        #app-onu .btn { padding: 7px 15px; font-size: 1.0em; }
+        #app-onu .output-wrap { padding: 10px 13px; }
+        #app-onu pre.output-area { font-size: 0.82em; min-height: 100px; line-height: 1.65; }
+
+        /* ════ RADIO APP STYLES ════ */
+        #app-radio { background: var(--radio-bg); }
+        .radio-client-panel { width: 300px; background: #f7fbff; display: flex; flex-direction: column; height: 100%; flex-shrink: 0; border-right: 1px solid var(--radio-border); box-shadow: 4px 0 16px rgba(26,127,203,0.06); }
+        .radio-panel-header { background: var(--radio-primary); display: flex; flex-direction: column; justify-content: center; padding: 16px 18px; border-bottom: 1px solid rgba(255,255,255,0.15); box-shadow: 0 4px 16px rgba(0,0,0,0.15); flex-shrink: 0; }
+        .radio-panel-bts { font-size: 11px; color: rgba(255,255,255,0.6); text-transform: uppercase; letter-spacing: 2.5px; font-weight: 600; font-family: 'JetBrains Mono', monospace; }
+        .radio-panel-title { font-size: 16px; font-weight: 700; color: #fff; letter-spacing: 0.5px; margin-top: 2px; }
+        .radio-panel-count { font-size: 10px; color: rgba(255,255,255,0.45); font-family: 'JetBrains Mono', monospace; margin-top: 2px; }
+        .radio-search-wrap { padding: 10px 10px 8px; border-bottom: 1px solid var(--radio-border); background: #fff; flex-shrink: 0; }
+        .radio-search { width: 100%; background: var(--radio-sidebar); border: 1px solid rgba(26,127,203,0.2); border-radius: 8px; padding: 7px 12px; font-size: 12px; color: #1a3a5c; outline: none; transition: all 0.2s; font-family: 'Rajdhani', sans-serif; font-weight: 600; }
+        .radio-search::placeholder { color: rgba(26,127,203,0.35); }
+        .radio-search:focus { border-color: var(--radio-accent); box-shadow: 0 0 0 3px rgba(26,127,203,0.1); background: #fff; }
+        .radio-bts-tabs { display: flex; flex-wrap: wrap; gap: 4px; padding: 8px 10px; border-bottom: 1px solid var(--radio-border); background: #f0f7ff; flex-shrink: 0; }
+        .radio-bts-tab { padding: 4px 10px; border-radius: 20px; border: 1px solid rgba(26,127,203,0.2); background: #fff; color: #4a7a9b; font-size: 10px; font-weight: 700; letter-spacing: 0.5px; cursor: pointer; transition: all 0.18s; font-family: 'Rajdhani', sans-serif; }
+        .radio-bts-tab:hover { border-color: var(--radio-accent); color: var(--radio-accent); }
+        .radio-bts-tab.active { background: var(--radio-accent); color: #fff; border-color: var(--radio-accent); }
+
+        /* ════ RADIO FIRMWARE BUTTON ════ */
+        .radio-firmware-btn {
+            padding: 4px 10px; border-radius: 20px;
+            border: 1px solid rgba(59,130,246,0.5);
+            background: linear-gradient(135deg, #1e3a5f 0%, #1d5fa8 100%);
+            color: #7dd3fc;
+            font-size: 10px; font-weight: 700; letter-spacing: 0.5px;
+            cursor: pointer; transition: all 0.22s;
+            font-family: 'Rajdhani', sans-serif;
+            display: flex; align-items: center; gap: 4px;
+            text-decoration: none;
+            box-shadow: 0 1px 6px rgba(29,95,168,0.3);
+        }
+        .radio-firmware-btn:hover {
+            background: linear-gradient(135deg, #1d5fa8 0%, #2389cc 100%);
+            color: #fff;
+            border-color: #38bdf8;
+            box-shadow: 0 3px 12px rgba(56,189,248,0.35);
+            transform: translateY(-1px);
+        }
+        .radio-firmware-btn:active { transform: translateY(0); }
+        .radio-firmware-btn .fw-icon { font-size: 11px; line-height: 1; }
+
+        .radio-client-list { flex: 1; overflow-y: auto; padding: 8px; }
+        .radio-client-list::-webkit-scrollbar { width: 4px; }
+        .radio-client-list::-webkit-scrollbar-thumb { background: rgba(26,127,203,0.2); border-radius: 4px; }
+        .radio-client-empty { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; color: rgba(26,127,203,0.3); text-align: center; padding: 24px; }
+        .radio-client-empty-icon { font-size: 36px; margin-bottom: 10px; opacity: 0.35; }
+        .radio-client-empty-text { font-size: 11px; letter-spacing: 1px; line-height: 1.7; }
+        .radio-client-card { background: #fff; border: 1px solid rgba(26,127,203,0.1); border-radius: 8px; padding: 10px 12px 10px 14px; margin-bottom: 5px; cursor: pointer; transition: all 0.22s ease; position: relative; }
+        .radio-client-card::before { content: ''; position: absolute; left: 0; top: 4px; bottom: 4px; width: 3px; background: transparent; border-radius: 0 2px 2px 0; transition: all 0.22s; }
+        .radio-client-card:hover { border-color: rgba(26,127,203,0.3); transform: translateX(2px); box-shadow: 0 3px 10px rgba(26,127,203,0.08); }
+        .radio-client-card:hover::before { background: var(--radio-accent); }
+        .radio-client-card.active { border-color: var(--radio-accent); background: linear-gradient(135deg, rgba(26,127,203,0.07), rgba(26,127,203,0.02)); box-shadow: 0 4px 14px rgba(26,127,203,0.12); transform: translateX(2px); }
+        .radio-client-card.active::before { background: var(--radio-accent); }
+        .radio-client-name { font-size: 12px; font-weight: 800; color: #1a3a5c; line-height: 1.35; margin-bottom: 5px; padding: 2px 4px 2px 2px; display: inline-block; border-radius: 4px; transition: all 0.15s; }
+        .radio-client-card:hover .radio-client-name { background-color: rgba(26,127,203,0.12); color: #0d4b7a; }
+        .radio-client-meta { display: flex; gap: 6px; align-items: center; }
+        .radio-client-tag { font-size: 9px; font-family: 'JetBrains Mono', monospace; padding: 2px 6px; border-radius: 4px; font-weight: 600; text-transform: uppercase; }
+        .radio-client-tag.p2p { background: rgba(26,127,203,0.1); color: #1a6fa8; border: 1px solid rgba(26,127,203,0.25); }
+        .radio-client-tag.p2m { background: rgba(14,106,173,0.08); color: #0e5a9a; border: 1px solid rgba(14,106,173,0.2); }
+        .radio-client-ip { font-size: 10px; font-family: 'JetBrains Mono', monospace; color: rgba(26,127,203,0.45); }
+        .radio-client-arrow { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); color: rgba(26,127,203,0.25); font-size: 16px; transition: all 0.2s; }
+        .radio-client-card:hover .radio-client-arrow, .radio-client-card.active .radio-client-arrow { color: var(--radio-accent); }
+        .radio-detail-panel { flex: 1; display: flex; flex-direction: column; height: 100%; overflow: hidden; background: var(--radio-bg); min-width: 0; }
+        .radio-detail-header { background: var(--radio-primary); display: flex; justify-content: space-between; align-items: center; padding: 0 28px; height: 70px; flex-shrink: 0; box-shadow: 0 4px 24px rgba(0,0,0,0.2); }
+        .radio-header-pulse { width: 9px; height: 9px; border-radius: 50%; background: #fff; box-shadow: 0 0 10px rgba(255,255,255,0.8); animation: pulse-ring 2s infinite; }
+        @keyframes pulse-ring { 0%{box-shadow:0 0 0 0 rgba(255,255,255,0.7)} 70%{box-shadow:0 0 0 8px rgba(255,255,255,0)} 100%{box-shadow:0 0 0 0 rgba(255,255,255,0)} }
+        .radio-detail-header h1 { font-size: 18px; font-weight: 700; letter-spacing: 3px; color: #fff; margin-bottom: 2px; }
+        .radio-detail-header p { font-size: 10px; opacity: 0.55; text-transform: uppercase; letter-spacing: 2px; font-family: 'JetBrains Mono', monospace; }
+        .radio-detail-body { flex: 1; display: flex; flex-direction: column; padding: 16px 20px 12px; overflow: hidden; min-height: 0; }
+        .radio-detail-welcome { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; text-align: center; }
+        .radio-detail-welcome-icon { font-size: 56px; opacity: 0.18; margin-bottom: 16px; }
+        .radio-detail-welcome-title { font-size: 20px; font-weight: 700; color: rgba(26,63,92,0.35); letter-spacing: 2.5px; margin-bottom: 8px; text-transform: uppercase; }
+        .radio-detail-welcome-sub { font-size: 11px; color: rgba(26,63,92,0.25); letter-spacing: 1px; line-height: 2; font-family: 'JetBrains Mono', monospace; }
+        .radio-detail-card { background: var(--radio-card); border-radius: 12px; border: 1px solid var(--radio-border); overflow: hidden; animation: fadeSlide 0.32s cubic-bezier(0.34,1.1,0.64,1); box-shadow: 0 6px 28px rgba(26,127,203,0.09); display: flex; flex-direction: column; flex: 1; min-height: 0; }
+        @keyframes fadeSlide { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)} }
+        .rdc-header { background: linear-gradient(135deg, #1a3a5c 0%, #1e5080 100%); padding: 14px 20px; display: flex; align-items: flex-start; justify-content: space-between; flex-shrink: 0; }
+        .rdc-client-name { font-size: 21px; font-weight: 700; color: #fff; letter-spacing: 0.3px; line-height: 1.3; }
+        .rdc-bts-label { font-size: 11px; color: rgba(77,182,245,0.75); text-transform: uppercase; letter-spacing: 2px; font-family: 'JetBrains Mono', monospace; margin-top: 5px; display: flex; align-items: center; gap: 5px; }
+        .rdc-bts-label::before { content: '📡'; font-size: 12px; }
+        .rdc-link-badge { padding: 4px 12px; border-radius: 6px; font-size: 11px; font-weight: 700; letter-spacing: 1.5px; font-family: 'JetBrains Mono', monospace; flex-shrink: 0; margin-left: 12px; margin-top: 2px; }
+        .rdc-link-badge.p2p { background: rgba(77,182,245,0.15); color: #7fc8f5; border: 1px solid rgba(77,182,245,0.35); }
+        .rdc-link-badge.p2m { background: rgba(26,127,203,0.2); color: #a8d8f5; border: 1px solid rgba(26,127,203,0.4); }
+        .rdc-table { flex: 1; display: grid; grid-template-columns: 130px 1fr 130px 1fr; align-content: start; border-top: 1px solid rgba(26,127,203,0.1); overflow: hidden; }
+        .rdc-cell { padding: 10px 16px; border-bottom: 1px solid rgba(26,127,203,0.07); display: flex; align-items: center; font-size: 13px; }
+        .rdc-cell.lbl { background: rgba(26,127,203,0.04); font-size: 10px; font-weight: 800; letter-spacing: 1.5px; text-transform: uppercase; color: rgba(26,127,203,0.65); font-family: 'JetBrains Mono', monospace; border-right: 1px solid rgba(26,127,203,0.07); }
+        .rdc-cell.val { font-family: 'JetBrains Mono', monospace; font-weight: 600; color: #1a3a5c; font-size: 13px; border-right: 1px solid rgba(26,127,203,0.07); }
+        .rdc-cell.lbl-wide { background: rgba(26,127,203,0.04); font-size: 10px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: rgba(26,127,203,0.65); font-family: 'JetBrains Mono', monospace; border-right: 1px solid rgba(26,127,203,0.07); }
+        .rdc-cell.val-wide { grid-column: span 3; font-family: 'JetBrains Mono', monospace; font-weight: 600; color: #1a3a5c; font-size: 13px; }
+        .ip-val { color: #0a4a82; font-weight: 700; }
+        .na-val { color: rgba(26,127,203,0.3); font-style: italic; font-weight: 400; }
+        .vlan-chip { background: linear-gradient(135deg, rgba(26,127,203,0.12), rgba(26,127,203,0.05)); border: 1px solid rgba(26,127,203,0.25); border-radius: 5px; padding: 2px 8px; font-size: 11px; font-weight: 700; color: var(--radio-accent); }
+        .radio-detail-footer { padding: 6px 20px; flex-shrink: 0; font-size: 9px; color: rgba(26,127,203,0.3); font-weight: 600; letter-spacing: 2px; text-transform: uppercase; font-family: 'JetBrains Mono', monospace; text-align: right; }
+
+        /* BTS INFO — compact */
+        #bts-cards-mobile { display: none; }
+        .bts-mobile-site { background: #fff; border-radius: 12px; border: 1px solid rgba(139,92,246,0.12); margin-bottom: 10px; overflow: hidden; box-shadow: 0 2px 10px rgba(99,102,241,0.07); }
+        .bts-mobile-site-header { background: linear-gradient(90deg, #1e1b4b, #312e81); padding: 10px 14px; display: flex; align-items: center; gap: 8px; }
+        .bts-mobile-site-name { font-family: 'Orbitron', monospace; font-size: 0.72em; font-weight: 700; letter-spacing: 1.5px; color: #e0e7ff; }
+        .bts-mobile-row { display: flex; align-items: center; justify-content: space-between; padding: 9px 14px; border-bottom: 1px solid #f0f0ff; gap: 8px; }
+        .bts-mobile-row:last-child { border-bottom: none; }
+        .bts-mobile-device { font-family: 'Space Mono', monospace; font-size: 0.72em; font-weight: 700; padding: 3px 9px; border-radius: 20px; white-space: nowrap; }
+        .bts-mobile-ip { font-family: 'Space Mono', monospace; font-size: 0.82em; font-weight: 700; color: #1e1b4b; display: flex; align-items: center; gap: 5px; }
+
+        /* ── Tablet (≤900px) ── */
+        @media (max-width: 900px) {
+            .sidebar { width: 190px; min-width: 190px; padding: 14px 10px; }
+            .nav-text .tab-name { font-size: 0.68em; }
+            .main-content { padding: 14px; }
+            .card-grid { grid-template-columns: 1fr 1fr; gap: 12px; }
+        }
+
+        /* ── Mobile (≤700px) ── */
+        @media (max-width: 700px) {
+            body { flex-direction: column; height: 100dvh; overflow: hidden; }
+            .sidebar { width: 100%; min-width: unset; height: auto; flex-direction: column; padding: 0; border-right: none; border-bottom: 1px solid var(--sb-border); overflow: visible !important; z-index: 200; flex-shrink: 0; position: sticky; top: 0; }
+            .sidebar::before, .sidebar::after { display: none; }
+            .sidebar-brand { display: none; }
+            .sidebar-footer { display: none; }
+            .nav-section-label { display: none; }
+            .nav-group { flex-direction: row; overflow: visible; padding: 6px 6px 0; gap: 3px; flex-wrap: nowrap; position: static; }
+            .nav-btn { flex: 1; flex-direction: column; align-items: center; justify-content: center; padding: 7px 4px 6px; gap: 3px; flex-shrink: 1; border-radius: 8px 8px 0 0; min-width: 0; text-align: center; animation: fadeUp 0.4s ease forwards; transform: none; }
+            .nav-btn:hover { transform: none; }
+            .nav-icon-wrap { width: 24px; height: 24px; font-size: 0.8em; border-radius: 7px; }
+            .nav-text { display: flex; flex-direction: column; align-items: center; }
+            .nav-text .tab-name { font-size: 0.5em; letter-spacing: 0.3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
+            .nav-text .tab-desc { display: none; }
+            .nav-btn-glow { width: 100%; height: 3px; left: 0; bottom: 0; top: auto; border-radius: 2px 2px 0 0; }
+            .nav-group-wrapper { flex: 1; min-width: 0; }
+            .nav-group-header { flex: 1; flex-direction: column; align-items: center; justify-content: center; padding: 7px 4px 6px; gap: 3px; border-radius: 8px 8px 0 0; min-width: 0; text-align: center; opacity: 1; transform: none; animation: none; }
+            .nav-group-header:hover { transform: none; }
+            .nav-group-header.open { border-radius: 8px 8px 0 0; }
+            .nav-icon-wrap.nav-group-icon { width: 24px; height: 24px; font-size: 0.8em; border-radius: 7px; }
+            .nav-group-header .tab-name { font-family: 'Orbitron', monospace; font-size: 0.5em; letter-spacing: 0.3px; white-space: nowrap; color: rgba(224,215,255,0.95); }
+            .nav-group-arrow { display: none; }
+            .nav-group-children { position: absolute; top: 100%; left: 0; right: 0; background: linear-gradient(180deg, #1e1b4b 0%, #0f172a 100%); border: 1px solid var(--sb-border); border-top: none; padding: 8px; z-index: 300; flex-direction: row; flex-wrap: wrap; gap: 4px; box-shadow: 0 8px 24px rgba(0,0,0,0.4); border-radius: 0; margin-bottom: 0; }
+            .nav-child-btn { flex: 0 0 auto; flex-direction: column; align-items: center; padding: 6px 10px; border-radius: 8px; }
+            .nav-child-icon { width: 22px; height: 22px; }
+            .nav-child-name { font-size: 0.55em; letter-spacing: 0.5px; white-space: nowrap; }
+            .docs-subnav { position: absolute; top: 100%; left: 0; right: 0; background: linear-gradient(180deg, #1e1b4b 0%, #0f172a 100%); border-bottom: 1px solid var(--sb-border); border-top: 1px solid rgba(167,139,250,0.15); padding: 10px 12px; z-index: 300; max-height: 55vh; overflow-y: auto; display: none; flex-direction: row; flex-wrap: wrap; gap: 4px; box-shadow: 0 8px 24px rgba(0,0,0,0.4); }
+            .docs-subnav.open { display: flex !important; }
+            .docs-subnav-group { flex: 0 0 auto; }
+            .docs-subnav-header { font-size: 0.6em; padding: 5px 9px; white-space: nowrap; }
+            .docs-subnav-items { min-width: 120px; }
+            .docs-sub-group-header { font-size: 0.72em; padding: 4px 7px; white-space: nowrap; }
+            .docs-sub-btn { font-size: 0.72em !important; padding: 4px 7px !important; white-space: nowrap; }
+            .docs-sub-btn-leaf { font-size: 0.68em !important; padding: 3px 7px !important; }
+            .main-content { flex: 1; overflow-y: auto; padding: 10px; -webkit-overflow-scrolling: touch; overscroll-behavior: contain; }
+            body.docs-mode .main-content { padding: 0; overflow: hidden; }
+            body.docs-mode .docs-content-scroll { padding: 12px; }
+            body.radio-mode .main-content { padding: 0; }
+            .app-wrapper { max-width: 100%; }
+            .app-header { margin-bottom: 10px; }
+            .title-onu, .title-lp { font-size: 1.15em; letter-spacing: 3px; }
+            .app-subtitle { font-size: 0.75em; letter-spacing: 2px; }
+            .card { padding: 12px; border-radius: 12px; }
+            .card-grid { grid-template-columns: 1fr; gap: 10px; }
+            .input-row { gap: 7px; margin-bottom: 7px; }
+            .col-2 { grid-template-columns: 1fr 1fr; }
+            .col-3 { grid-template-columns: 1fr 1fr 1fr; }
+            .col-4 { grid-template-columns: 1fr 1fr 1fr 1fr; }
+            input, select { padding: 6px 9px; font-size: 0.82em; border-radius: 7px; }
+            label { font-size: 0.72em; }
+            .section-chip { font-size: 0.55em; padding: 3px 9px; }
+            .btn-row { margin-top: 8px; gap: 7px; }
+            .btn { padding: 7px 12px; font-size: 0.78em; }
+            pre.output-area { font-size: 0.75em; min-height: 80px; line-height: 1.6; }
+            textarea.output-area { font-size: 0.75em; height: 120px; }
+            .output-wrap { padding: 10px 12px; }
+            #bts-info-table { display: none; }
+            #bts-cards-mobile { display: block !important; }
+            .docs-card { padding: 16px; }
+            .docs-card-title { font-size: 1.1rem; }
+            .docs-cmd-label { font-size: 0.82rem; padding: 6px 10px; margin-top: 16px; }
+            .docs-code { font-size: 0.78rem; padding: 12px; }
+            .docs-olt-table th, .docs-olt-table td { padding: 8px 10px; font-size: 0.78rem; }
+            #app-radio { flex-direction: column; }
+            .radio-client-panel { width: 100%; height: 280px; border-right: none; border-bottom: 1px solid var(--radio-border); }
+            .radio-detail-header { height: 50px; padding: 0 14px; }
+            .radio-detail-header h1 { font-size: 13px; letter-spacing: 2px; }
+            .rdc-table { grid-template-columns: 100px 1fr; }
+            .rdc-cell.val-wide { grid-column: span 1; }
+            .rdc-cell.lbl-wide { grid-column: 1; }
+        }
+
+        @media (max-width: 400px) {
+            .col-3 { grid-template-columns: 1fr 1fr; }
+            .col-4 { grid-template-columns: 1fr 1fr; }
+            .title-onu, .title-lp { font-size: 1em; letter-spacing: 2px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+        <div class="sidebar-brand">
+            <div class="brand-title">NETWORK MGMT SUITE</div>
+            <div class="brand-sub">Management Tools</div>
+        </div>
+
+        <div class="nav-section-label">Tools</div>
+        <nav class="nav-group">
+
+            <div class="nav-group-wrapper">
+                <button class="nav-group-header open" id="nav-olt-group" onclick="toggleOltGroup(this)">
+                    <div class="nav-btn-glow"></div>
+                    <div class="nav-icon-wrap icon-v nav-group-icon">
+                        <i class="material-icons" style="font-size:16px">device_hub</i>
+                    </div>
+                    <div class="nav-text">
+                        <span class="tab-name">OLT</span>
+                        <span class="tab-desc">Management Tools</span>
+                    </div>
+                    <span class="nav-group-arrow">▼</span>
+                </button>
+                <div class="nav-group-children open" id="olt-children">
+                    <button class="nav-child-btn active" id="nav-onu" onclick="switchTab('app-onu', this)">
+                        <div class="nav-child-icon icon-v"><i class="material-icons" style="font-size:13px">settings_input_component</i></div>
+                        <span class="nav-child-name">ONU ADD</span>
+                    </button>
+                    <button class="nav-child-btn" id="nav-lp" onclick="switchTab('app-lp', this)">
+                        <div class="nav-child-icon icon-s"><i class="fas fa-cogs" style="font-size:11px"></i></div>
+                        <span class="nav-child-name">LINE PROFILE</span>
+                    </button>
+                    <button class="nav-child-btn" id="nav-docs" onclick="switchToDocsTab(this)">
+                        <div class="nav-child-icon icon-g"><i class="material-icons" style="font-size:13px">menu_book</i></div>
+                        <span class="nav-child-name">OLT DOCS</span>
+                    </button>
+                    <div class="docs-subnav" id="docs-subnav">
+                        <div class="docs-subnav-group">
+                            <div class="docs-subnav-header active" onclick="showDocsContent('d_olt_ips', this)">
+                                <span>📡 OLT IPs</span>
+                            </div>
+                        </div>
+                        <div class="docs-subnav-group">
+                            <div class="docs-subnav-header" onclick="toggleDocsSub(this)">
+                                <span>🔷 GPON OLT</span><span class="sub-arrow">▼</span>
+                            </div>
+                            <div class="docs-subnav-items">
+                                <div class="docs-sub-group">
+                                    <div class="docs-sub-group-header" onclick="toggleSubGroup(this)"><span>CDATA GPON 16</span><span class="sub-arrow2">▶</span></div>
+                                    <div class="docs-sub-group-items">
+                                        <button class="docs-sub-btn docs-sub-btn-leaf" onclick="showDocsContent('d_cdata_troubleshoot', this)">🔧 Troubleshoot</button>
+                                        <button class="docs-sub-btn docs-sub-btn-leaf" onclick="showDocsContent('d_cdata_installation', this)">⚙️ Installation</button>
+                                    </div>
+                                </div>
+                                <div class="docs-sub-group">
+                                    <div class="docs-sub-group-header" onclick="toggleSubGroup(this)"><span>CDATA GPON 8</span><span class="sub-arrow2">▶</span></div>
+                                    <div class="docs-sub-group-items">
+                                        <button class="docs-sub-btn docs-sub-btn-leaf" onclick="showDocsContent('d_gpon8_troubleshoot', this)">🔧 Troubleshoot</button>
+                                        <button class="docs-sub-btn docs-sub-btn-leaf" onclick="showDocsContent('d_gpon8_installation', this)">⚙️ Installation</button>
+                                    </div>
+                                </div>
+                                <div class="docs-sub-group">
+                                    <div class="docs-sub-group-header" onclick="toggleSubGroup(this)"><span>VSOL / ATOP</span><span class="sub-arrow2">▶</span></div>
+                                    <div class="docs-sub-group-items">
+                                        <button class="docs-sub-btn docs-sub-btn-leaf" onclick="showDocsContent('d_vsol_troubleshoot', this)">🔧 Troubleshoot</button>
+                                        <button class="docs-sub-btn docs-sub-btn-leaf" onclick="showDocsContent('d_vsol_installation', this)">⚙️ Installation</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="docs-subnav-group">
+                            <div class="docs-subnav-header" onclick="toggleDocsSub(this)">
+                                <span>🟢 EPON OLT</span><span class="sub-arrow">▼</span>
+                            </div>
+                            <div class="docs-subnav-items">
+                                <div class="docs-sub-group">
+                                    <div class="docs-sub-group-header" onclick="toggleSubGroup(this)"><span>EPON UTSTAR</span><span class="sub-arrow2">▶</span></div>
+                                    <div class="docs-sub-group-items">
+                                        <button class="docs-sub-btn docs-sub-btn-leaf" onclick="showDocsContent('d_utstar_troubleshoot', this)">🔧 Troubleshoot</button>
+                                        <button class="docs-sub-btn docs-sub-btn-leaf" onclick="showDocsContent('d_utstar_installation', this)">⚙️ Installation</button>
+                                    </div>
+                                </div>
+                                <div class="docs-sub-group">
+                                    <div class="docs-sub-group-header" onclick="toggleSubGroup(this)"><span>EPON PHYHOME</span><span class="sub-arrow2">▶</span></div>
+                                    <div class="docs-sub-group-items">
+                                        <button class="docs-sub-btn docs-sub-btn-leaf" onclick="showDocsContent('d_phyhome_troubleshoot', this)">🔧 Troubleshoot</button>
+                                        <button class="docs-sub-btn docs-sub-btn-leaf" onclick="showDocsContent('d_phyhome_installation', this)">⚙️ Installation</button>
+                                    </div>
+                                </div>
+                                <div class="docs-sub-group">
+                                    <div class="docs-sub-group-header" onclick="toggleSubGroup(this)"><span>EPON FHNET</span><span class="sub-arrow2">▶</span></div>
+                                    <div class="docs-sub-group-items">
+                                        <button class="docs-sub-btn docs-sub-btn-leaf" onclick="showDocsContent('d_fhnet_troubleshoot', this)">🔧 Troubleshoot</button>
+                                        <button class="docs-sub-btn docs-sub-btn-leaf" onclick="showDocsContent('d_fhnet_installation', this)">⚙️ Installation</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <button class="nav-btn" id="nav-radio" onclick="switchToRadioTab(this)">
+                <div class="nav-btn-glow"></div>
+                <div class="nav-icon-wrap icon-r">
+                    <i class="material-icons" style="font-size:16px">settings_input_antenna</i>
+                </div>
+                <div class="nav-text">
+                    <span class="tab-name">RADIO</span>
+                    <span class="tab-desc">Wireless Links</span>
+                </div>
+            </button>
+
+            <button class="nav-btn" id="nav-bts" onclick="switchTab('app-bts', this)">
+                <div class="nav-btn-glow"></div>
+                <div class="nav-icon-wrap" style="background:rgba(251,191,36,0.15);color:#fbbf24;">
+                    <i class="material-icons" style="font-size:16px">cell_tower</i>
+                </div>
+                <div class="nav-text">
+                    <span class="tab-name">BTS INFO</span>
+                    <span class="tab-desc">Router &amp; SW IPs</span>
+                </div>
+            </button>
+        </nav>
+
+        <div class="sidebar-footer">
+            <div class="author-name">Ahsanul Kabir</div>
+            <div class="author-role">Link3 Technologies Ltd.</div>
+        </div>
+    </aside>
+
+    <!-- MAIN -->
+    <main class="main-content" id="main-content">
+
+        <!-- APP 1: ONU ADD -->
+        <div id="app-onu" class="app-wrapper active">
+            <div class="app-header">
+                <div class="title-onu">ONU ADD SCRIPT</div>
+                <div class="app-subtitle">Prepared by Ahsanul Kabir</div>
+            </div>
+            <div class="card-grid">
+                <div class="card violet-stripe">
+                    <div class="card-head">
+                        <div class="ch-icon chi-v"><i class="material-icons" style="font-size:16px">tune</i></div>
+                        <span class="card-head-text">Configuration Inputs</span>
+                    </div>
+                    <div class="input-row col-2">
+                        <div class="field"><label for="olt-type">OLT Type</label>
+                            <select id="olt-type">
+                                <option value="vsol-gpon">VSOL GPON</option>
+                                <option value="cdata-gpon-16">CData GPON 16-PON</option>
+                                <option value="cdata-gpon-8">CData GPON 8-PON</option>
+                                <option value="utstarcom">UTStarcom</option>
+                                <option value="fh-net">FH-NET</option>
+                                <option value="phyhome">Phyhome</option>
+                            </select>
+                        </div>
+                        <div class="field"><label for="onu-ports">ONU Ports</label>
+                            <select id="onu-ports">
+                                <option value="1">1-Port</option>
+                                <option value="4">4-Ports</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="input-row col-3">
+                        <div class="field"><label for="slot">Slot</label><input type="number" id="slot" value="0"></div>
+                        <div class="field"><label for="pon">PON Port</label><input type="number" id="pon" placeholder="PON"></div>
+                        <div class="field"><label for="onu-id">ONU ID</label><input type="number" id="onu-id" placeholder="ID"></div>
+                    </div>
+                    <div class="input-row col-2">
+                        <div class="field"><label for="onu-mac">ONU MAC Address</label><input type="text" id="onu-mac" placeholder="e.g. AABBCCDDEEFF"></div>
+                        <div class="field"><label for="line-profile">Line Profile ID</label><input type="number" id="line-profile" value="5"></div>
+                    </div>
+                    <div class="input-row col-2">
+                        <div class="field"><label for="gem-id">GEM ID</label><input type="number" id="gem-id" value="1"></div>
+                        <div class="field"><label for="bandwidth">Bandwidth Rate</label>
+                            <select id="bandwidth">
+                                <option value="60">60 / 60 Mbps</option>
+                                <option value="100">100 / 100 Mbps</option>
+                                <option value="160">160 / 160 Mbps</option>
+                                <option value="210">210 / 210 Mbps</option>
+                                <option value="255">255 / 255 Mbps</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="section-chip"><i class="material-icons" style="font-size:0.95em">tag</i> VLAN IDs</div>
+                    <div class="input-row col-4">
+                        <div class="field"><input type="text" id="vlan1" placeholder="VLAN 1"></div>
+                        <div class="field"><input type="text" id="vlan2" placeholder="VLAN 2"></div>
+                        <div class="field"><input type="text" id="vlan3" placeholder="VLAN 3"></div>
+                        <div class="field"><input type="text" id="vlan4" placeholder="VLAN 4"></div>
+                    </div>
+                    <div class="btn-row">
+                        <button class="btn btn-gen" onclick="generateOnuScript()"><span class="material-icons" style="font-size:16px">play_arrow</span> Generate</button>
+                        <button class="btn btn-clr" onclick="clearOnuForm()"><span class="material-icons" style="font-size:16px">delete_outline</span> Clear</button>
+                    </div>
+                </div>
+                <div class="card sky-stripe">
+                    <div class="card-head">
+                        <div class="ch-icon chi-s"><i class="material-icons" style="font-size:16px">code</i></div>
+                        <span class="card-head-text">Generated Script</span>
+                    </div>
+                    <div class="output-wrap" style="flex:1">
+                        <div class="output-dots"><span class="dot-red"></span><span class="dot-amber"></span><span class="dot-green"></span></div>
+                        <pre id="output-script" class="output-area"></pre>
+                    </div>
+                    <div class="btn-row" style="justify-content:flex-end">
+                        <button id="copy-btn" class="btn btn-cpy" onclick="copyOnuScript()">
+                            <span class="material-icons" style="font-size:16px">content_copy</span>
+                            <span class="copy-text">Copy Script</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- APP 2: LINE PROFILE -->
+        <div id="app-lp" class="app-wrapper">
+            <div class="app-header">
+                <div class="title-lp">LINE PROFILE CREATE</div>
+                <div class="app-subtitle">Prepared by Ahsanul Kabir</div>
+            </div>
+            <div class="card-grid">
+                <div class="card indigo-stripe">
+                    <div class="card-head">
+                        <div class="ch-icon chi-i"><i class="fas fa-cogs" style="font-size:14px"></i></div>
+                        <span class="card-head-text">Profile Parameters</span>
+                    </div>
+                    <div class="input-row" style="grid-template-columns:1fr">
+                        <div class="field"><label for="oltName">OLT Name</label>
+                            <select id="oltName">
+                                <option value="cdata16">CDATA GPON 16-PON</option>
+                                <option value="cdata8">CDATA GPON 8-PON</option>
+                                <option value="vsol">VSOL / ATOP</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="input-row col-2">
+                        <div class="field"><label for="profileId">Line Profile ID</label><input type="text" id="profileId" placeholder="e.g., 10"></div>
+                        <div class="field" id="lp-gemmap-field"><label for="gemMap">Gem Map</label><input type="number" id="gemMap" min="1" max="8" value="1"></div>
+                    </div>
+                    <div class="section-chip"><i class="material-icons" style="font-size:0.95em">tag</i> VLAN IDs (up to 4)</div>
+                    <div class="input-row col-2">
+                        <div class="field"><input type="text" id="lp-vlan1" placeholder="VLAN 1"></div>
+                        <div class="field"><input type="text" id="lp-vlan2" placeholder="VLAN 2"></div>
+                        <div class="field"><input type="text" id="lp-vlan3" placeholder="VLAN 3"></div>
+                        <div class="field"><input type="text" id="lp-vlan4" placeholder="VLAN 4"></div>
+                    </div>
+                    <div class="btn-row" style="margin-top:16px">
+                        <button class="btn btn-gen" onclick="generateLineProfile()"><i class="fas fa-cogs" style="font-size:14px"></i> Generate</button>
+                        <button class="btn btn-clr" onclick="clearLPFields()"><i class="fas fa-broom" style="font-size:14px"></i> Clear</button>
+                    </div>
+                </div>
+                <div class="card sky-stripe">
+                    <div class="card-head">
+                        <div class="ch-icon chi-g"><i class="material-icons" style="font-size:16px">terminal</i></div>
+                        <span class="card-head-text">Generated Script</span>
+                    </div>
+                    <div class="output-wrap" style="flex:1">
+                        <div class="output-dots"><span class="dot-red"></span><span class="dot-amber"></span><span class="dot-green"></span></div>
+                        <textarea id="lp-output" class="output-area" readonly placeholder="Your generated script will appear here..."></textarea>
+                    </div>
+                    <div class="btn-row" style="justify-content:flex-end">
+                        <button class="btn btn-cpy" id="lp-copy-btn" onclick="copyLPScript()">
+                            <i class="far fa-copy" style="font-size:14px"></i>
+                            <span id="lp-copy-text">Copy Script</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- APP 3: OLT DOCS -->
+        <div id="app-docs" class="app-wrapper">
+            <div class="docs-content-scroll" id="docs-content-scroll">
+                <div id="d_olt_ips" class="docs-tab-content active">
+                    <div class="docs-card">
+                        <div class="docs-card-header"><h2 class="docs-card-title">OLT IP Info</h2></div>
+                        <div style="margin-bottom:20px;">
+                            <label style="display:block;margin-bottom:8px;font-weight:700;color:#475569;font-size:0.85rem;text-transform:uppercase;letter-spacing:0.5px;font-family:'Exo 2',sans-serif;">Filter by BTS Location</label>
+                            <select class="docs-olt-select" id="docs-olt-bts-select" onchange="filterDocsOltIps()">
+                                <option value="all">All BTS Info</option>
+                                <option value="Malek Mansion BTS">Malek Mansion BTS</option>
+                                <option value="Dilkusha BTS">Dilkusha BTS</option>
+                                <option value="Jatrabari BTS">Jatrabari BTS</option>
+                                <option value="Wari BTS">Wari BTS</option>
+                                <option value="Segunbagicha BTS">Segunbagicha BTS</option>
+                                <option value="Eskaton BTS">Eskaton BTS</option>
+                                <option value="Imamganj BTS">Imamganj BTS</option>
+                                <option value="Shahjahanpur BTS">Shahjahanpur BTS</option>
+                            </select>
+                        </div>
+                        <table class="docs-olt-table">
+                            <thead><tr><th>OLT Name</th><th>OLT IP</th><th>Uplink Port</th></tr></thead>
+                            <tbody id="docs-olt-ip-tbody">
+                                <tr data-bts="Malek Mansion BTS"><td>Malek_CDATA_1</td><td>10.49.10.162</td><td>100.64.167.14 [Eth1/31]</td></tr>
+                                <tr data-bts="Malek Mansion BTS"><td>Malek_VSOL_2</td><td>10.49.10.166</td><td>100.64.167.14 [Eth1/7]</td></tr>
+                                <tr data-bts="Malek Mansion BTS"><td>Malek_ATOP_3</td><td>10.49.15.138</td><td>100.64.167.14 [Eth1/13]</td></tr>
+                                <tr data-bts="Malek Mansion BTS"><td>Malek_VSOL_4</td><td>10.49.15.126</td><td>100.64.167.14 [Eth1/8]</td></tr>
+                                <tr data-bts="Dilkusha BTS"><td>Dilkusha_CDATA_1</td><td>10.49.8.26</td><td>10.48.2.82 [Gi0/6]</td></tr>
+                                <tr data-bts="Jatrabari BTS"><td>Jatrabari_ATOP_1</td><td>10.49.9.62</td><td>100.64.168.58 [GE0/0/15]</td></tr>
+                                <tr data-bts="Wari BTS"><td>Wari_CDATA_1</td><td>10.49.8.84</td><td>100.64.168.66 [GE0/0/2]</td></tr>
+                                <tr data-bts="Wari BTS"><td>Wari_ATOP_2</td><td>10.49.8.85</td><td>100.64.168.66 [XGE0/0/2]</td></tr>
+                                <tr data-bts="Segunbagicha BTS"><td>Segun_CDATA_1</td><td>10.49.10.130</td><td>10.66.9.250 [Eth1/29]</td></tr>
+                                <tr data-bts="Segunbagicha BTS"><td>Segun_CDATA_2</td><td>10.49.10.131</td><td>10.66.9.250 [Eth1/43]</td></tr>
+                                <tr data-bts="Segunbagicha BTS"><td>Segun_CDATA_3</td><td>10.49.10.132</td><td>10.66.9.250 [Eth1/33]</td></tr>
+                                <tr data-bts="Segunbagicha BTS"><td>Segun_CDATA_18</td><td>10.49.10.150</td><td>10.66.9.250 [Eth1/27]</td></tr>
+                                <tr data-bts="Segunbagicha BTS"><td>Segun_CDATA_19</td><td>10.49.10.151</td><td>10.66.9.250 [Eth1/28]</td></tr>
+                                <tr data-bts="Segunbagicha BTS"><td>Segun_CDATA_20</td><td>10.49.10.152</td><td>10.66.9.250 [Eth1/32]</td></tr>
+                                <tr data-bts="Eskaton BTS"><td>Eskaton_CDATA_1</td><td>10.49.10.172</td><td>10.66.1.250 [Eth1/18]</td></tr>
+                                <tr data-bts="Eskaton BTS"><td>Eskaton_CDATA_2</td><td>10.49.10.171</td><td>10.66.1.250 [Eth1/21]</td></tr>
+                                <tr data-bts="Eskaton BTS"><td>Eskaton_CDATA_3</td><td>10.49.10.173</td><td>10.66.1.250 [Eth1/19]</td></tr>
+                                <tr data-bts="Imamganj BTS"><td>Imamgonj_VSOL_1</td><td>10.49.8.94</td><td>10.66.61.2 [Gi0/42]</td></tr>
+                                <tr data-bts="Imamganj BTS"><td>Imamgonj_UTS_3</td><td>10.49.8.91</td><td>10.66.61.2 [Gi0/52]</td></tr>
+                                <tr data-bts="Shahjahanpur BTS"><td>Shahjhnpr_CDATA_1</td><td>10.49.11.254</td><td>-</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div id="d_cdata_troubleshoot" class="docs-tab-content">
+                    <div class="docs-card">
+                        <div class="docs-card-header"><h2 class="docs-card-title">CDATA GPON Troubleshooting</h2></div>
+                        <div class="docs-search-wrapper"><span class="docs-search-icon">🔍</span><input type="text" class="docs-search-input" id="s_cdata_ts" placeholder="Search commands..."></div>
+                        <span class="docs-cmd-label">ONU Discover check:</span><code class="docs-code">(config-interface-gpon-0/0)# show ont autofind all
+(config-interface-gpon-0/0)# show ont autofind 1 all</code>
+                        <span class="docs-cmd-label">ONU configuration Check:</span><code class="docs-code">(config-interface-gpon-0/0)# show ont info 1 1
+(config)# show current-config section ont 0/0 2 5</code>
+                        <span class="docs-cmd-label">ONU Laser check:</span><code class="docs-code">(config-interface-gpon-0/0)# show ont optical-info 1 1</code>
+                        <span class="docs-cmd-label">ONU Delete:</span><code class="docs-code">(config-interface-gpon-0/0)# ont delete 1 28</code>
+                        <span class="docs-cmd-label">MAC from ONU port:</span><code class="docs-code">(config-interface-gpon-0/0)# show ont port learned-mac 1 1 eth 4</code>
+                        <span class="docs-cmd-label">ONU Reboot:</span><code class="docs-code">(config-interface-gpon-0/0)# ont reboot 1 3</code>
+                        <span class="docs-cmd-label">Line Profile check:</span><code class="docs-code">(config)# show ont-lineprofile gpon profile-id 5</code>
+                        <span class="docs-cmd-label">Show all ONU at OLT:</span><code class="docs-code">(config-interface-gpon-0/0)# show ont info all</code>
+                        <span class="docs-cmd-label">Rate-Limit UP/Down:</span><code class="docs-code">(config-interface-gpon-0/0)#ont port car 2 14 eth 3 inbound 60 outbound 60
+(config-interface-gpon-0/0)#no ont port car 1 2 eth 1 inbound outbound</code>
+                        <span class="docs-cmd-label">ONU Port VLAN/ Status Check:</span><code class="docs-code">(config-interface-gpon-0/0)# show ont port attribute 15 13 eth all
+(config-interface-gpon-0/0)# show ont port state 15 13 eth all
+(config-interface-gpon-0/0)# show ont wan config 15 9</code>
+                        <span class="docs-cmd-label">ONU Port BW check:</span><code class="docs-code">(config-interface-gpon-0/0)# show ont port car 1 1 eth all</code>
+                        <span class="docs-cmd-label">ONU Lan port shut /no shut:</span><code class="docs-code">(config-interface-gpon-0/0)# ont port attribute 1 1 eth 1 operational-state on
+(config-interface-gpon-0/0)# ont port attribute 1 1 eth 1 operational-state off</code>
+                        <span class="docs-cmd-label">Check ONU service port:</span><code class="docs-code">(config)# show service-port gpon 0/0 port 1 ont 1</code>
+                        <span class="docs-cmd-label">Mac Static:</span><code class="docs-code">(config)# mac-address static port xge 0/0/1 vlan 295 B8:D6:F6:11:46:36</code>
+                        <span class="docs-cmd-label">Pon TX power/Temp Check:</span><code class="docs-code">(config-interface-gpon-0/0)# show port ddm-info 2
+(config-interface-gpon-0/0)#show temperature</code>
+                        <span class="docs-cmd-label">PON Shut/No-Shut:</span><code class="docs-code">(config-interface-gpon-0/0)# shutdown 3
+(config-interface-gpon-0/0)# no shutdown 3</code>
+                    </div>
+                </div>
+                <div id="d_cdata_installation" class="docs-tab-content">
+                    <div class="docs-card">
+                        <div class="docs-card-header"><h2 class="docs-card-title">CDATA GPON Installation</h2></div>
+                        <div class="docs-search-wrapper"><span class="docs-search-icon">🔍</span><input type="text" class="docs-search-input" id="s_cdata_in" placeholder="Search installation commands..."></div>
+                        <span class="docs-cmd-label">VLAN Check:</span><code class="docs-code">(config)# show vlan all
+(config)# show vlan 100</code>
+                        <span class="docs-cmd-label">VLAN Create:</span><code class="docs-code">(config)# vlan 191</code>
+                        <span class="docs-cmd-label">VLAN Tagg on Uplink port [1G]:</span><code class="docs-code">Malek_GPON-01(config)# interface ge 0/0
+Malek_GPON-01(config-interface-ge-0/0)# vlan trunk 1 123</code>
+                        <span class="docs-cmd-label">VLAN Tagg on Uplink port [10G]:</span><code class="docs-code">Malek_GPON-01(config)# interface xge 0/0
+Malek_GPON-01(config-interface-xge-0/0)# vlan trunk 1 123</code>
+                        <span class="docs-cmd-label">Line Profile Create:</span><code class="docs-code">(config)# ont-lineprofile gpon profile-id 489
+(config-ont-lineprofile-489)# tcont 1 dba-profile-id 30
+(config-ont-lineprofile-489)# gem add 1 tcont 1
+(config-ont-lineprofile-489)# gem mapping 1 1 vlan 489
+(config-ont-lineprofile-489)# mapping-mode vlan
+(config-ont-lineprofile-489)# commit
+(config-ont-lineprofile-489)# exit</code>
+                        <span class="docs-cmd-label">Enter a VLAN under a specific Line-profile:</span><code class="docs-code">ont-lineprofile gpon profile-id 76
+tcont 1 dba-profile-id 30
+gem add 1 tcont 1
+gem mapping 1 2 vlan 76
+mapping-mode vlan
+commit
+exit</code>
+                        <span class="docs-cmd-label">Enter VLAN ONU 2nd port:</span><code class="docs-code">(config)# interface gpon 0/0
+(config-interface-gpon-0/0)# ont port attribute 9 9 eth 2 operational-state on
+(config-interface-gpon-0/0)# ont port native-vlan 9 9 eth 2 vlan 1260 priority 0
+(config-interface-gpon-0/0)# exit
+(config)# save
+(config)#service-port autoindex vlan 1260 gpon 0/0 port 9 ont 9 gemport 1 multi-service user-vlan 1260 tag-action transparent</code>
+                    </div>
+                </div>
+                <div id="d_vsol_troubleshoot" class="docs-tab-content">
+                    <div class="docs-card">
+                        <div class="docs-card-header"><h2 class="docs-card-title">VSOL &amp; ATOP Troubleshooting</h2></div>
+                        <div class="docs-search-wrapper"><span class="docs-search-icon">🔍</span><input type="text" class="docs-search-input" id="s_vsol_ts" placeholder="Search commands..."></div>
+                        <span class="docs-cmd-label">ONU Discover Check:</span><code class="docs-code">(config-pon-0/1)# show onu auto-find</code>
+                        <span class="docs-cmd-label">ONU Config Check:</span><code class="docs-code">(config-pon-0/1)# show running-config onu 10</code>
+                        <span class="docs-cmd-label">Free ONU ID check:</span><code class="docs-code">(config-pon-0/1)# show onu state</code>
+                        <span class="docs-cmd-label">ONU Reboot:</span><code class="docs-code">(config-pon-0/2)# onu 26 reboot</code>
+                        <span class="docs-cmd-label">ONU Port learnt mac:</span><code class="docs-code">(config)# show mac address-table pon 1 2</code>
+                        <span class="docs-cmd-label">ONU Laser check:</span><code class="docs-code">(config-pon-0/1)# show onu 2 optical_info</code>
+                        <span class="docs-cmd-label">Profile Line check:</span><code class="docs-code">(config)# show profile line id 5</code>
+                        <span class="docs-cmd-label">ONU Eth port status check:</span><code class="docs-code">(config-pon-0/3)# show onu 24 eth 1</code>
+                        <span class="docs-cmd-label">All ONU Laser check:</span><code class="docs-code">(config-pon-0/3)# show pon onu all rx-power</code>
+                        <span class="docs-cmd-label">Rate-limit Omit:</span><code class="docs-code">(config-pon-0/3)#no ont port car 15 19 eth 1 inbound
+(config-pon-0/3)#no ont port car 15 19 eth 1 outbound</code>
+                        <span class="docs-cmd-label">To Save:</span><code class="docs-code">(config)# write</code>
+                        <span class="docs-cmd-label">ONU Disable / Enable:</span><code class="docs-code">(config-pon-0/2)# onu 26 enable
+(config-pon-0/2)# onu 26 disable</code>
+                        <span class="docs-cmd-label">ONU Lock/ Unlock:</span><code class="docs-code">(config-pon-0/2)# onu 26 deactivate
+(config-pon-0/2)# onu 26 activate</code>
+                        <span class="docs-cmd-label">ONU Lock / Unlock (ONU Port):</span><code class="docs-code">(config-pon-0/2)# onu 26 eth 1 state disable
+(config-pon-0/2)# onu 26 eth 1 state enable</code>
+                        <span class="docs-cmd-label">Mac Static:</span><code class="docs-code">(config)# mac address-table static vlan 71 80db:1702:496d interface gigabitethernet 0/5
+(config)#mac address-table static vlan 59 0002-17dc-d81b interface gigabitethernet 0/6</code>
+                        <span class="docs-cmd-label">Pon Shut / No Shut:</span><code class="docs-code">(config-pon-0/1)# shutdown
+(config-pon-0/1)# no shutdown</code>
+                        <span class="docs-cmd-label">PON TX Power check/Temperature:</span><code class="docs-code">(config-pon-0/1)# show pon optical transceiver</code>
+                        <span class="docs-cmd-label">PON / Uplink port traffic check:</span><code class="docs-code">(config-if-ge0/5)# show interface</code>
+                        <span class="docs-cmd-label">ONU Distance check from OLT:</span><code class="docs-code">(config-pon-0/3)# show onu 25 distance</code>
+                    </div>
+                </div>
+                <div id="d_vsol_installation" class="docs-tab-content">
+                    <div class="docs-card">
+                        <div class="docs-card-header"><h2 class="docs-card-title">VSOL &amp; ATOP Installation</h2></div>
+                        <div class="docs-search-wrapper"><span class="docs-search-icon">🔍</span><input type="text" class="docs-search-input" id="s_vsol_in" placeholder="Search installation commands..."></div>
+                        <span class="docs-cmd-label">Show Vlan:</span><code class="docs-code">(config)# show vlan 500</code>
+                        <span class="docs-cmd-label">Vlan Create:</span><code class="docs-code">(config)# vlan 500</code>
+                        <span class="docs-cmd-label">All interface check:</span><code class="docs-code">(config)# show interface brief</code>
+                        <span class="docs-cmd-label">Vlan Add in Uplink port:</span><code class="docs-code">(config)# interface gigabitethernet 0/5
+(config-if-ge0/5)# switchport mode trunk
+(config-if-ge0/5)# switchport trunk vlan 500
+(config-if-ge0/5)# exit</code>
+                        <span class="docs-cmd-label">DBA Profile Check:</span><code class="docs-code">(config)# show profile dba</code>
+                        <span class="docs-cmd-label">DBA Profile Create:</span><code class="docs-code">profile dba id 1 name MAX_BW
+type 4 maximum 307200 Kbps
+commit</code>
+                        <span class="docs-cmd-label">Line-Profile Create:</span><code class="docs-code">(config)# profile line id 782
+(profile-line:782)#tcont 1 dba MAX_BW
+(profile-line:782)#gemport 1 tcont 1
+(profile-line:782)#service 1 gemport 1 vlan 782
+(profile-line:782)#service-port 1 gemport 1 uservlan 782 vlan 782
+(profile-line:782)#commit
+(profile-line:782)# exit</code>
+                        <span class="docs-cmd-label">Line-Profile Create with multiple Vlan:</span><code class="docs-code">(config)# profile line id 14
+(profile-line:14)# tcont 1 dba MAX_BW
+(profile-line:14)# gemport 1 tcont 1
+(profile-line:14)# service 1 gemport 1 vlan 14,620
+(profile-line:14)# service-port 1 gemport 1 uservlan 14 vlan 14
+(profile-line:14)# service-port 2 gemport 1 uservlan 620 vlan 620
+(profile-line:14)# commit
+(profile-line:14)# exit</code>
+                    </div>
+                </div>
+                <div id="d_gpon8_troubleshoot" class="docs-tab-content">
+                    <div class="docs-card">
+                        <div class="docs-card-header"><h2 class="docs-card-title">GPON 8 Port Troubleshooting</h2></div>
+                        <div class="docs-search-wrapper"><span class="docs-search-icon">🔍</span><input type="text" class="docs-search-input" id="s_gpon8_ts" placeholder="Search commands..."></div>
+                        <span class="docs-cmd-label">ONU Discover:</span><code class="docs-code">(config-interface-gpon)# show ont autofind all</code>
+                        <span class="docs-cmd-label">ALL ONU Details:</span><code class="docs-code">(config)# show saved-config</code>
+                        <span class="docs-cmd-label">Specific ONU Details:</span><code class="docs-code">(config-interface-gpon)# show ont info 2 2</code>
+                        <span class="docs-cmd-label">ONU port check:</span><code class="docs-code">(config-interface-gpon)# show ont port attribute 2 2 eth all</code>
+                        <span class="docs-cmd-label">ONU Port Details:</span><code class="docs-code">(config-interface-gpon)# show ont port car 2 2 eth all</code>
+                        <span class="docs-cmd-label">MAC from ONU port:</span><code class="docs-code">(config)# show mac-address vlan 999
+(config-interface-gpon)# show ont port learned-mac 2 9 eth 2</code>
+                        <span class="docs-cmd-label">ONU Port BW:</span><code class="docs-code">(config-interface-gpon)# ont port car 2 2 eth 1 inbound 100 outbound 100
+(config-interface-gpon)# ont port car 2 2 eth 2 inbound 100 outbound 100</code>
+                        <span class="docs-cmd-label">ONU Delete:</span><code class="docs-code">(config-interface-gpon)# ont delete 2 2</code>
+                        <span class="docs-cmd-label">Show all onu of specific pon port:</span><code class="docs-code">Dilkusha_GPON-01(config)# show ont info 2 all</code>
+                        <span class="docs-cmd-label">Show Line Profile:</span><code class="docs-code">(config)# show ont-lineprofile profile-id 512</code>
+                        <span class="docs-cmd-label">PON Shut / No-Shut:</span><code class="docs-code">(config-interface-gpon)# shutdown 2
+(config-interface-gpon)# no shutdown 2</code>
+                    </div>
+                </div>
+                <div id="d_gpon8_installation" class="docs-tab-content">
+                    <div class="docs-card">
+                        <div class="docs-card-header"><h2 class="docs-card-title">GPON 8 Port Installation</h2></div>
+                        <div class="docs-search-wrapper"><span class="docs-search-icon">🔍</span><input type="text" class="docs-search-input" id="s_gpon8_in" placeholder="Search installation commands..."></div>
+                        <span class="docs-cmd-label">VLAN Add:</span><code class="docs-code">(config)#vlan 748</code>
+                        <span class="docs-cmd-label">VLAN Tagg on Uplink port [GE]:</span><code class="docs-code">Dilkusha_GPON-01(config)# interface ge
+Dilkusha_GPON-01(config-interface-ge)# vlan trunk 1 748</code>
+                        <span class="docs-cmd-label">VLAN Tagg on Uplink port [XGE]:</span><code class="docs-code">Dilkusha_GPON-01(config)# interface xge
+Dilkusha_GPON-01(config-interface-xge)# vlan trunk 1 748</code>
+                        <span class="docs-cmd-label">VLAN on PON ports:</span><code class="docs-code">(config-interface-gpon)# vlan mode 1-8 trunk
+(config-interface-gpon)# vlan trunk 1-8 748</code>
+                        <span class="docs-cmd-label">Line Profile create:</span><code class="docs-code">ont-lineprofile  profile-id 191
+tcont 1 dba-profile-id 30
+gem add 1 tcont 1
+gem mapping 1 1 vlan 191
+mapping-mode vlan
+commit
+exit</code>
+                    </div>
+                </div>
+                <div id="d_utstar_troubleshoot" class="docs-tab-content">
+                    <div class="docs-card">
+                        <div class="docs-card-header"><h2 class="docs-card-title">EPON UTSTAR Troubleshooting</h2></div>
+                        <div class="docs-search-wrapper"><span class="docs-search-icon">🔍</span><input type="text" class="docs-search-input" id="s_utstar_ts" placeholder="Search commands..."></div>
+                        <span class="docs-cmd-label">Find unbound ONU:</span><code class="docs-code">(config-t)# show interface epon-olt 1/4 onu-unbound</code>
+                        <span class="docs-cmd-label">ONU Status check:</span><code class="docs-code">(config-t)# show interface epon-olt 1/1 onu 63 summary
+(config-t)# show interface epon-olt 1/1 onu 63 brief</code>
+                        <span class="docs-cmd-label">ONU Configuration Check:</span><code class="docs-code">(config-t)# show configuration  interface epon-olt 1/1 onu 56</code>
+                        <span class="docs-cmd-label">ONU Lan port status check:</span><code class="docs-code">(config-t-if-olt-1/4)# show interface epon-olt 1/1 onu 63 port 1 remote-mgmt</code>
+                        <span class="docs-cmd-label">ONU port learnt mac check:</span><code class="docs-code">(config-t-if-olt-1/4)# show interface epon-olt 1/4 onu 13 mac-address-table</code>
+                        <span class="docs-cmd-label">ONU Delete:</span><code class="docs-code">(config-t-if-olt-1/4)# no onu 13</code>
+                        <span class="docs-cmd-label">ONU Laser check:</span><code class="docs-code">(config-t-if-olt-1/1)# show interface epon-olt 1/1 onu 12 opm-diagnisos</code>
+                        <span class="docs-cmd-label">ONU Rate Limit:</span><code class="docs-code">(config-if-onu-1/1/37)# dba-sla upstream maximum-bandwidth 61440 Kbps
+(config-if-onu-1/1/37)# dba-sla downstream  maximum-bandwidth 61440 Kbps</code>
+                        <span class="docs-cmd-label">Configuration Save:</span><code class="docs-code">telnet@Malek_VSOL# conf m
+telnet@Malek_VSOL# (config-mgmt)# save</code>
+                        <span class="docs-cmd-label">PON shut / unshut:</span><code class="docs-code">(config-t)# interface epon-olt 1/2
+(config-t-if-olt-1/2)#shutdown</code>
+                        <span class="docs-cmd-label">PON Up/Down Check:</span><code class="docs-code">(config-t)# show interface epon-olt 1/1 onu brief</code>
+                        <span class="docs-cmd-label">OLT Uplink port status check:</span><code class="docs-code">(config-t)# show interface giga-ethernet 3/1 switchport</code>
+                    </div>
+                </div>
+                <div id="d_utstar_installation" class="docs-tab-content">
+                    <div class="docs-card">
+                        <div class="docs-card-header"><h2 class="docs-card-title">EPON UTSTAR Installation</h2></div>
+                        <div class="docs-search-wrapper"><span class="docs-search-icon">🔍</span><input type="text" class="docs-search-input" id="s_utstar_in" placeholder="Search installation commands..."></div>
+                        <span class="docs-cmd-label">Show Vlan:</span><code class="docs-code">(config-t)# show vlan 291</code>
+                        <span class="docs-cmd-label">Vlan Create:</span><code class="docs-code">(config-t)# vlan 291
+(config-t-vlan-291)# name Popular
+(config-t-vlan-291)# member ge1/1-4,ge2/1-4,ge3/1-4 tagged
+(config-t-vlan-291)# exit</code>
+                    </div>
+                </div>
+                <div id="d_phyhome_troubleshoot" class="docs-tab-content">
+                    <div class="docs-card">
+                        <div class="docs-card-header"><h2 class="docs-card-title">EPON PHYHOME Troubleshooting</h2></div>
+                        <div class="docs-search-wrapper"><span class="docs-search-icon">🔍</span><input type="text" class="docs-search-input" id="s_phyhome_ts" placeholder="Search commands..."></div>
+                        <span class="docs-cmd-label">Show All ONU in OLT:</span><code class="docs-code">>ont
+ont# display ont-auth-info slotno 1</code>
+                        <span class="docs-cmd-label">ONU Configuration Check:</span><code class="docs-code">service# display service info 2 2 9</code>
+                        <span class="docs-cmd-label">Delete ONU:</span><code class="docs-code">ont\configure# ont-auth undo 1 1 6</code>
+                        <span class="docs-cmd-label">ONU Laser check:</span><code class="docs-code">ont# display ont-optical-info 1 1 5</code>
+                        <span class="docs-cmd-label">ONU LAN Port Check:</span><code class="docs-code">service# display onu-port-attribute 1 1 5</code>
+                        <span class="docs-cmd-label">ONU RESET:</span><code class="docs-code">system\configure# reset 2 3 30</code>
+                        <span class="docs-cmd-label">OLT Mac Address Table:</span><code class="docs-code">fdb# display mac-table</code>
+                        <span class="docs-cmd-label">For Lock/delete ONU Service:</span><code class="docs-code">service\configure# delete 2 4 43 1 service 1</code>
+                        <span class="docs-cmd-label">PON Shut/No shut:</span><code class="docs-code">system\configure# pon off 1 1
+system\configure# pon on 1 1</code>
+                        <span class="docs-cmd-label">PON Status Check:</span><code class="docs-code">system# display pon-state 2 2</code>
+                    </div>
+                </div>
+                <div id="d_phyhome_installation" class="docs-tab-content">
+                    <div class="docs-card">
+                        <div class="docs-card-header"><h2 class="docs-card-title">EPON PHYHOME Installation</h2></div>
+                        <div class="docs-search-wrapper"><span class="docs-search-icon">🔍</span><input type="text" class="docs-search-input" id="s_phyhome_in" placeholder="Search installation commands..."></div>
+                        <span class="docs-cmd-label">Vlan Check:</span><code class="docs-code">vlan# display vlan-database</code>
+                        <span class="docs-cmd-label">Vlan Create:</span><code class="docs-code">vlan#vlan-database data Internet 428 6:1 tagged</code>
+                    </div>
+                </div>
+                <div id="d_fhnet_troubleshoot" class="docs-tab-content">
+                    <div class="docs-card">
+                        <div class="docs-card-header"><h2 class="docs-card-title">EPON FHNET Troubleshooting</h2></div>
+                        <div class="docs-search-wrapper"><span class="docs-search-icon">🔍</span><input type="text" class="docs-search-input" id="s_fhnet_ts" placeholder="Search commands..."></div>
+                        <span class="docs-cmd-label">ONU Discover (Auto Bind) &amp; ONU status Check:</span><code class="docs-code">(config)#show onu-status</code>
+                        <span class="docs-cmd-label">ALL interface status:</span><code class="docs-code">(config)# show interface brief</code>
+                        <span class="docs-cmd-label">ONU Configuration check:</span><code class="docs-code">(onu-0/1/2)#show running-config onumnt 0/1/2</code>
+                        <span class="docs-cmd-label">ONU Eth port status check:</span><code class="docs-code">(onu-0/1/2)#show onu-interface ethernet 0/1</code>
+                        <span class="docs-cmd-label">ONU laser check:</span><code class="docs-code">(onu-0/1/3)#show onu-opm-diagnosis</code>
+                        <span class="docs-cmd-label">ONU Reboot:</span><code class="docs-code">(config)#onu 0/8/4
+(onu-0/8/4)#onu-reboot</code>
+                        <span class="docs-cmd-label">PON shut / no shut:</span><code class="docs-code">(config)#interface pon 0/8
+(config-if-pon-0/8)#shutdown
+(config-if-pon-0/8)#no shutdown</code>
+                        <span class="docs-cmd-label">PON Laser Check:</span><code class="docs-code">(config-if-pon-0/1)#show opm option diagnosis</code>
+                        <span class="docs-cmd-label">SFP Laser Check:</span><code class="docs-code">(config)#show interface sfp ethernet 0/5</code>
+                    </div>
+                </div>
+                <div id="d_fhnet_installation" class="docs-tab-content">
+                    <div class="docs-card">
+                        <div class="docs-card-header"><h2 class="docs-card-title">EPON FHNET Installation</h2></div>
+                        <div class="docs-search-wrapper"><span class="docs-search-icon">🔍</span><input type="text" class="docs-search-input" id="s_fhnet_in" placeholder="Search installation commands..."></div>
+                        <span class="docs-cmd-label">Vlan Create:</span><code class="docs-code">(config)# vlan 2000
+(config-if-vlan)#switchport all</code>
+                        <span class="docs-cmd-label">VLAN Check:</span><code class="docs-code">(config)# show vlan
+(config)#show vlan 10</code>
+                        <span class="docs-cmd-label">Config Save:</span><code class="docs-code">Malek_FH_Net_07# copy running-config startup-config</code>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- APP 4: RADIO -->
+        <div id="app-radio" class="app-wrapper">
+            <div class="radio-client-panel">
+                <div class="radio-panel-header">
+                    <div class="radio-panel-bts" id="r-panel-bts-name">MALEK BTS</div>
+                    <div class="radio-panel-title">Clients</div>
+                    <div class="radio-panel-count" id="r-panel-count">0 CLIENTS</div>
+                </div>
+                <div class="radio-search-wrap">
+                    <input class="radio-search" type="text" id="radioClientSearch" placeholder="🔍  Search ALL BTS radios..." oninput="radioGlobalSearch()">
+                </div>
+                <!-- BTS Tabs + Firmware Button -->
+                <div class="radio-bts-tabs" id="radioBtsTabs">
+                    <a href="https://mobidrive.com/my-files/daaea16c-584a-4f11-adc2-d8bb3ecb3885"
+                       target="_blank"
+                       class="radio-firmware-btn"
+                       title="Open Radio Firmware Files">
+                        <span class="fw-icon">&#128190;</span> Firmware
+                    </a>
+                </div>
+                <div class="radio-client-list" id="radioClientList"></div>
+            </div>
+            <div class="radio-detail-panel">
+                <div class="radio-detail-header">
+                    <div style="display:flex;align-items:center;gap:14px;">
+                        <div class="radio-header-pulse"></div>
+                        <div>
+                            <h1>MOTIJHEEL ZONE RADIO</h1>
+                            <p>Live Data · Wireless Link Management</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="radio-detail-body" id="radioDetailBody">
+                    <div class="radio-detail-welcome">
+                        <div class="radio-detail-welcome-icon">📡</div>
+                        <div class="radio-detail-welcome-title">Select a Client</div>
+                        <div class="radio-detail-welcome-sub">Choose a BTS from the tabs<br>then select a client to view details</div>
+                    </div>
+                </div>
+                <div class="radio-detail-footer">MZR · MOTIJHEEL ZONE RADIO · PREPARED BY AHSANUL KABIR</div>
+            </div>
+        </div>
+
+        <!-- APP: BTS INFO -->
+        <div id="app-bts" class="app-wrapper">
+            <div class="app-header">
+                <div style="font-family:'Orbitron',monospace;font-size:1.7em;font-weight:900;letter-spacing:4px;background:linear-gradient(90deg,#f59e0b 0%,#ef4444 50%,#ec4899 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">BTS INFO</div>
+                <div class="app-subtitle">Router &amp; Switch IP Directory</div>
+            </div>
+            <div class="card" style="margin-bottom:14px;border-top:3px solid #f59e0b;">
+                <div class="card-head">
+                    <div class="ch-icon" style="background:rgba(251,191,36,0.15);color:#fbbf24;width:32px;height:32px;border-radius:9px;display:flex;align-items:center;justify-content:center;">
+                        <i class="material-icons" style="font-size:16px">search</i>
+                    </div>
+                    <span class="card-head-text">Search by BTS Name</span>
+                </div>
+                <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+                    <div style="flex:1;min-width:200px;position:relative;">
+                        <select id="bts-select-dropdown" onchange="selectBtsFromDropdown(this.value)" style="width:100%;padding:8px 14px;border-radius:9px;border:1.5px solid #fde68a;background:#fffbeb;color:#1e1b4b;font-family:'Exo 2',sans-serif;font-size:0.88em;cursor:pointer;outline:none;appearance:none;-webkit-appearance:none;">
+                            <option value="">— Select a BTS —</option>
+                        </select>
+                        <span style="position:absolute;right:12px;top:50%;transform:translateY(-50%);pointer-events:none;color:#f59e0b;">▼</span>
+                    </div>
+                    <button onclick="clearBtsSearch()" style="padding:8px 16px;border-radius:9px;border:none;background:linear-gradient(135deg,#f59e0b,#ef4444);color:#fff;font-family:'Orbitron',monospace;font-size:0.68em;font-weight:700;letter-spacing:1px;cursor:pointer;">CLEAR</button>
+                </div>
+                <div id="bts-search-result-count" style="margin-top:6px;font-size:0.78em;color:#a78bfa;font-family:'Rajdhani',sans-serif;letter-spacing:0.5px;"></div>
+            </div>
+            <div class="card" style="border-top:3px solid #ef4444;padding:0;overflow:hidden;">
+                <div style="overflow-x:auto;">
+                    <table id="bts-info-table" style="width:100%;border-collapse:collapse;font-family:'Exo 2',sans-serif;">
+                        <thead>
+                            <tr style="background:linear-gradient(90deg,#1e1b4b 0%,#312e81 100%);">
+                                <th style="padding:9px 12px;text-align:left;font-family:'Orbitron',monospace;font-size:0.6em;letter-spacing:2px;color:#a78bfa;font-weight:700;border-bottom:2px solid rgba(167,139,250,0.3);white-space:nowrap;">#</th>
+                                <th style="padding:9px 12px;text-align:left;font-family:'Orbitron',monospace;font-size:0.6em;letter-spacing:2px;color:#a78bfa;font-weight:700;border-bottom:2px solid rgba(167,139,250,0.3);">BTS NAME</th>
+                                <th style="padding:9px 12px;text-align:left;font-family:'Orbitron',monospace;font-size:0.6em;letter-spacing:2px;color:#38bdf8;font-weight:700;border-bottom:2px solid rgba(167,139,250,0.3);">DEVICE TYPE</th>
+                                <th style="padding:9px 12px;text-align:left;font-family:'Orbitron',monospace;font-size:0.6em;letter-spacing:2px;color:#fbbf24;font-weight:700;border-bottom:2px solid rgba(167,139,250,0.3);">IP ADDRESS</th>
+                            </tr>
+                        </thead>
+                        <tbody id="bts-table-body"></tbody>
+                    </table>
+                </div>
+            </div>
+            <div id="bts-cards-mobile"></div>
+        </div>
+
+    </main>
+
+    <div class="toast" id="toast"></div>
+
+    <script>
+    const radioData = {
+        malek: {
+            name: "Malek BTS",
+            clients: [
+                { name:"IFIC Bank Limited: DC- 3rd Link", swip:"123.200.15.3:26", apip:"10.200.149.114", cpip:"10.200.149.115", linktype:"P2P", radioname:"NANO BEAM-M5-400", ssid:"1092018", chwidth:"20 MHz", freq:"5805/5850", key:"N/A", vlan:"N/A" }
+            ]
+        },
+        jatrabari: {
+            name: "Jatrabari BTS",
+            clients: [
+                { name:"Dept. of Immigration: RPO Jatrabari", swip:"Huawei SW:GE0/0/2", apip:"10.200.140.42", cpip:"10.200.140.43", linktype:"P2P", radioname:"NANO BEAM-M5-400", ssid:"10122017", chwidth:"10 MHz", freq:"5825/5365", key:"N/A", vlan:"N/A" },
+                { name:"Midland Bank Ltd: Aganagar", swip:"Huawei SW:GE0/0/22", apip:"172.16.17.50", cpip:"172.16.17.51", linktype:"P2M", radioname:"NANO BEAM-M5-400", ssid:"midland", chwidth:"25 MHz", freq:"5870/55860", key:"midland123", vlan:"15111" },
+                { name:"Mutual Trust Bank: Keranigonj", swip:"Huawei SW:GE0/0/22", apip:"172.16.17.50", cpip:"172.16.17.53", linktype:"P2M", radioname:"NANO BEAM-M5-300", ssid:"midland", chwidth:"25 MHz", freq:"5870/55860", key:"midland123", vlan:"15100" },
+                { name:"AB Bank Ltd: Jinjira Branch", swip:"Huawei SW:GE0/0/22", apip:"172.16.17.50", cpip:"172.16.17.52", linktype:"P2M", radioname:"NANO BEAM-M5-400", ssid:"midland", chwidth:"25 MHz", freq:"5870/55860", key:"midland123", vlan:"15100" },
+                { name:"Janata Bank: Gandaria Corp Branch", swip:"Huawei SW:GE0/0/11", apip:"172.16.21.130", cpip:"172.16.21.133", linktype:"P2P", radioname:"PMP Eforce100 Dish", ssid:"6092020", chwidth:"20 MHz", freq:"5760", key:"epmp-keranigonj", vlan:"N/A" },
+                { name:"Renata Ltd: Burigonga Depot", swip:"Huawei SW:GE0/0/20", apip:"10.200.140.106", cpip:"10.200.140.107", linktype:"P2M", radioname:"NANO AIRFIBER 5XHD", ssid:"mblabdullahpur", chwidth:"20 MHz", freq:"5730", key:"121224@L3", vlan:"N/A" },
+                { name:"United Com. Bank: Dania Branch", swip:"Huawei SW:GE0/0/21", apip:"10.200.140.98", cpip:"10.200.140.100", linktype:"P2M", radioname:"NANO STATION M5", ssid:"icmh567", chwidth:"20 MHz", freq:"5775/5785", key:"N/A", vlan:"600" },
+                { name:"Dutch-Bangla Bank: Matuail Branch", swip:"Huawei SW:GE0/0/23", apip:"172.16.21.98", cpip:"172.16.21.100", linktype:"P2P", radioname:"PMP Eforce100 Dish", ssid:"epmpjatrabari", chwidth:"20 MHz", freq:"5350/5840", key:"epmp.jatrabari", vlan:"N/A" },
+                { name:"B.A.R & ASSOCIATES LTD", swip:"Huawei SW:GE0/0/28", apip:"10.200.140.194", cpip:"10.200.140.195", linktype:"P2P", radioname:"ePMP Cambium Eforce300 With Dish", ssid:"BARassociate26", chwidth:"40 MHz", freq:"5350", key:"BAR@link3", vlan:"N/A" }
+            ]
+        },
+        imamganj: {
+            name: "Imamganj BTS",
+            clients: [
+                { name:"Shahjalal Islamic Bank: Keranigonj", swip:"10.66.61.2:12", apip:"172.16.9.146", cpip:"172.16.9.149", linktype:"P2M", radioname:"NANO BEAM-M5-400", ssid:"imam", chwidth:"20 MHz", freq:"5120/5350", key:"N/A", vlan:"1010" },
+                { name:"DBBL: Rajabari Bazar FT", swip:"10.66.61.2:12", apip:"172.16.9.146", cpip:"172.16.9.154", linktype:"P2M", radioname:"NANO BEAM-M5-400", ssid:"imam", chwidth:"20 MHz", freq:"5350/5360", key:"N/A", vlan:"1013" }
+            ]
+        },
+        concord: {
+            name: "Concord BTS",
+            clients: [
+                { name:"Diamond Disposable & Plastic Ind.", swip:"10.67.3.4:33", apip:"10.200.144.218", cpip:"10.200.144.219", linktype:"P2P", radioname:"PMP Eforce100 Dish", ssid:"3112022", chwidth:"20 MHz", freq:"5340/5355", key:"diamond12345", vlan:"N/A" },
+                { name:"PRAN DAIRY LTD: Keranigonj", swip:"10.67.3.3:15", apip:"10.200.155.154", cpip:"10.200.155.155", linktype:"P2P", radioname:"PMP Eforce100 Dish", ssid:"5072022", chwidth:"20 MHz", freq:"5215/5785", key:"pran12345", vlan:"N/A" },
+                { name:"BPDB: Pre-Paid Metering Main Link", swip:"10.67.3.4:41", apip:"10.200.144.154", cpip:"10.200.144.155", linktype:"P2P", radioname:"PMP Eforce100 Dish", ssid:"link321", chwidth:"20 MHz", freq:"5350/5370", key:"tssa012419", vlan:"N/A" },
+                { name:"United Finance: HO Sec Radio", swip:"10.67.3.4:45", apip:"10.200.144.106", cpip:"10.200.144.107", linktype:"P2P", radioname:"ePMP Eforce300", ssid:"UFL_HO_Sec", chwidth:"20 MHz", freq:"5730/5750", key:"UFL@link321", vlan:"N/A" }
+            ]
+        },
+        joypara: {
+            name: "Joypara BTS",
+            clients: [
+                { name:"Agrani Bank: Kolapara Branch", swip:"10.67.1.202:0/4", apip:"10.200.134.74", cpip:"10.200.134.75", linktype:"P2P", radioname:"PowerBeam M5 400", ssid:"ABL", chwidth:"10 MHz", freq:"5500/5800 MHz", key:"ABL", vlan:"N/A" },
+                { name:"Bangladesh Krishi Bank: Hashara", swip:"10.59.1.30:0/11", apip:"10.200.133.146", cpip:"10.200.133.147", linktype:"P2P", radioname:"Rocket 5AC Lite", ssid:"BKB/hasara", chwidth:"10 MHz", freq:"5340/5345 MHz", key:"hasara07", vlan:"N/A" },
+                { name:"Shahjalal Isl. Bank: Nimtola", swip:"10.67.3.4:0/10", apip:"10.200.143.226", cpip:"10.200.143.229", linktype:"P2M", radioname:"PowerBeam M5 400", ssid:"PBLNIM", chwidth:"20 MHz", freq:"5350/5370 MHz", key:"pblnim@321", vlan:"N/A" },
+                { name:"National Bank: Bhaghyakul Branch", swip:"10.67.1.202:0/41", apip:"10.200.226.34", cpip:"10.200.226.35", linktype:"P2P", radioname:"Rocket 5AC Lite", ssid:"21102024", chwidth:"20 MHz", freq:"5330/5350 MHz", key:"21102024", vlan:"N/A" },
+                { name:"National Bank: Baghrabazar Branch", swip:"10.67.1.202:0/21", apip:"10.200.133.226", cpip:"10.200.133.227", linktype:"P2P", radioname:"PowerBeam M5 400", ssid:"ABC", chwidth:"10 MHz", freq:"5440/5835 MHz", key:"ABC", vlan:"N/A" },
+                { name:"Barrister Nazmul Huda's Residence", swip:"10.67.1.202:0/37", apip:"10.200.230.58", cpip:"10.200.230.59", linktype:"P2P", radioname:"PMP Eforce200 Dish", ssid:"BNHR EP", chwidth:"05 MHz", freq:"5760 MHz", key:"link3210", vlan:"N/A" },
+                { name:"Agrani Bank: Churain Bazar Branch", swip:"10.67.1.202:0/30", apip:"10.200.230.98", cpip:"10.200.230.99", linktype:"P2P", radioname:"PowerBeam M5 400", ssid:"ablchurain", chwidth:"8 MHz", freq:"5780/5675 MHz", key:"ablchurain", vlan:"N/A" }
+            ]
+        }
+    };
+
+    let currentRadioBTS = 'malek';
+
+    function switchTab(id, btn) {
+        document.body.classList.remove('docs-mode', 'radio-mode');
+        document.getElementById('docs-subnav').classList.remove('open');
+        const mc = document.getElementById('main-content');
+        mc.style.cssText = '';
+        document.querySelectorAll('.app-wrapper').forEach(a => a.classList.remove('active'));
+        document.getElementById(id).classList.add('active');
+        document.querySelectorAll('.nav-btn, .nav-child-btn').forEach(b => b.classList.remove('active'));
+        if (btn) btn.classList.add('active');
+    }
+
+    function toggleOltGroup(header) {
+        const children = document.getElementById('olt-children');
+        const isOpen = children.classList.contains('open');
+        children.classList.toggle('open', !isOpen);
+        header.classList.toggle('open', !isOpen);
+    }
+
+    function switchToDocsTab(btn) {
+        document.querySelectorAll('.app-wrapper').forEach(a => a.classList.remove('active'));
+        document.getElementById('app-docs').classList.add('active');
+        document.querySelectorAll('.nav-btn, .nav-child-btn').forEach(b => b.classList.remove('active'));
+        if (btn) btn.classList.add('active');
+        document.body.classList.add('docs-mode');
+        document.body.classList.remove('radio-mode');
+        const mc = document.getElementById('main-content');
+        mc.style.overflow = 'hidden';
+        mc.style.padding = '0';
+        mc.style.display = 'flex';
+        mc.style.flexDirection = 'column';
+        document.getElementById('docs-subnav').classList.add('open');
+        setupAllSearches();
+    }
+
+    function switchToRadioTab(btn) {
+        document.querySelectorAll('.app-wrapper').forEach(a => a.classList.remove('active'));
+        document.getElementById('app-radio').classList.add('active');
+        document.querySelectorAll('.nav-btn, .nav-child-btn').forEach(b => b.classList.remove('active'));
+        if (btn) btn.classList.add('active');
+        document.body.classList.add('radio-mode');
+        document.body.classList.remove('docs-mode');
+        document.getElementById('docs-subnav').classList.remove('open');
+        const mc = document.getElementById('main-content');
+        mc.style.padding = '0';
+        mc.style.overflow = 'hidden';
+        mc.style.display = 'flex';
+        mc.style.flexDirection = 'column';
+        initRadio();
+    }
+
+    let radioInited = false;
+    function initRadio() {
+        if (radioInited) return;
+        radioInited = true;
+        const tabs = document.getElementById('radioBtsTabs');
+        Object.entries(radioData).forEach(([id, bts]) => {
+            const btn = document.createElement('button');
+            btn.className = 'radio-bts-tab' + (id === 'malek' ? ' active' : '');
+            btn.textContent = bts.name.replace(' BTS', '');
+            btn.onclick = () => selectRadioBTS(id, btn);
+            tabs.appendChild(btn);
+        });
+        renderRadioClientPanel('malek');
+    }
+
+    function selectRadioBTS(id, btn) {
+        document.querySelectorAll('.radio-bts-tab').forEach(t => t.classList.remove('active'));
+        btn.classList.add('active');
+        currentRadioBTS = id;
+        document.getElementById('radioClientSearch').value = '';
+        renderRadioClientPanel(id);
+        showRadioWelcome();
+    }
+
+    function renderRadioClientPanel(id) {
+        const bts = radioData[id];
+        document.getElementById('r-panel-bts-name').textContent = bts.name.toUpperCase();
+        document.getElementById('r-panel-count').textContent = bts.clients.length + ' CLIENT' + (bts.clients.length !== 1 ? 'S' : '');
+        renderRadioCards(bts.clients, id);
+    }
+
+    function renderRadioCards(clients, btsId) {
+        const list = document.getElementById('radioClientList');
+        if (!clients.length) {
+            list.innerHTML = `<div class="radio-client-empty"><div class="radio-client-empty-icon">🔍</div><div class="radio-client-empty-text">No clients found</div></div>`;
+            return;
+        }
+        list.innerHTML = clients.map((c, i) => {
+            const realIdx = btsId ? radioData[btsId].clients.indexOf(c) : i;
+            return `<div class="radio-client-card" onclick="selectRadioClient(this, '${btsId}', ${realIdx})">
+                <div class="radio-client-name">${c.name}</div>
+                <div class="radio-client-meta">
+                    <span class="radio-client-tag ${c.linktype.toLowerCase()}">${c.linktype}</span>
+                    <span class="radio-client-ip">${c.apip}</span>
+                    ${btsId === '_search' ? `<span style="margin-left:auto;font-size:8px;color:var(--radio-accent);background:rgba(26,127,203,0.08);padding:2px 6px;border-radius:12px;">${radioData[c._btsId] ? radioData[c._btsId].name : ''}</span>` : ''}
+                </div>
+                <span class="radio-client-arrow">›</span>
+            </div>`;
+        }).join('');
+    }
+
+    function radioGlobalSearch() {
+        const q = document.getElementById('radioClientSearch').value.toLowerCase().trim();
+        if (!q) { renderRadioClientPanel(currentRadioBTS); return; }
+        let matches = [];
+        for (let [btsId, bts] of Object.entries(radioData)) {
+            bts.clients.forEach(c => { if (c.name.toLowerCase().includes(q)) matches.push({...c, _btsId: btsId}); });
+        }
+        document.getElementById('r-panel-bts-name').textContent = 'ALL BTS · GLOBAL';
+        document.getElementById('r-panel-count').textContent = matches.length + ' RESULT' + (matches.length !== 1 ? 'S' : '');
+        const list = document.getElementById('radioClientList');
+        if (!matches.length) {
+            list.innerHTML = `<div class="radio-client-empty"><div class="radio-client-empty-icon">🔍</div><div class="radio-client-empty-text">No matches across BTS</div></div>`;
+            return;
+        }
+        list.innerHTML = matches.map((c) => {
+            const realIdx = radioData[c._btsId].clients.findIndex(x => x.name === c.name && x.apip === c.apip);
+            return `<div class="radio-client-card" onclick="selectRadioClient(this, '${c._btsId}', ${realIdx})">
+                <div class="radio-client-name">${c.name}</div>
+                <div class="radio-client-meta">
+                    <span class="radio-client-tag ${c.linktype.toLowerCase()}">${c.linktype}</span>
+                    <span class="radio-client-ip">${c.apip}</span>
+                    <span style="margin-left:auto;font-size:8px;color:var(--radio-accent);background:rgba(26,127,203,0.08);padding:2px 6px;border-radius:12px;">${radioData[c._btsId].name}</span>
+                </div>
+                <span class="radio-client-arrow">›</span>
+            </div>`;
+        }).join('');
+    }
+
+    function selectRadioClient(el, btsId, idx) {
+        document.querySelectorAll('.radio-client-card').forEach(c => c.classList.remove('active'));
+        el.classList.add('active');
+        showRadioDetail(radioData[btsId].clients[idx], radioData[btsId].name);
+    }
+
+    function showRadioWelcome() {
+        document.getElementById('radioDetailBody').innerHTML = `
+            <div class="radio-detail-welcome">
+                <div class="radio-detail-welcome-icon">📡</div>
+                <div class="radio-detail-welcome-title">Select a Client</div>
+                <div class="radio-detail-welcome-sub">Choose a BTS tab then select a client</div>
+            </div>`;
+    }
+
+    function rv(val, isIp) {
+        if (!val || val === 'N/A') return `<span class="na-val">N/A</span>`;
+        return isIp ? `<span class="ip-val">${val}</span>` : val;
+    }
+
+    function showRadioDetail(c, btsName) {
+        const lt = c.linktype.toLowerCase();
+        const vlan = (c.vlan && c.vlan !== 'N/A') ? `<span class="vlan-chip">${c.vlan}</span>` : `<span class="na-val">N/A</span>`;
+        document.getElementById('radioDetailBody').innerHTML = `
+            <div class="radio-detail-card">
+                <div class="rdc-header">
+                    <div>
+                        <div class="rdc-client-name">${c.name}</div>
+                        <div class="rdc-bts-label">${btsName}</div>
+                    </div>
+                    <span class="rdc-link-badge ${lt}">${c.linktype}</span>
+                </div>
+                <div class="rdc-table">
+                    <div class="rdc-cell lbl-wide">SW IP &amp; Port</div>
+                    <div class="rdc-cell val-wide">${rv(c.swip, true)}</div>
+                    <div class="rdc-cell lbl">Radio IP (AP)</div>
+                    <div class="rdc-cell val">${rv(c.apip, true)}</div>
+                    <div class="rdc-cell lbl">Radio IP (CP)</div>
+                    <div class="rdc-cell val">${rv(c.cpip, true)}</div>
+                    <div class="rdc-cell lbl">Radio Name</div>
+                    <div class="rdc-cell val">${rv(c.radioname)}</div>
+                    <div class="rdc-cell lbl">SSID</div>
+                    <div class="rdc-cell val">${rv(c.ssid)}</div>
+                    <div class="rdc-cell lbl">Channel Width</div>
+                    <div class="rdc-cell val">${rv(c.chwidth)}</div>
+                    <div class="rdc-cell lbl">Frequency</div>
+                    <div class="rdc-cell val">${rv(c.freq)}</div>
+                    <div class="rdc-cell lbl">Key</div>
+                    <div class="rdc-cell val">${rv(c.key)}</div>
+                    <div class="rdc-cell lbl">VLAN</div>
+                    <div class="rdc-cell val">${vlan}</div>
+                </div>
+            </div>`;
+    }
+
+    function toggleSubGroup(header) {
+        const items = header.nextElementSibling;
+        const isOpen = items.classList.contains('open');
+        const parent = header.closest('.docs-subnav-items');
+        if (parent) {
+            parent.querySelectorAll('.docs-sub-group-header').forEach(h => h.classList.remove('open'));
+            parent.querySelectorAll('.docs-sub-group-items').forEach(i => i.classList.remove('open'));
+        }
+        if (!isOpen) { items.classList.add('open'); header.classList.add('open'); }
+    }
+
+    function toggleDocsSub(header) {
+        const items = header.nextElementSibling;
+        const isOpen = items.classList.contains('open');
+        document.querySelectorAll('.docs-subnav-items').forEach(i => i.classList.remove('open'));
+        document.querySelectorAll('.docs-subnav-header').forEach(h => h.classList.remove('open'));
+        if (!isOpen) { items.classList.add('open'); header.classList.add('open'); }
+    }
+
+    function showDocsContent(id, btn) {
+        document.querySelectorAll('.docs-tab-content').forEach(c => c.classList.remove('active'));
+        const target = document.getElementById(id);
+        if (target) {
+            target.classList.add('active');
+            const scroll = document.getElementById('docs-content-scroll');
+            if (scroll) scroll.scrollTop = 0;
+        }
+        document.querySelectorAll('.docs-sub-btn').forEach(b => b.classList.remove('active'));
+        if (btn) btn.classList.add('active');
+    }
+
+    function filterDocsOltIps() {
+        const sel = document.getElementById('docs-olt-bts-select').value;
+        const rows = document.getElementById('docs-olt-ip-tbody').getElementsByTagName('tr');
+        for (let r of rows) {
+            r.style.display = (sel === 'all' || r.getAttribute('data-bts') === sel) ? '' : 'none';
+        }
+    }
+
+    function generateOnuScript() {
+        const oltType     = document.getElementById('olt-type').value;
+        const slot        = document.getElementById('slot').value;
+        const pon         = document.getElementById('pon').value;
+        const onuId       = document.getElementById('onu-id').value;
+        const onuPorts    = parseInt(document.getElementById('onu-ports').value, 10);
+        const onuMac      = document.getElementById('onu-mac').value;
+        const lineProfile = document.getElementById('line-profile').value;
+        const bandwidth   = parseInt(document.getElementById('bandwidth').value, 10);
+        const gemId       = document.getElementById('gem-id').value || '1';
+        const vlanList    = ['vlan1','vlan2','vlan3','vlan4'].map(id => document.getElementById(id).value.trim());
+        const bwKbps = bandwidth === 255 ? 512000 : bandwidth * 1024;
+        let script = '', srvProfileId = '';
+        if (oltType.startsWith('cdata-gpon')) srvProfileId = onuPorts === 4 ? '1' : '4';
+        switch (oltType) {
+            case 'vsol-gpon': {
+                const mac = onuMac.replace(/[^a-zA-Z0-9]/g, '');
+                script += `onu add ${onuId} profile ${onuPorts}_port_onu sn ${mac}\n`;
+                script += `onu ${onuId} profile line id ${lineProfile}\n`;
+                for (let i = 1; i <= onuPorts; i++) {
+                    const v = vlanList[i-1];
+                    if (v) { script += `onu ${onuId} eth ${i} state enable\nonu ${onuId} portvlan eth ${i} mode tag vlan ${v} pri 0\nonu ${onuId} eth ${i} loopdetect disable\n`; }
+                    else script += `onu ${onuId} eth ${i} state disable\n`;
+                }
+                for (let i = 1; i <= onuPorts; i++) {
+                    const v = vlanList[i-1];
+                    if (v) { script += `onu ${onuId} eth ${i} upstream-rate-limit cir ${bwKbps} pir ${bwKbps}\nonu ${onuId} eth ${i} downstream-rate-limit cir ${bwKbps} pir ${bwKbps}\n`; }
+                }
+                script += `exit\n`; break;
+            }
+            case 'cdata-gpon-16': {
+                script += `ont add ${pon} ${onuId} sn-auth ${onuMac} ont-lineprofile-id ${lineProfile} ont-srvprofile-id ${srvProfileId}\n`;
+                if (onuPorts === 1) {
+                    const v = vlanList[0];
+                    if (v) { script += `ont port native-vlan ${pon} ${onuId} eth 1 vlan ${v}\nont port car ${pon} ${onuId} eth 1 inbound ${bandwidth} outbound ${bandwidth}\nexit\nservice-port autoindex vlan ${v} gpon 0/0 port ${pon} ont ${onuId} gemport ${gemId} multi-service user-vlan ${v} tag-action transparent\n`; }
+                } else {
+                    for (let i = 1; i <= 4; i++) { const v = vlanList[i-1]; if (v) { script += `ont port native-vlan ${pon} ${onuId} eth ${i} vlan ${v}\nont port attribute ${pon} ${onuId} eth ${i} operational-state on\n`; } else script += `ont port attribute ${pon} ${onuId} eth ${i} operational-state off\n`; }
+                    for (let i = 1; i <= 4; i++) { const v = vlanList[i-1]; if (v) script += `ont port car ${pon} ${onuId} eth ${i} inbound ${bandwidth} outbound ${bandwidth}\n`; }
+                    script += `exit\n`;
+                    vlanList.forEach(v => { if (v) script += `service-port autoindex vlan ${v} gpon 0/0 port ${pon} ont ${onuId} gemport ${gemId} multi-service user-vlan ${v} tag-action transparent\n`; });
+                }
+                break;
+            }
+            case 'cdata-gpon-8': {
+                script += `ont add ${pon} ${onuId} sn-auth ${onuMac} ont-lineprofile-id ${lineProfile} ont-srvprofile-id ${srvProfileId}\n`;
+                for (let i = 1; i <= onuPorts; i++) { const v = vlanList[i-1]; if (v) { script += `ont port native-vlan ${pon} ${onuId} eth ${i} vlan ${v}\nont port attribute ${pon} ${onuId} eth ${i} operational-state on\n`; } else script += `ont port attribute ${pon} ${onuId} eth ${i} operational-state off\n`; }
+                for (let i = 1; i <= onuPorts; i++) { const v = vlanList[i-1]; if (v) script += `ont port car ${pon} ${onuId} eth ${i} inbound ${bandwidth} outbound ${bandwidth}\n`; }
+                script += `exit\n`; break;
+            }
+            case 'utstarcom': {
+                const mf = onuMac.length === 12 ? `${onuMac.substring(0,4)}-${onuMac.substring(4,12)}` : onuMac;
+                script += `interface epon-olt ${slot}/${pon}\nonu ${onuId}\ndba-sla mac ${mf}\ndba-sla mac-limit 10\n`;
+                for (let i = 1; i <= onuPorts; i++) {
+                    if (vlanList[i-1]) { script += `remote-mgmt eth ${i} admin enable\nremote-mgmt eth ${i} vlan-mode tag ${vlanList[i-1]} 8100\npolicing upstream pir-mark-no-drop\npolicing downstream pir-mark-no-drop\nshaping conform-to-pir\ndba-sla upstream maximum-bandwidth ${bwKbps} Kbps\ndba-sla upstream max-burst 512 Kbps\ndba-sla downstream maximum-bandwidth ${bwKbps} Kbps\ndba-sla downstream max-burst 512 Kbps\n`; }
+                    else script += `remote-mgmt eth ${i} admin disable\n`;
+                }
+                script += `exit\nexit\nexit\nconfigure management\nsave\n`; break;
+            }
+            case 'fh-net': {
+                script += `onu ${slot}/${pon}/${onuId}\n`;
+                for (let i = 1; i <= onuPorts; i++) { script += `interface ethernet 0/${i}\n`; if (vlanList[i-1]) { script += `no onu-shutdown\nonu-vlan-mode tag vlan ${vlanList[i-1]}\n`; } else script += `onu-shutdown\n`; script += `exit\n`; }
+                script += `onu-bandwidth upstream fir 0 cir 0 pir ${bwKbps}\nonu-bandwidth downstream fir 0 cir 0 pir ${bwKbps}\nonu-bandwidth shaper pir\nexit\nexit\ncopy running-config startup-config\ny\n`; break;
+            }
+            case 'phyhome': {
+                script += `service\nconfigure\n`;
+                for (let i = 1; i <= onuPorts; i++) { const v = vlanList[i-1]; if (v) { script += `service number ${slot} ${pon} ${onuId} 1 ${i}\ncustomer-vlan ${slot} ${pon} ${onuId} 1 ${i} tag 7 33024 ${v}\napply fe-service-compress-pkt ${slot} ${pon} ${onuId}\n`; } script += `onu-port-attribute ${slot} ${pon} ${onuId} ${i} ${v ? 'enable' : 'disable'}\n`; }
+                for (let i = 1; i <= onuPorts; i++) { const v = vlanList[i-1]; if (v) script += `port-policing-config ${slot} ${pon} ${onuId} ${i} up-state enable up-parameters 99328 16384 1024 down-state enable down-parameters 99328 99328\nexit\nsystem\nconfigure\nmax-mac-counter ${slot} ${pon} ${onuId} ${i} 10\n`; }
+                script += `exit\nexit\nsave\n`; break;
+            }
+        }
+        document.getElementById('output-script').innerText = script;
+    }
+
+    function clearOnuForm() {
+        document.getElementById('olt-type').value = 'cdata-gpon-16';
+        document.getElementById('onu-ports').value = '1';
+        document.getElementById('slot').value = '0';
+        document.getElementById('line-profile').value = '5';
+        document.getElementById('gem-id').value = '1';
+        document.getElementById('bandwidth').value = '100';
+        ['pon','onu-id','onu-mac','vlan1','vlan2','vlan3','vlan4'].forEach(id => document.getElementById(id).value = '');
+        document.getElementById('output-script').innerText = '';
+    }
+
+    function copyOnuScript() {
+        const text = document.getElementById('output-script').innerText;
+        const btn = document.getElementById('copy-btn');
+        const ct = btn.querySelector('.copy-text');
+        navigator.clipboard.writeText(text).then(() => {
+            btn.classList.add('copied'); ct.textContent = 'Copied!';
+            showToast('Script copied to clipboard!');
+            setTimeout(() => { btn.classList.remove('copied'); ct.textContent = 'Copy Script'; }, 2000);
+        }).catch(() => showToast('Copy failed', 'error'));
+    }
+
+    function generateLineProfile() {
+        const olt = document.getElementById('oltName').value;
+        const profileId = document.getElementById('profileId').value.trim() || '10';
+        const gemMap = Math.min(Math.max(parseInt(document.getElementById('gemMap').value || '1'), 1), 8);
+        const vlans = ['lp-vlan1','lp-vlan2','lp-vlan3','lp-vlan4'].map(id => document.getElementById(id).value.trim()).filter(v => v !== '');
+        let script = '';
+        if (olt === 'vsol') {
+            const vlanString = vlans.join(',');
+            let servicePorts = '';
+            vlans.forEach((v, i) => { servicePorts += `service-port ${i + 1} gemport 1 uservlan ${v} vlan ${v}\n`; });
+            script = `profile line id ${profileId}\ntcont 1 name tcont_1 dba MAX_BW\ngemport 1 tcont 1\nservice 1 gemport 1 vlan ${vlanString}\n${servicePorts}commit\nexit`;
+        } else if (olt === 'cdata16') {
+            let gemMappings = '';
+            vlans.forEach((vlan, idx) => { gemMappings += `gem mapping 1 ${gemMap + idx} vlan ${vlan}\n`; });
+            script = `ont-lineprofile gpon profile-id ${profileId}\ntcont 1 dba-profile-id 30\ngem add 1 tcont 1\n${gemMappings}mapping-mode vlan\ncommit\nexit`;
+        } else if (olt === 'cdata8') {
+            let gemMappings = '';
+            vlans.forEach((vlan, idx) => { gemMappings += `gem mapping 1 ${gemMap + idx} vlan ${vlan}\n`; });
+            script = `ont-lineprofile profile-id ${profileId}\ntcont 1 dba-profile-id 30\ngem add 1 tcont 1\n${gemMappings}mapping-mode vlan\ncommit\nexit`;
+        }
+        document.getElementById('lp-output').value = script;
+    }
+
+    function clearLPFields() {
+        ['profileId','lp-vlan1','lp-vlan2','lp-vlan3','lp-vlan4'].forEach(id => document.getElementById(id).value = '');
+        document.getElementById('gemMap').value = '1';
+        document.getElementById('lp-output').value = '';
+    }
+
+    function copyLPScript() {
+        const output = document.getElementById('lp-output');
+        if (!output.value.trim()) { showToast('No script to copy!', 'error'); return; }
+        const btn = document.getElementById('lp-copy-btn');
+        const ct = document.getElementById('lp-copy-text');
+        navigator.clipboard.writeText(output.value).then(() => {
+            btn.classList.add('copied'); ct.textContent = 'Copied!';
+            showToast('Script copied to clipboard!');
+            setTimeout(() => { btn.classList.remove('copied'); ct.textContent = 'Copy Script'; }, 2000);
+        }).catch(() => showToast('Copy failed', 'error'));
+    }
+
+    function showToast(msg, type = 'success') {
+        const t = document.getElementById('toast');
+        t.textContent = msg;
+        t.style.background = type === 'error' ? 'linear-gradient(135deg,#dc2626,#ef4444)' : 'linear-gradient(135deg,#059669,#10b981)';
+        t.classList.add('show');
+        setTimeout(() => t.classList.remove('show'), 2400);
+    }
+
+    let searchesInit = false;
+    function setupAllSearches() {
+        if (searchesInit) return;
+        searchesInit = true;
+        const ids = ['s_cdata_ts','s_cdata_in','s_vsol_ts','s_vsol_in','s_gpon8_ts','s_gpon8_in','s_utstar_ts','s_utstar_in','s_phyhome_ts','s_phyhome_in','s_fhnet_ts','s_fhnet_in'];
+        ids.forEach(id => {
+            const inp = document.getElementById(id);
+            if (!inp) return;
+            inp.addEventListener('input', function() {
+                const q = this.value.toLowerCase();
+                const card = this.closest('.docs-card');
+                const labels = card.querySelectorAll('.docs-cmd-label');
+                labels.forEach(lbl => {
+                    const code = lbl.nextElementSibling;
+                    if (!code) return;
+                    if (q.length > 0) {
+                        const match = lbl.textContent.toLowerCase().includes(q) || code.textContent.toLowerCase().includes(q);
+                        lbl.style.display = match ? 'block' : 'none';
+                        code.style.display = match ? 'block' : 'none';
+                        if (match) code.classList.add('highlighted'); else code.classList.remove('highlighted');
+                    } else {
+                        lbl.style.display = 'block'; code.style.display = 'block'; code.classList.remove('highlighted');
+                    }
+                });
+            });
+        });
+    }
+
+    const btsData = [
+        { bts:"Malek BTS", device:"Huawei_Router", ip:"10.20.127.205" },
+        { bts:"Malek BTS", device:"Huawei_Switch_1", ip:"100.64.168.6" },
+        { bts:"Malek BTS", device:"Huawei_Switch_2", ip:"100.64.168.2" },
+        { bts:"Malek BTS", device:"Nexus", ip:"100.64.167.14" },
+        { bts:"Malek BTS", device:"JB_SW", ip:"10.20.101.202" },
+        { bts:"Segunbagicha BTS", device:"Huawei_Router", ip:"10.20.127.110" },
+        { bts:"Segunbagicha BTS", device:"Huawei_Switch", ip:"100.64.168.22" },
+        { bts:"Segunbagicha BTS", device:"Nexus", ip:"10.66.9.250" },
+        { bts:"Eskaton BTS", device:"Huawei_Router", ip:"10.20.127.137" },
+        { bts:"Eskaton BTS", device:"Switch", ip:"10.67.51.3" },
+        { bts:"Eskaton BTS", device:"Nexus", ip:"10.66.1.250" },
+        { bts:"Dilkusha BTS", device:"Huawei_Router", ip:"10.20.127.82" },
+        { bts:"Dilkusha BTS", device:"Switch_1", ip:"10.48.2.82" },
+        { bts:"Dilkusha BTS", device:"Switch_2", ip:"10.48.2.83" },
+        { bts:"Wari BTS", device:"Huawei_Router", ip:"10.20.127.151" },
+        { bts:"Wari BTS", device:"Huawei_Switch", ip:"100.64.168.66" },
+        { bts:"Imamganj BTS", device:"Huawei_Router", ip:"10.20.127.199" },
+        { bts:"Imamganj BTS", device:"Switch", ip:"10.66.61.2" },
+        { bts:"Jatrabari BTS", device:"Router", ip:"10.20.127.113" },
+        { bts:"Jatrabari BTS", device:"Huawei_Switch", ip:"100.64.168.58" },
+        { bts:"Concord BTS", device:"Huawei_Router", ip:"10.20.127.190" },
+        { bts:"Concord BTS", device:"Switch", ip:"10.67.3.4" },
+        { bts:"Concord BTS", device:"Huawei_Switch", ip:"100.64.168.90" },
+        { bts:"Concord BTS", device:"Nexus", ip:"10.67.3.5" },
+        { bts:"Joypara BTS", device:"Router", ip:"10.20.224.76" },
+        { bts:"Joypara BTS", device:"Switch_1", ip:"10.67.1.202" },
+        { bts:"Joypara BTS", device:"Switch_2", ip:"10.59.1.30" },
+        { bts:"AhmedTower BTS", device:"Huawei_Router", ip:"10.20.127.202" },
+        { bts:"KarwanBazar BTS", device:"Huawei_Router", ip:"10.20.127.204" },
+        { bts:"Banani28 BTS", device:"Huawei_Router", ip:"10.20.127.197" },
+        { bts:"Coloasia DC BTS", device:"Huawei_Router", ip:"10.20.127.102" },
+        { bts:"Coloasia DC BDIX", device:"Huawei_Router", ip:"10.20.127.101" },
+    ];
+
+    function getDeviceColor(device) {
+        const d = device.toUpperCase();
+        if (d.includes('ROUTER')) return { bg:'rgba(239,68,68,0.1)', color:'#dc2626', border:'rgba(239,68,68,0.25)' };
+        if (d.includes('NEXUS'))  return { bg:'rgba(139,92,246,0.1)', color:'#7c3aed', border:'rgba(139,92,246,0.25)' };
+        if (d.includes('SWITCH')) return { bg:'rgba(56,189,248,0.1)', color:'#0369a1', border:'rgba(56,189,248,0.25)' };
+        return { bg:'rgba(100,100,100,0.08)', color:'#6b7280', border:'rgba(100,100,100,0.18)' };
+    }
+
+    function renderBtsTable(data) {
+        const tbody = document.getElementById('bts-table-body');
+        const mobileContainer = document.getElementById('bts-cards-mobile');
+        if (!data.length) {
+            tbody.innerHTML = '<tr><td colspan="4" style="padding:24px;text-align:center;color:#a78bfa;font-family:\'Rajdhani\',sans-serif;">No results found</td></tr>';
+            mobileContainer.innerHTML = '<div style="padding:24px;text-align:center;color:#a78bfa;font-family:\'Rajdhani\',sans-serif;">No results found</div>';
+            return;
+        }
+        let prevBts = null, rowNum = 0;
+        tbody.innerHTML = data.map((row, i) => {
+            rowNum++;
+            const isNewBts = row.bts !== prevBts; prevBts = row.bts;
+            const dc = getDeviceColor(row.device);
+            const rowBg = i % 2 === 0 ? '#fafafa' : '#f4f6ff';
+            const topBorder = isNewBts ? 'border-top:1.5px solid rgba(251,191,36,0.2);' : '';
+            const btsDisplay = isNewBts
+                ? `<span style="display:flex;align-items:center;gap:5px;font-family:'Orbitron',monospace;font-size:0.65em;font-weight:700;letter-spacing:1.2px;color:#1e1b4b;"><i class="material-icons" style="font-size:12px;color:#f59e0b;">cell_tower</i>${row.bts}</span>`
+                : `<span style="color:rgba(0,0,0,0.1);font-size:0.65em;padding-left:16px;">└─</span>`;
+            return `<tr style="background:${rowBg};${topBorder}" onmouseover="this.style.background='rgba(167,139,250,0.08)'" onmouseout="this.style.background='${rowBg}'">
+                <td style="padding:7px 10px;font-family:'Space Mono',monospace;font-size:0.7em;color:#c4b5fd;border-bottom:1px solid #e8eaff;text-align:center;width:36px;">${rowNum}</td>
+                <td style="padding:7px 10px;border-bottom:1px solid #e8eaff;border-right:1.5px solid rgba(251,191,36,0.15);">${btsDisplay}</td>
+                <td style="padding:7px 10px;border-bottom:1px solid #e8eaff;">
+                    <span style="display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:20px;border:1px solid ${dc.border};background:${dc.bg};color:${dc.color};font-family:'Orbitron',monospace;font-size:0.58em;font-weight:700;">${row.device}</span>
+                </td>
+                <td style="padding:7px 10px;font-family:'Space Mono',monospace;font-size:0.8em;color:#1e1b4b;border-bottom:1px solid #e8eaff;font-weight:700;">
+                    <span style="display:inline-flex;align-items:center;gap:5px;"><i class="material-icons" style="font-size:12px;color:#38bdf8;">lan</i>${row.ip}</span>
+                </td>
+            </tr>`;
+        }).join('');
+
+        const grouped = {};
+        data.forEach(row => { if (!grouped[row.bts]) grouped[row.bts] = []; grouped[row.bts].push(row); });
+        mobileContainer.innerHTML = Object.entries(grouped).map(([btsName, rows]) => {
+            const rowsHtml = rows.map(row => {
+                const dc = getDeviceColor(row.device);
+                return `<div class="bts-mobile-row">
+                    <span class="bts-mobile-device" style="background:${dc.bg};color:${dc.color};border:1px solid ${dc.border};">${row.device}</span>
+                    <span class="bts-mobile-ip"><i class="material-icons" style="font-size:12px;color:#38bdf8;">lan</i>${row.ip}</span>
+                </div>`;
+            }).join('');
+            return `<div class="bts-mobile-site"><div class="bts-mobile-site-header"><i class="material-icons" style="font-size:14px;color:#f59e0b;">cell_tower</i><span class="bts-mobile-site-name">${btsName}</span></div>${rowsHtml}</div>`;
+        }).join('');
+    }
+
+    function initBtsSearch() {
+        const sel = document.getElementById('bts-select-dropdown');
+        const uniqueBts = [...new Set(btsData.map(r => r.bts))];
+        uniqueBts.forEach(b => { const opt = document.createElement('option'); opt.value = b; opt.textContent = b; sel.appendChild(opt); });
+    }
+
+    function selectBtsFromDropdown(val) {
+        if (!val) { renderBtsTable(btsData); document.getElementById('bts-search-result-count').textContent = ''; return; }
+        const filtered = btsData.filter(r => r.bts === val);
+        renderBtsTable(filtered);
+        document.getElementById('bts-search-result-count').textContent = `${filtered.length} device(s) found for "${val}"`;
+    }
+
+    function clearBtsSearch() {
+        document.getElementById('bts-select-dropdown').value = '';
+        document.getElementById('bts-search-result-count').textContent = '';
+        renderBtsTable(btsData);
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        renderBtsTable(btsData);
+        initBtsSearch();
+        document.getElementById('olt-type').value = 'cdata-gpon-16';
+        document.getElementById('bandwidth').value = '100';
+        generateOnuScript();
+    });
+    </script>
+</body>
+</html>
