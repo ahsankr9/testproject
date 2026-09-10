@@ -628,6 +628,88 @@ font-weight: 700; font-weight: 600; color: #1a3a5c; font-size: 13px; }
         .vlan-chip { background: linear-gradient(135deg, rgba(26,127,203,0.12), rgba(26,127,203,0.05)); border: 1px solid rgba(26,127,203,0.25); border-radius: 5px; padding: 2px 8px; font-size: 11px; font-weight: 700; color: var(--radio-accent); }
         .radio-detail-footer { padding: 6px 20px; flex-shrink: 0; font-size: 9px; color: rgba(26,127,203,0.3); font-weight: 600; letter-spacing: 2px; text-transform: uppercase; font-family: 'JetBrains Mono', monospace; text-align: right; }
 
+        /* ════ RADIO CRUD (Add / Edit / Delete) ════ */
+        .radio-panel-header { position: relative; }
+        .radio-add-btn {
+            position: absolute; top: 14px; right: 14px;
+            background: rgba(255,255,255,0.16); border: 1px solid rgba(255,255,255,0.35);
+            color: #fff; font-size: 11px; font-weight: 700; letter-spacing: 0.5px;
+            padding: 6px 10px; border-radius: 7px; cursor: pointer;
+            display: flex; align-items: center; gap: 5px;
+            font-family: 'Rajdhani', sans-serif; transition: all 0.18s;
+        }
+        .radio-add-btn:hover { background: rgba(255,255,255,0.28); transform: translateY(-1px); }
+
+        .radio-client-card { display: flex; align-items: center; }
+        .radio-client-card .radio-client-name { flex: 1; }
+        .radio-card-actions { display: flex; gap: 4px; margin-right: 6px; flex-shrink: 0; }
+        .radio-card-icon-btn {
+            width: 22px; height: 22px; border-radius: 6px; border: none; cursor: pointer;
+            display: flex; align-items: center; justify-content: center; font-size: 12px;
+            background: rgba(26,127,203,0.08); color: var(--radio-accent);
+            opacity: 0; transition: all 0.16s;
+        }
+        .radio-client-card:hover .radio-card-icon-btn { opacity: 1; }
+        .radio-card-icon-btn:hover { background: rgba(26,127,203,0.18); transform: scale(1.08); }
+        .radio-card-icon-btn.del:hover { background: rgba(220,38,38,0.18); color: #dc2626; }
+
+        .rdc-actions { display: flex; gap: 8px; flex-shrink: 0; margin-left: 12px; margin-top: 2px; }
+        .rdc-action-btn {
+            border: none; border-radius: 6px; padding: 6px 12px; font-size: 11px; font-weight: 700;
+            letter-spacing: 0.5px; cursor: pointer; display: flex; align-items: center; gap: 5px;
+            font-family: 'Rajdhani', sans-serif; transition: all 0.18s;
+        }
+        .rdc-action-btn.edit { background: rgba(77,182,245,0.18); color: #cfeaff; border: 1px solid rgba(77,182,245,0.4); }
+        .rdc-action-btn.edit:hover { background: rgba(77,182,245,0.3); }
+        .rdc-action-btn.del { background: rgba(220,38,38,0.2); color: #ffd7d7; border: 1px solid rgba(220,38,38,0.4); }
+        .rdc-action-btn.del:hover { background: rgba(220,38,38,0.32); }
+
+        .radio-modal-overlay {
+            position: fixed; inset: 0; background: rgba(10,20,40,0.55); backdrop-filter: blur(3px);
+            display: none; align-items: center; justify-content: center; z-index: 1000; padding: 20px;
+        }
+        .radio-modal-overlay.open { display: flex; }
+        .radio-modal {
+            background: #fff; border-radius: 14px; width: 100%; max-width: 560px; max-height: 88vh;
+            overflow-y: auto; box-shadow: 0 20px 60px rgba(0,0,0,0.35);
+            animation: fadeSlide 0.25s ease;
+        }
+        .radio-modal-header {
+            background: var(--radio-primary); padding: 16px 22px; display: flex; align-items: center;
+            justify-content: space-between; position: sticky; top: 0; z-index: 2;
+        }
+        .radio-modal-header h3 { color: #fff; font-size: 15px; letter-spacing: 1px; font-family: 'Rajdhani', sans-serif; font-weight: 700; }
+        .radio-modal-close { background: rgba(255,255,255,0.15); border: none; color: #fff; width: 26px; height: 26px; border-radius: 7px; cursor: pointer; font-size: 14px; }
+        .radio-modal-close:hover { background: rgba(255,255,255,0.28); }
+        .radio-modal-body { padding: 20px 22px; }
+        .radio-form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+        .radio-form-row.full { grid-template-columns: 1fr; }
+        .radio-form-group label {
+            display: block; font-size: 10px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase;
+            color: var(--label); margin-bottom: 5px; font-family: 'Rajdhani', sans-serif;
+        }
+        .radio-form-group input, .radio-form-group select {
+            width: 100%; padding: 9px 11px; border: 1px solid var(--input-border); border-radius: 8px;
+            background: var(--input-bg); color: var(--input-text); font-size: 13px; font-family: 'Exo 2', sans-serif;
+        }
+        .radio-form-group input:focus, .radio-form-group select:focus { border-color: var(--radio-accent); box-shadow: 0 0 0 3px rgba(26,127,203,0.12); }
+        .radio-modal-footer { padding: 14px 22px 20px; display: flex; justify-content: flex-end; gap: 10px; }
+        .radio-modal-btn { border: none; border-radius: 8px; padding: 10px 20px; font-size: 12px; font-weight: 700; letter-spacing: 0.5px; cursor: pointer; font-family: 'Rajdhani', sans-serif; }
+        .radio-modal-btn.cancel { background: #f0f0f0; color: #555; }
+        .radio-modal-btn.cancel:hover { background: #e2e2e2; }
+        .radio-modal-btn.save { background: var(--radio-primary); color: #fff; }
+        .radio-modal-btn.save:hover { filter: brightness(1.08); }
+
+        .app-confirm-overlay {
+            position: fixed; inset: 0; background: rgba(10,20,40,0.55); backdrop-filter: blur(3px);
+            display: none; align-items: center; justify-content: center; z-index: 1100; padding: 20px;
+        }
+        .app-confirm-overlay.open { display: flex; }
+        .app-confirm-box { background: #fff; border-radius: 14px; padding: 22px 24px; max-width: 360px; width: 100%; box-shadow: 0 20px 60px rgba(0,0,0,0.35); text-align: center; }
+        .app-confirm-box p { font-size: 14px; color: var(--text-primary); margin: 6px 0 18px; line-height: 1.5; }
+        .app-confirm-title { font-size: 15px; font-weight: 700; color: #dc2626; margin-bottom: 6px; }
+        .app-confirm-actions { display: flex; gap: 10px; justify-content: center; }
+
         /* BTS INFO — compact */
         #bts-cards-mobile { display: none; }
         .bts-mobile-site { background: #fff; border-radius: 12px; border: 1px solid rgba(139,92,246,0.12); margin-bottom: 10px; overflow: hidden; box-shadow: 0 2px 10px rgba(99,102,241,0.07); }
@@ -1493,6 +1575,7 @@ system\configure# pon on 1 1</code>
                     <div class="radio-panel-bts" id="r-panel-bts-name">MALEK BTS</div>
                     <div class="radio-panel-title">Clients</div>
                     <div class="radio-panel-count" id="r-panel-count">0 CLIENTS</div>
+                    <button class="radio-add-btn" onclick="openRadioModal('add')"><i class="fa-solid fa-plus"></i> Add</button>
                 </div>
                 <div class="radio-search-wrap">
                     <input class="radio-search" type="text" id="radioClientSearch" placeholder="🔍  Search ALL BTS radios..." oninput="radioGlobalSearch()">
@@ -1523,6 +1606,105 @@ system\configure# pon on 1 1</code>
             </div>
         </div>
 
+        <!-- RADIO ADD/EDIT MODAL -->
+        <div class="radio-modal-overlay" id="radioModalOverlay">
+            <div class="radio-modal">
+                <div class="radio-modal-header">
+                    <h3 id="radioModalTitle">ADD RADIO CLIENT</h3>
+                    <button class="radio-modal-close" onclick="closeRadioModal()"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+                <div class="radio-modal-body">
+                    <div class="radio-form-row full">
+                        <div class="radio-form-group">
+                            <label>BTS</label>
+                            <select id="rf-bts"></select>
+                        </div>
+                    </div>
+                    <div class="radio-form-row full">
+                        <div class="radio-form-group">
+                            <label>Client / Site Name *</label>
+                            <input type="text" id="rf-name" placeholder="e.g. XYZ Bank: Branch Name">
+                        </div>
+                    </div>
+                    <div class="radio-form-row full">
+                        <div class="radio-form-group">
+                            <label>Firmware Link</label>
+                            <input type="text" id="rf-firmware" placeholder="https://...">
+                        </div>
+                    </div>
+                    <div class="radio-form-row">
+                        <div class="radio-form-group">
+                            <label>SW IP &amp; Port</label>
+                            <input type="text" id="rf-swip" placeholder="e.g. 10.200.15.3: 26">
+                        </div>
+                        <div class="radio-form-group">
+                            <label>Link Type</label>
+                            <select id="rf-linktype">
+                                <option value="P2P">P2P</option>
+                                <option value="P2M">P2M</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="radio-form-row">
+                        <div class="radio-form-group">
+                            <label>Radio IP (AP)</label>
+                            <input type="text" id="rf-apip" placeholder="10.200.x.x">
+                        </div>
+                        <div class="radio-form-group">
+                            <label>Radio IP (CP)</label>
+                            <input type="text" id="rf-cpip" placeholder="10.200.x.x">
+                        </div>
+                    </div>
+                    <div class="radio-form-row">
+                        <div class="radio-form-group">
+                            <label>Radio Name</label>
+                            <input type="text" id="rf-radioname" placeholder="e.g. NANO BEAM-M5-400">
+                        </div>
+                        <div class="radio-form-group">
+                            <label>SSID</label>
+                            <input type="text" id="rf-ssid" placeholder="SSID">
+                        </div>
+                    </div>
+                    <div class="radio-form-row">
+                        <div class="radio-form-group">
+                            <label>Channel Width</label>
+                            <input type="text" id="rf-chwidth" placeholder="e.g. 20 MHz">
+                        </div>
+                        <div class="radio-form-group">
+                            <label>Frequency</label>
+                            <input type="text" id="rf-freq" placeholder="e.g. 5805/5850">
+                        </div>
+                    </div>
+                    <div class="radio-form-row">
+                        <div class="radio-form-group">
+                            <label>Key</label>
+                            <input type="text" id="rf-key" placeholder="password / key">
+                        </div>
+                        <div class="radio-form-group">
+                            <label>VLAN</label>
+                            <input type="text" id="rf-vlan" placeholder="VLAN ID">
+                        </div>
+                    </div>
+                </div>
+                <div class="radio-modal-footer">
+                    <button class="radio-modal-btn cancel" onclick="closeRadioModal()">Cancel</button>
+                    <button class="radio-modal-btn save" onclick="saveRadioClient()"><i class="fa-solid fa-floppy-disk"></i> Save</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- GENERIC DELETE CONFIRM (used by Radio + BTS Info) -->
+        <div class="app-confirm-overlay" id="appConfirmOverlay">
+            <div class="app-confirm-box">
+                <div class="app-confirm-title" id="appConfirmTitle">Delete Item?</div>
+                <p id="appConfirmText">Are you sure you want to delete this item? This cannot be undone.</p>
+                <div class="app-confirm-actions">
+                    <button class="radio-modal-btn cancel" onclick="closeAppConfirm()">Cancel</button>
+                    <button class="radio-modal-btn save" style="background:#dc2626;" onclick="runAppConfirm()">Delete</button>
+                </div>
+            </div>
+        </div>
+
         <!-- APP: BTS INFO -->
         <div id="app-bts" class="app-wrapper">
             <div class="app-header">
@@ -1544,6 +1726,7 @@ system\configure# pon on 1 1</code>
                         <span style="position:absolute;right:12px;top:50%;transform:translateY(-50%);pointer-events:none;color:#f59e0b;">▼</span>
                     </div>
                     <button onclick="clearBtsSearch()" style="padding:8px 16px;border-radius:9px;border:none;background:linear-gradient(135deg,#f59e0b,#ef4444);color:#fff;font-family:'Orbitron',monospace;font-size:0.68em;font-weight:700;letter-spacing:1px;cursor:pointer;">CLEAR</button>
+                    <button onclick="openBtsModal('add')" style="padding:8px 16px;border-radius:9px;border:none;background:linear-gradient(135deg,#10b981,#059669);color:#fff;font-family:'Orbitron',monospace;font-size:0.68em;font-weight:700;letter-spacing:1px;cursor:pointer;display:flex;align-items:center;gap:6px;"><i class="fa-solid fa-plus"></i> ADD</button>
                 </div>
                 <div id="bts-search-result-count" style="margin-top:6px;font-size:0.78em;color:#a78bfa;font-family:'Rajdhani',sans-serif;letter-spacing:0.5px;"></div>
             </div>
@@ -1557,6 +1740,7 @@ system\configure# pon on 1 1</code>
                                 <th style="padding:9px 12px;text-align:left;font-family:'Orbitron',monospace;font-size:0.6em;letter-spacing:2px;color:#a78bfa;font-weight:700;border-bottom:2px solid rgba(167,139,250,0.3);">BTS NAME</th>
                                 <th style="padding:9px 12px;text-align:left;font-family:'Orbitron',monospace;font-size:0.6em;letter-spacing:2px;color:#38bdf8;font-weight:700;border-bottom:2px solid rgba(167,139,250,0.3);">DEVICE TYPE</th>
                                 <th style="padding:9px 12px;text-align:left;font-family:'Orbitron',monospace;font-size:0.6em;letter-spacing:2px;color:#fbbf24;font-weight:700;border-bottom:2px solid rgba(167,139,250,0.3);">IP ADDRESS</th>
+                                <th style="padding:9px 12px;text-align:center;font-family:'Orbitron',monospace;font-size:0.6em;letter-spacing:2px;color:#a78bfa;font-weight:700;border-bottom:2px solid rgba(167,139,250,0.3);">ACTIONS</th>
                             </tr>
                         </thead>
                         <tbody id="bts-table-body"></tbody>
@@ -1564,6 +1748,39 @@ system\configure# pon on 1 1</code>
                 </div>
             </div>
             <div id="bts-cards-mobile"></div>
+        </div>
+
+        <!-- BTS INFO ADD/EDIT MODAL -->
+        <div class="radio-modal-overlay" id="btsModalOverlay">
+            <div class="radio-modal">
+                <div class="radio-modal-header" style="background:linear-gradient(135deg,#f59e0b 0%,#ef4444 100%);">
+                    <h3 id="btsModalTitle">ADD DEVICE</h3>
+                    <button class="radio-modal-close" onclick="closeBtsModal()"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+                <div class="radio-modal-body">
+                    <div class="radio-form-row full">
+                        <div class="radio-form-group">
+                            <label>BTS Name *</label>
+                            <input type="text" id="bf-bts" list="bf-bts-list" placeholder="e.g. Malek BTS">
+                            <datalist id="bf-bts-list"></datalist>
+                        </div>
+                    </div>
+                    <div class="radio-form-row">
+                        <div class="radio-form-group">
+                            <label>Device Type *</label>
+                            <input type="text" id="bf-device" placeholder="e.g. Huawei_Router">
+                        </div>
+                        <div class="radio-form-group">
+                            <label>IP Address *</label>
+                            <input type="text" id="bf-ip" placeholder="e.g. 10.20.127.205">
+                        </div>
+                    </div>
+                </div>
+                <div class="radio-modal-footer">
+                    <button class="radio-modal-btn cancel" onclick="closeBtsModal()">Cancel</button>
+                    <button class="radio-modal-btn save" style="background:linear-gradient(135deg,#f59e0b,#ef4444);" onclick="saveBtsDevice()"><i class="fa-solid fa-floppy-disk"></i> Save</button>
+                </div>
+            </div>
         </div>
 
     </main>
@@ -1627,6 +1844,24 @@ system\configure# pon on 1 1</code>
     };
 
     let currentRadioBTS = 'malek';
+
+    // ════ RADIO PERSISTENCE (localStorage) ════
+    const RADIO_STORAGE_KEY = 'mzr_radio_data_v1';
+    function saveRadioDataToStorage() {
+        try { localStorage.setItem(RADIO_STORAGE_KEY, JSON.stringify(radioData)); }
+        catch (e) { console.error('Could not save radio data', e); }
+    }
+    function loadRadioDataFromStorage() {
+        try {
+            const raw = localStorage.getItem(RADIO_STORAGE_KEY);
+            if (!raw) return;
+            const saved = JSON.parse(raw);
+            if (saved && typeof saved === 'object') {
+                Object.keys(radioData).forEach(k => delete radioData[k]);
+                Object.assign(radioData, saved);
+            }
+        } catch (e) { console.error('Could not load saved radio data', e); }
+    }
 
     // ════ TAB SWITCHING ════
     function switchTab(id, btn) {
@@ -1696,18 +1931,29 @@ initRadio();
     function initRadio() {
         if (radioInited) return;
         radioInited = true;
+        loadRadioDataFromStorage();
+        renderRadioBtsTabs();
+        renderRadioClientPanel(currentRadioBTS);
+        populateRadioBtsSelect();
+    }
+
+    function renderRadioBtsTabs() {
         const tabs = document.getElementById('radioBtsTabs');
-        const firmwareBtn = tabs.querySelector('.firmware-btn');
+        tabs.innerHTML = '';
         Object.entries(radioData).forEach(([id, bts]) => {
             const btn = document.createElement('button');
-            btn.className = 'radio-bts-tab' + (id === 'malek' ? ' active' : '');
+            btn.className = 'radio-bts-tab' + (id === currentRadioBTS ? ' active' : '');
             btn.textContent = bts.name.replace(' BTS', '');
             btn.onclick = () => selectRadioBTS(id, btn);
-            tabs.insertBefore(btn, firmwareBtn);
+            tabs.appendChild(btn);
         });
-        // Set initial firmware link for malek
-        firmwareBtn.href = radioData['malek'].firmware;
-        renderRadioClientPanel('malek');
+    }
+
+    function populateRadioBtsSelect() {
+        const sel = document.getElementById('rf-bts');
+        if (!sel) return;
+        sel.innerHTML = Object.entries(radioData).map(([id, bts]) =>
+            `<option value="${id}">${bts.name}</option>`).join('');
     }
 
     function selectRadioBTS(id, btn) {
@@ -1739,6 +1985,10 @@ initRadio();
     const realIdx = btsId ? radioData[btsId].clients.indexOf(c) : i;
     return `<div class="radio-client-card" onclick="selectRadioClient(this, '${btsId}', ${realIdx})">
         <div class="radio-client-name">${c.name}</div>
+        <div class="radio-card-actions">
+            <button class="radio-card-icon-btn edit" title="Edit" onclick="event.stopPropagation(); openRadioModal('edit', '${btsId}', ${realIdx})"><i class="fa-solid fa-pen"></i></button>
+            <button class="radio-card-icon-btn del" title="Delete" onclick="event.stopPropagation(); openRadioConfirm('${btsId}', ${realIdx})"><i class="fa-solid fa-trash"></i></button>
+        </div>
         <span class="radio-client-arrow">›</span>
     </div>`;
 }).join('');
@@ -1765,18 +2015,28 @@ initRadio();
                 <div class="radio-client-meta">
                   <span style="margin-left:auto;font-size:8px;color:var(--radio-accent);background:rgba(26,127,203,0.08);padding:2px 6px;border-radius:12px;">${radioData[c._btsId].name}</span>
                 </div>
+                <div class="radio-card-actions">
+                    <button class="radio-card-icon-btn edit" title="Edit" onclick="event.stopPropagation(); openRadioModal('edit', '${c._btsId}', ${realIdx})"><i class="fa-solid fa-pen"></i></button>
+                    <button class="radio-card-icon-btn del" title="Delete" onclick="event.stopPropagation(); openRadioConfirm('${c._btsId}', ${realIdx})"><i class="fa-solid fa-trash"></i></button>
+                </div>
                 <span class="radio-client-arrow">›</span>
             </div>`;
         }).join('');
     }
 
+    let currentDetailBtsId = null, currentDetailIdx = null;
+
     function selectRadioClient(el, btsId, idx) {
         document.querySelectorAll('.radio-client-card').forEach(c => c.classList.remove('active'));
         el.classList.add('active');
+        currentDetailBtsId = btsId;
+        currentDetailIdx = idx;
         showRadioDetail(radioData[btsId].clients[idx], radioData[btsId].name, radioData[btsId].firmware);
     }
 
     function showRadioWelcome() {
+        currentDetailBtsId = null;
+        currentDetailIdx = null;
         document.getElementById('radioDetailBody').innerHTML = `
             <div class="radio-detail-welcome">
                 <div class="radio-detail-welcome-icon">📡</div>
@@ -1804,7 +2064,13 @@ initRadio();
                         <div class="rdc-client-name">${c.name}</div>
                         <div class="rdc-bts-label">${btsName}</div>
                     </div>
-                    <span class="rdc-link-badge ${lt}">${c.linktype}</span>
+                    <div style="display:flex;align-items:flex-start;flex-shrink:0;">
+                        <span class="rdc-link-badge ${lt}">${c.linktype}</span>
+                        <div class="rdc-actions">
+                            <button class="rdc-action-btn edit" onclick="openRadioModal('edit', currentDetailBtsId, currentDetailIdx)"><i class="fa-solid fa-pen"></i> Edit</button>
+                            <button class="rdc-action-btn del" onclick="openRadioConfirm(currentDetailBtsId, currentDetailIdx)"><i class="fa-solid fa-trash"></i> Delete</button>
+                        </div>
+                    </div>
                 </div>
                 <div class="rdc-table">
                     <div class="rdc-cell lbl-wide">SW IP &amp; Port</div>
@@ -1828,6 +2094,127 @@ initRadio();
                     ${firmwareRow}
                 </div>
             </div>`;
+    }
+
+    // ════ RADIO ADD / EDIT / DELETE ════
+    let radioModalMode = 'add'; // 'add' | 'edit'
+    let radioModalBtsId = null;
+    let radioModalIdx = null;
+
+    function openRadioModal(mode, btsId, idx) {
+        radioModalMode = mode;
+        radioModalBtsId = btsId || currentRadioBTS;
+        radioModalIdx = (idx === undefined) ? null : idx;
+        populateRadioBtsSelect();
+
+        const title = document.getElementById('radioModalTitle');
+        const btsSel = document.getElementById('rf-bts');
+
+        if (mode === 'edit' && radioModalBtsId !== null && radioModalIdx !== null) {
+            const c = radioData[radioModalBtsId].clients[radioModalIdx];
+            title.textContent = 'EDIT RADIO CLIENT';
+            btsSel.value = radioModalBtsId;
+            document.getElementById('rf-name').value = c.name || '';
+            document.getElementById('rf-firmware').value = c.firmware || '';
+            document.getElementById('rf-swip').value = c.swip || '';
+            document.getElementById('rf-linktype').value = c.linktype || 'P2P';
+            document.getElementById('rf-apip').value = c.apip || '';
+            document.getElementById('rf-cpip').value = c.cpip || '';
+            document.getElementById('rf-radioname').value = c.radioname || '';
+            document.getElementById('rf-ssid').value = c.ssid || '';
+            document.getElementById('rf-chwidth').value = c.chwidth || '';
+            document.getElementById('rf-freq').value = c.freq || '';
+            document.getElementById('rf-key').value = c.key || '';
+            document.getElementById('rf-vlan').value = c.vlan || '';
+        } else {
+            radioModalMode = 'add';
+            title.textContent = 'ADD RADIO CLIENT';
+            btsSel.value = radioModalBtsId;
+            ['rf-name','rf-firmware','rf-swip','rf-apip','rf-cpip','rf-radioname','rf-ssid','rf-chwidth','rf-freq','rf-key','rf-vlan']
+                .forEach(id => document.getElementById(id).value = '');
+            document.getElementById('rf-linktype').value = 'P2P';
+        }
+        document.getElementById('radioModalOverlay').classList.add('open');
+    }
+
+    function closeRadioModal() {
+        document.getElementById('radioModalOverlay').classList.remove('open');
+    }
+
+    function saveRadioClient() {
+        const name = document.getElementById('rf-name').value.trim();
+        if (!name) { showToast('Client / Site name is required', 'error'); return; }
+        const targetBts = document.getElementById('rf-bts').value;
+
+        const clientObj = {
+            name: name,
+            firmware: document.getElementById('rf-firmware').value.trim(),
+            swip: document.getElementById('rf-swip').value.trim() || 'N/A',
+            apip: document.getElementById('rf-apip').value.trim() || 'N/A',
+            cpip: document.getElementById('rf-cpip').value.trim() || 'N/A',
+            linktype: document.getElementById('rf-linktype').value,
+            radioname: document.getElementById('rf-radioname').value.trim() || 'N/A',
+            ssid: document.getElementById('rf-ssid').value.trim() || 'N/A',
+            chwidth: document.getElementById('rf-chwidth').value.trim() || 'N/A',
+            freq: document.getElementById('rf-freq').value.trim() || 'N/A',
+            key: document.getElementById('rf-key').value.trim() || 'N/A',
+            vlan: document.getElementById('rf-vlan').value.trim() || 'N/A'
+        };
+
+        if (radioModalMode === 'edit' && radioModalBtsId !== null && radioModalIdx !== null) {
+            if (targetBts === radioModalBtsId) {
+                radioData[radioModalBtsId].clients[radioModalIdx] = clientObj;
+            } else {
+                // Moved to a different BTS
+                radioData[radioModalBtsId].clients.splice(radioModalIdx, 1);
+                radioData[targetBts].clients.push(clientObj);
+            }
+            showToast('Radio client updated');
+        } else {
+            radioData[targetBts].clients.push(clientObj);
+            showToast('Radio client added');
+        }
+
+        saveRadioDataToStorage();
+        closeRadioModal();
+        currentRadioBTS = targetBts;
+        renderRadioBtsTabs();
+        renderRadioClientPanel(targetBts);
+        showRadioWelcome();
+    }
+
+    // ════ GENERIC CONFIRM DIALOG (Delete confirmations, reused everywhere) ════
+    let __appConfirmCallback = null;
+    function showAppConfirm(title, message, onConfirm) {
+        document.getElementById('appConfirmTitle').textContent = title;
+        document.getElementById('appConfirmText').textContent = message;
+        __appConfirmCallback = onConfirm;
+        document.getElementById('appConfirmOverlay').classList.add('open');
+    }
+    function closeAppConfirm() {
+        document.getElementById('appConfirmOverlay').classList.remove('open');
+        __appConfirmCallback = null;
+    }
+    function runAppConfirm() {
+        const cb = __appConfirmCallback;
+        closeAppConfirm();
+        if (typeof cb === 'function') cb();
+    }
+
+    function openRadioConfirm(btsId, idx) {
+        if (btsId === null || idx === null || btsId === undefined || idx === undefined) return;
+        const c = radioData[btsId].clients[idx];
+        showAppConfirm(
+            'Delete Radio Client?',
+            `Are you sure you want to delete "${c.name}"? This cannot be undone.`,
+            () => {
+                radioData[btsId].clients.splice(idx, 1);
+                saveRadioDataToStorage();
+                renderRadioClientPanel(currentRadioBTS);
+                if (currentDetailBtsId === btsId) showRadioWelcome();
+                showToast('Radio client deleted');
+            }
+        );
     }
 
     // ════ DOCS FUNCTIONS ════
@@ -2320,7 +2707,7 @@ script += `onu ${onuId} eth ${i} upstream-rate-limit cir ${vsol_bw} pir ${vsol_b
         const tbody = document.getElementById('bts-table-body');
         const mobileContainer = document.getElementById('bts-cards-mobile');
         if (!data.length) {
-            tbody.innerHTML = '<tr><td colspan="4" style="padding:24px;text-align:center;color:#a78bfa;font-family:\'Rajdhani\',sans-serif;">No results found</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="5" style="padding:24px;text-align:center;color:#a78bfa;font-family:\'Rajdhani\',sans-serif;">No results found</td></tr>';
             mobileContainer.innerHTML = '<div style="padding:24px;text-align:center;color:#a78bfa;font-family:\'Rajdhani\',sans-serif;">No results found</div>';
             return;
         }
@@ -2334,6 +2721,7 @@ script += `onu ${onuId} eth ${i} upstream-rate-limit cir ${vsol_bw} pir ${vsol_b
             const btsDisplay = isNewBts
                 ? `<span style="display:flex;align-items:center;gap:5px;font-family:'Orbitron',monospace;font-size:0.65em;font-weight:700;letter-spacing:1.2px;color:#1e1b4b;"><i class="material-icons" style="font-size:12px;color:#f59e0b;">cell_tower</i>${row.bts}</span>`
                 : `<span style="color:rgba(0,0,0,0.1);font-size:0.65em;padding-left:16px;">└─</span>`;
+            const realIdx = btsData.indexOf(row);
             return `<tr style="background:${rowBg};${topBorder}" onmouseover="this.style.background='rgba(167,139,250,0.08)'" onmouseout="this.style.background='${rowBg}'">
                 <td style="padding:7px 10px;font-family:'Space Mono',monospace;font-size:0.7em;color:#c4b5fd;border-bottom:1px solid #e8eaff;text-align:center;width:36px;">${rowNum}</td>
                 <td style="padding:7px 10px;border-bottom:1px solid #e8eaff;border-right:1.5px solid rgba(251,191,36,0.15);">${btsDisplay}</td>
@@ -2343,6 +2731,10 @@ script += `onu ${onuId} eth ${i} upstream-rate-limit cir ${vsol_bw} pir ${vsol_b
                 <td style="padding:7px 10px;font-family:'Outfit',sans-serif;font-size:0.85em;color:#1e1b4b;border-bottom:1px solid #e8eaff;font-weight:700;">
                     <span style="display:inline-flex;align-items:center;gap:5px;"><i class="material-icons" style="font-size:12px;color:#38bdf8;">lan</i>${row.ip}</span>
                 </td>
+                <td style="padding:7px 10px;border-bottom:1px solid #e8eaff;text-align:center;white-space:nowrap;">
+                    <button class="radio-card-icon-btn edit" style="opacity:1;display:inline-flex;" title="Edit" onclick="openBtsModal('edit', ${realIdx})"><i class="fa-solid fa-pen"></i></button>
+                    <button class="radio-card-icon-btn del" style="opacity:1;display:inline-flex;" title="Delete" onclick="openBtsConfirm(${realIdx})"><i class="fa-solid fa-trash"></i></button>
+                </td>
             </tr>`;
         }).join('');
 
@@ -2351,13 +2743,117 @@ script += `onu ${onuId} eth ${i} upstream-rate-limit cir ${vsol_bw} pir ${vsol_b
         mobileContainer.innerHTML = Object.entries(grouped).map(([btsName, rows]) => {
             const rowsHtml = rows.map(row => {
                 const dc = getDeviceColor(row.device);
+                const realIdx = btsData.indexOf(row);
                 return `<div class="bts-mobile-row">
                     <span class="bts-mobile-device" style="background:${dc.bg};color:${dc.color};border:1px solid ${dc.border};">${row.device}</span>
                     <span class="bts-mobile-ip"><i class="material-icons" style="font-size:12px;color:#38bdf8;">lan</i>${row.ip}</span>
+                    <span style="margin-left:auto;display:flex;gap:4px;">
+                        <button class="radio-card-icon-btn edit" style="opacity:1;display:inline-flex;" title="Edit" onclick="openBtsModal('edit', ${realIdx})"><i class="fa-solid fa-pen"></i></button>
+                        <button class="radio-card-icon-btn del" style="opacity:1;display:inline-flex;" title="Delete" onclick="openBtsConfirm(${realIdx})"><i class="fa-solid fa-trash"></i></button>
+                    </span>
                 </div>`;
             }).join('');
             return `<div class="bts-mobile-site"><div class="bts-mobile-site-header"><i class="material-icons" style="font-size:14px;color:#f59e0b;">cell_tower</i><span class="bts-mobile-site-name">${btsName}</span></div>${rowsHtml}</div>`;
         }).join('');
+    }
+
+    // ════ BTS INFO PERSISTENCE (localStorage) ════
+    const BTS_STORAGE_KEY = 'mzr_bts_data_v1';
+    function saveBtsDataToStorage() {
+        try { localStorage.setItem(BTS_STORAGE_KEY, JSON.stringify(btsData)); }
+        catch (e) { console.error('Could not save BTS data', e); }
+    }
+    function loadBtsDataFromStorage() {
+        try {
+            const raw = localStorage.getItem(BTS_STORAGE_KEY);
+            if (!raw) return;
+            const saved = JSON.parse(raw);
+            if (Array.isArray(saved)) {
+                btsData.length = 0;
+                saved.forEach(r => btsData.push(r));
+            }
+        } catch (e) { console.error('Could not load saved BTS data', e); }
+    }
+
+    // ════ BTS INFO ADD / EDIT / DELETE ════
+    let btsModalMode = 'add';
+    let btsModalIdx = null;
+
+    function populateBtsDatalist() {
+        const list = document.getElementById('bf-bts-list');
+        if (!list) return;
+        const uniqueBts = [...new Set(btsData.map(r => r.bts))];
+        list.innerHTML = uniqueBts.map(b => `<option value="${b}"></option>`).join('');
+    }
+
+    function openBtsModal(mode, idx) {
+        btsModalMode = mode;
+        btsModalIdx = (idx === undefined) ? null : idx;
+        populateBtsDatalist();
+        const title = document.getElementById('btsModalTitle');
+        if (mode === 'edit' && btsModalIdx !== null) {
+            const r = btsData[btsModalIdx];
+            title.textContent = 'EDIT DEVICE';
+            document.getElementById('bf-bts').value = r.bts || '';
+            document.getElementById('bf-device').value = r.device || '';
+            document.getElementById('bf-ip').value = r.ip || '';
+        } else {
+            btsModalMode = 'add';
+            title.textContent = 'ADD DEVICE';
+            document.getElementById('bf-bts').value = '';
+            document.getElementById('bf-device').value = '';
+            document.getElementById('bf-ip').value = '';
+        }
+        document.getElementById('btsModalOverlay').classList.add('open');
+    }
+
+    function closeBtsModal() {
+        document.getElementById('btsModalOverlay').classList.remove('open');
+    }
+
+    function saveBtsDevice() {
+        const bts = document.getElementById('bf-bts').value.trim();
+        const device = document.getElementById('bf-device').value.trim();
+        const ip = document.getElementById('bf-ip').value.trim();
+        if (!bts || !device || !ip) { showToast('BTS Name, Device Type and IP are required', 'error'); return; }
+
+        if (btsModalMode === 'edit' && btsModalIdx !== null) {
+            btsData[btsModalIdx] = { bts, device, ip };
+            showToast('Device updated');
+        } else {
+            btsData.push({ bts, device, ip });
+            showToast('Device added');
+        }
+        saveBtsDataToStorage();
+        closeBtsModal();
+        refreshBtsView();
+    }
+
+    function openBtsConfirm(idx) {
+        if (idx === null || idx === undefined) return;
+        const r = btsData[idx];
+        showAppConfirm(
+            'Delete Device?',
+            `Are you sure you want to delete "${r.device}" (${r.ip}) under "${r.bts}"? This cannot be undone.`,
+            () => {
+                btsData.splice(idx, 1);
+                saveBtsDataToStorage();
+                refreshBtsView();
+                showToast('Device deleted');
+            }
+        );
+    }
+
+    function refreshBtsView() {
+        const sel = document.getElementById('bts-select-dropdown');
+        const currentVal = sel ? sel.value : '';
+        if (sel) {
+            sel.innerHTML = '<option value="">— Select a BTS —</option>';
+            const uniqueBts = [...new Set(btsData.map(r => r.bts))];
+            uniqueBts.forEach(b => { const opt = document.createElement('option'); opt.value = b; opt.textContent = b; sel.appendChild(opt); });
+            if (uniqueBts.includes(currentVal)) sel.value = currentVal;
+        }
+        selectBtsFromDropdown(sel ? sel.value : '');
     }
 
     function initBtsSearch() {
@@ -2382,6 +2878,7 @@ script += `onu ${onuId} eth ${i} upstream-rate-limit cir ${vsol_bw} pir ${vsol_b
     // ════ INIT ════
     document.addEventListener('DOMContentLoaded', () => {
     ensureDocsSubnavPlacement();
+    loadBtsDataFromStorage();
     renderBtsTable(btsData);
     initBtsSearch();
     document.getElementById('olt-type').value = 'cdata-gpon-16';
