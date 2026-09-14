@@ -11,7 +11,7 @@
 
     <style>
         :root {
-            --sb-bg: linear-gradient(160deg, #12183f 0%, #0c0e28 60%, #0a0d24 100%);
+            --sb-bg: linear-gradient(160deg, #0a0f2c 0%, #16336b 42%, #0f9b8e 85%, #00e0a8 130%);
             --sb-border: rgba(0,212,255,0.22);
             --sb-accent: #7dd3fc;
             --sb-accent2: #00d4ff;
@@ -35,7 +35,7 @@
             --label: #6d5fa6;
             --text-primary: #1e1b4b;
 
-            --output-bg: #0f0a2a;
+            --output-bg: var(--sb-bg);
             --output-text: #e2d9f3;
             --output-border: rgba(139,92,246,0.35);
 
@@ -326,8 +326,8 @@
             padding-top: 16px; text-align: center; flex-shrink: 0;
             animation: brandFadeIn 0.9s ease forwards;
         }
-        .author-name { font-family: 'Orbitron', monospace; font-size: 0.62em; letter-spacing: 2px; color: #40E0D0; margin-bottom: 4px; }
-        .author-role { font-family: 'Exo 2', sans-serif; font-size: 0.8em; color: rgba(153,246,228,0.7); letter-spacing: 1px; }
+        .author-name { font-family: 'Orbitron', monospace; font-size: 0.62em; letter-spacing: 2px; color: #a78bfa; margin-bottom: 4px; }
+.author-role { font-family: 'Exo 2', sans-serif; font-size: 0.8em; color: rgba(196,181,253,0.75); letter-spacing: 1px; }
 
         /* ════ MAIN CONTENT ════ */
         .main-content {
@@ -390,6 +390,7 @@
         .chi-i { background: linear-gradient(135deg,#ede9fe,#e0e7ff); color: #4338ca; }
         .chi-g { background: linear-gradient(135deg,#d1fae5,#a7f3d0); color: #065f46; }
         .card-head-text { font-family: 'Orbitron', monospace; font-size: 0.72em; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: #4c1d95; }
+#onu-saved-modal .card-head-text { color: #02C5A5; }
 
         .input-row { display: grid; gap: 11px; margin-bottom: 11px; }
         .col-2 { grid-template-columns: 1fr 1fr; }
@@ -466,6 +467,36 @@
         .docs-code { display: block; padding: 18px; background: #000; border: 1px solid #1e293b; border-radius: 6px; margin-bottom: 30px; white-space: pre-wrap; font-family: 'Space Mono', monospace; font-size: 0.88rem; color: #00ff00; position: relative; overflow-x: auto; line-height: 1.6; box-shadow: 0 4px 6px rgba(0,0,0,0.3), 0 0 10px rgba(0,255,0,0.1); word-break: break-word; transition: all 0.2s; }
         .docs-code:hover { border-color: #00ff9d; box-shadow: 0 8px 15px rgba(0,0,0,0.4), 0 0 15px rgba(0,255,157,0.2); transform: translateX(2px); }
         .docs-code.highlighted { background: #002200; border-color: #00ff9d; color: #fff; box-shadow: 0 0 20px rgba(0,255,157,0.4); }
+        /* ════ EDITABLE GPON COMMANDS (ADD/REMOVE) ════ */
+        .docs-cmd-item { position: relative; }
+        .docs-cmd-checkbox { display: none; position: absolute; top: 22px; right: 4px; width: 20px; height: 20px; accent-color: #ef4444; cursor: pointer; z-index: 2; }
+        .docs-card.delete-mode .docs-cmd-checkbox { display: block; }
+        .docs-card.delete-mode .docs-cmd-item { padding-right: 32px; border-radius: 8px; transition: background 0.15s ease; }
+        .docs-card.delete-mode .docs-cmd-item:hover { background: rgba(239,68,68,0.05); }
+        .docs-cmd-item.selected-for-delete { background: rgba(239,68,68,0.1); }
+        .docs-header-actions { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+        .docs-add-cmd-btn { display: inline-flex; align-items: center; gap: 5px; padding: 5px 12px; background: transparent; color: #00A36C; border: 1.5px solid #00A36C; border-radius: 14px; font-weight: 700; font-size: 0.75rem; cursor: pointer; font-family: 'Exo 2', sans-serif; transition: all 0.2s ease; white-space: nowrap; }
+        .docs-add-cmd-btn:hover { background: #00A36C; color: #fff; }
+        .docs-del-toggle-btn { display: inline-flex; align-items: center; gap: 5px; padding: 5px 12px; background: transparent; color: #ef4444; border: 1.5px solid #ef4444; border-radius: 14px; font-weight: 700; font-size: 0.75rem; cursor: pointer; font-family: 'Exo 2', sans-serif; transition: all 0.2s ease; white-space: nowrap; }
+        .docs-del-toggle-btn:hover { background: #ef4444; color: #fff; }
+        .docs-del-toggle-btn.active { background: #64748b; color: #fff; border-color: #64748b; }
+        .docs-del-confirm-btn { display: none; align-items: center; gap: 5px; padding: 5px 12px; background: #ef4444; color: #fff; border: 1.5px solid #ef4444; border-radius: 14px; font-weight: 700; font-size: 0.75rem; cursor: pointer; font-family: 'Exo 2', sans-serif; transition: all 0.2s ease; white-space: nowrap; }
+        .docs-del-confirm-btn.show { display: inline-flex; }
+        .docs-del-confirm-btn:hover { background: #dc2626; }
+        .docs-cmd-modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); display: none; align-items: center; justify-content: center; z-index: 99999; padding: 20px; }
+        .docs-cmd-modal-overlay.open { display: flex; }
+        .docs-cmd-modal { background: #fff; border-radius: 10px; padding: 26px; width: 100%; max-width: 480px; box-shadow: 0 12px 40px rgba(0,0,0,0.35); font-family: 'Exo 2', sans-serif; }
+        .docs-cmd-modal h3 { margin: 0 0 4px; color: #0f172a; font-size: 1.15rem; }
+        .docs-cmd-modal .docs-cmd-modal-sub { margin: 0 0 16px; color: #64748b; font-size: 0.85rem; }
+        .docs-cmd-modal label { display: block; font-weight: 700; color: #334155; margin-top: 14px; margin-bottom: 6px; font-size: 0.88rem; }
+        .docs-cmd-modal input, .docs-cmd-modal textarea { width: 100%; padding: 10px 12px; border: 2px solid #cbd5e1; border-radius: 6px; font-family: 'Space Mono', monospace; font-size: 0.88rem; resize: vertical; box-sizing: border-box; }
+        .docs-cmd-modal input:focus, .docs-cmd-modal textarea:focus { outline: none; border-color: #00d4ff; box-shadow: 0 0 0 3px rgba(0,212,255,0.1); }
+        .docs-cmd-modal-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 22px; }
+        .docs-cmd-modal-actions button { padding: 10px 22px; border: none; border-radius: 6px; font-weight: 700; cursor: pointer; font-family: 'Exo 2', sans-serif; font-size: 0.9rem; transition: all 0.15s ease; }
+        .docs-cmd-modal-save { background: linear-gradient(135deg, #00A36C, #00d4ff); color: #fff; }
+        .docs-cmd-modal-save:hover { transform: translateY(-1px); }
+        .docs-cmd-modal-cancel { background: #e2e8f0; color: #334155; }
+        .docs-cmd-modal-cancel:hover { background: #cbd5e1; }
         .docs-olt-table { width: 100%; border-collapse: separate; border-spacing: 0; margin-top: 10px; background: #fff; border-radius: 8px; overflow: hidden; border: 1px solid #cbd5e1; font-size: 0.9rem; }
         .docs-olt-table th, .docs-olt-table td { padding: 14px 16px; text-align: center; border-bottom: 1px solid #e2e8f0; font-family: 'Exo 2', sans-serif; }
         .docs-olt-table th { background: #f1f5f9; color: #00A36C; font-weight: 700; text-transform: uppercase; font-size: 0.9rem; border-bottom: 2px solid #cbd5e1; }
@@ -494,6 +525,15 @@
         .onu-saved-item .osi-actions button:hover { background:rgba(125,211,252,0.16); }
         .onu-saved-item .osi-actions button.osi-del:hover { background:rgba(239,68,68,0.18); border-color:rgba(239,68,68,0.4); color:#f87171; }
         .onu-saved-empty { font-family:'Rajdhani',sans-serif; font-size:0.85em; color:rgba(125,211,252,0.4); text-align:center; padding:18px 0; }
+
+        /* ── ONU saved script floating viewer ── */
+        .onu-script-view-box { background: var(--sb-bg); border: 1px solid rgba(167,139,250,0.32); }
+        .onu-view-meta { font-family:'Space Mono',monospace; font-size:0.75em; color:rgba(125,211,252,0.6); padding:0 18px; }
+        .onu-view-body { padding:12px 18px 16px; overflow-y:auto; flex:1; display:flex; flex-direction:column; gap:10px; }
+        textarea.onu-view-textarea { flex:1; min-height:220px; background:rgba(0,0,0,0.22); border:1px solid rgba(125,211,252,0.18); border-radius:10px; padding:12px 14px; font-family:'Space Mono',monospace; font-size:0.84em; font-weight:700; line-height:1.75; color:#ede9fe; resize:vertical; outline:none; }
+        textarea.onu-view-textarea:read-only { color:#ede9fe; }
+        textarea.onu-view-textarea:not(:read-only) { border-color:rgba(0,255,157,0.4); background:rgba(0,0,0,0.32); }
+        .onu-view-actions { display:flex; gap:8px; justify-content:flex-end; padding:12px 18px; border-top:1px solid rgba(125,211,252,0.14); flex-shrink:0; }
         #app-onu .card { padding: 14px 16px; }
         #app-onu .card-head { margin-bottom: 10px; padding-bottom: 8px; }
         #app-onu .input-row { gap: 8px; margin-bottom: 8px; }
@@ -1195,6 +1235,34 @@ font-weight: 700; font-weight: 600; color: #1a3a5c; font-size: 13px; }
             </div>
         </div>
 
+        <!-- ONU SAVED SCRIPT FLOATING VIEWER -->
+        <div id="onu-script-view-modal" class="onu-modal-overlay" onclick="if(event.target===this) closeOnuScriptView()">
+            <div class="onu-modal-box onu-script-view-box">
+                <div class="onu-modal-head">
+                    <div style="display:flex;align-items:center;gap:10px">
+                        <div class="ch-icon chi-v"><i class="material-icons" style="font-size:16px">terminal</i></div>
+                        <span class="card-head-text" id="onu-view-mac">MAC</span>
+                    </div>
+                    <button class="onu-modal-close" onclick="closeOnuScriptView()"><span class="material-icons">close</span></button>
+                </div>
+                <div class="onu-view-meta" id="onu-view-meta"></div>
+                <div class="onu-view-body">
+                    <textarea id="onu-view-script" class="onu-view-textarea" readonly></textarea>
+                </div>
+                <div class="onu-view-actions">
+                    <button class="btn" id="onu-view-edit-btn" style="background:rgba(125,211,252,0.14);color:#7dd3fc;box-shadow:none" onclick="toggleOnuViewEdit()">
+                        <span class="material-icons" style="font-size:16px">edit</span> Edit
+                    </button>
+                    <button class="btn btn-cpy" onclick="copyOnuViewScript()">
+                        <span class="material-icons" style="font-size:16px">content_copy</span> Copy
+                    </button>
+                    <button class="btn" style="background:rgba(239,68,68,0.18);color:#f87171;box-shadow:none" onclick="deleteOnuViewScript()">
+                        <span class="material-icons" style="font-size:16px">delete_outline</span> Delete
+                    </button>
+                </div>
+            </div>
+        </div>
+
         <!-- APP 2: LINE PROFILE -->
         <div id="app-lp" class="app-wrapper">
             <div class="app-header">
@@ -1301,7 +1369,7 @@ font-weight: 700; font-weight: 600; color: #1a3a5c; font-size: 13px; }
                 <!-- CDATA GPON Troubleshoot -->
                 <div id="d_cdata_troubleshoot" class="docs-tab-content">
                     <div class="docs-card">
-                        <div class="docs-card-header"><h2 class="docs-card-title">CDATA GPON Troubleshooting</h2></div>
+                        <div class="docs-card-header"><h2 class="docs-card-title">CDATA GPON Troubleshooting</h2><div class="docs-header-actions"><button class="docs-add-cmd-btn" onclick="openDocsCmdModal('d_cdata_troubleshoot')">➕ Add</button><button class="docs-del-toggle-btn" id="delToggle_d_cdata_troubleshoot" onclick="toggleDocsDeleteMode('d_cdata_troubleshoot')">🗑 Delete</button><button class="docs-del-confirm-btn" id="delConfirm_d_cdata_troubleshoot" onclick="deleteSelectedDocsCommands('d_cdata_troubleshoot')">✔ Delete Selected</button></div></div>
                         <div class="docs-search-wrapper"><span class="docs-search-icon">🔍</span><input type="text" class="docs-search-input" id="s_cdata_ts" placeholder="Search commands..."></div>
                         <span class="docs-cmd-label">ONU Discover check:</span><code class="docs-code">(config)# show ont autofind all brief sn-format string 
 (config)# show ont autofind all
@@ -1333,7 +1401,7 @@ font-weight: 700; font-weight: 600; color: #1a3a5c; font-size: 13px; }
                 <!-- CDATA GPON Installation -->
                 <div id="d_cdata_installation" class="docs-tab-content">
                     <div class="docs-card">
-                        <div class="docs-card-header"><h2 class="docs-card-title">CDATA GPON Installation</h2></div>
+                        <div class="docs-card-header"><h2 class="docs-card-title">CDATA GPON Installation</h2><div class="docs-header-actions"><button class="docs-add-cmd-btn" onclick="openDocsCmdModal('d_cdata_installation')">➕ Add</button><button class="docs-del-toggle-btn" id="delToggle_d_cdata_installation" onclick="toggleDocsDeleteMode('d_cdata_installation')">🗑 Delete</button><button class="docs-del-confirm-btn" id="delConfirm_d_cdata_installation" onclick="deleteSelectedDocsCommands('d_cdata_installation')">✔ Delete Selected</button></div></div>
                         <div class="docs-search-wrapper"><span class="docs-search-icon">🔍</span><input type="text" class="docs-search-input" id="s_cdata_in" placeholder="Search installation commands..."></div>
                         <span class="docs-cmd-label">VLAN Check:</span><code class="docs-code">(config)# show vlan all
 (config)# show vlan 100</code>
@@ -1367,7 +1435,7 @@ exit</code>
                 <!-- VSOL Troubleshoot -->
                 <div id="d_vsol_troubleshoot" class="docs-tab-content">
                     <div class="docs-card">
-                        <div class="docs-card-header"><h2 class="docs-card-title">VSOL &amp; ATOP Troubleshooting</h2></div>
+                        <div class="docs-card-header"><h2 class="docs-card-title">VSOL &amp; ATOP Troubleshooting</h2><div class="docs-header-actions"><button class="docs-add-cmd-btn" onclick="openDocsCmdModal('d_vsol_troubleshoot')">➕ Add</button><button class="docs-del-toggle-btn" id="delToggle_d_vsol_troubleshoot" onclick="toggleDocsDeleteMode('d_vsol_troubleshoot')">🗑 Delete</button><button class="docs-del-confirm-btn" id="delConfirm_d_vsol_troubleshoot" onclick="deleteSelectedDocsCommands('d_vsol_troubleshoot')">✔ Delete Selected</button></div></div>
                         <div class="docs-search-wrapper"><span class="docs-search-icon">🔍</span><input type="text" class="docs-search-input" id="s_vsol_ts" placeholder="Search commands..."></div>
                         <span class="docs-cmd-label">ONU Discover Check:</span><code class="docs-code">(config-pon-0/1)# show onu auto-find</code>
                         <span class="docs-cmd-label">ONU Config Check:</span><code class="docs-code">(config-pon-0/1)# show running-config onu 10</code>
@@ -1399,7 +1467,7 @@ exit</code>
                 <!-- VSOL Installation -->
                 <div id="d_vsol_installation" class="docs-tab-content">
                     <div class="docs-card">
-                        <div class="docs-card-header"><h2 class="docs-card-title">VSOL &amp; ATOP Installation</h2></div>
+                        <div class="docs-card-header"><h2 class="docs-card-title">VSOL &amp; ATOP Installation</h2><div class="docs-header-actions"><button class="docs-add-cmd-btn" onclick="openDocsCmdModal('d_vsol_installation')">➕ Add</button><button class="docs-del-toggle-btn" id="delToggle_d_vsol_installation" onclick="toggleDocsDeleteMode('d_vsol_installation')">🗑 Delete</button><button class="docs-del-confirm-btn" id="delConfirm_d_vsol_installation" onclick="deleteSelectedDocsCommands('d_vsol_installation')">✔ Delete Selected</button></div></div>
                         <div class="docs-search-wrapper"><span class="docs-search-icon">🔍</span><input type="text" class="docs-search-input" id="s_vsol_in" placeholder="Search installation commands..."></div>
                         <span class="docs-cmd-label">Show Vlan:</span><code class="docs-code">(config)# show vlan 500</code>
                         <span class="docs-cmd-label">Vlan Create:</span><code class="docs-code">(config)# vlan 500</code>
@@ -1432,7 +1500,7 @@ commit</code>
                 <!-- GPON 8 Troubleshoot -->
                 <div id="d_gpon8_troubleshoot" class="docs-tab-content">
                     <div class="docs-card">
-                        <div class="docs-card-header"><h2 class="docs-card-title">GPON 8 Port Troubleshooting</h2></div>
+                        <div class="docs-card-header"><h2 class="docs-card-title">GPON 8 Port Troubleshooting</h2><div class="docs-header-actions"><button class="docs-add-cmd-btn" onclick="openDocsCmdModal('d_gpon8_troubleshoot')">➕ Add</button><button class="docs-del-toggle-btn" id="delToggle_d_gpon8_troubleshoot" onclick="toggleDocsDeleteMode('d_gpon8_troubleshoot')">🗑 Delete</button><button class="docs-del-confirm-btn" id="delConfirm_d_gpon8_troubleshoot" onclick="deleteSelectedDocsCommands('d_gpon8_troubleshoot')">✔ Delete Selected</button></div></div>
                         <div class="docs-search-wrapper"><span class="docs-search-icon">🔍</span><input type="text" class="docs-search-input" id="s_gpon8_ts" placeholder="Search commands..."></div>
                         <span class="docs-cmd-label">ONU Discover:</span><code class="docs-code">(config-interface-gpon)# show ont autofind all</code>
                         <span class="docs-cmd-label">ALL ONU Details:</span><code class="docs-code">(config)# show saved-config</code>
@@ -1453,7 +1521,7 @@ commit</code>
                 <!-- GPON 8 Installation -->
                 <div id="d_gpon8_installation" class="docs-tab-content">
                     <div class="docs-card">
-                        <div class="docs-card-header"><h2 class="docs-card-title">GPON 8 Port Installation</h2></div>
+                        <div class="docs-card-header"><h2 class="docs-card-title">GPON 8 Port Installation</h2><div class="docs-header-actions"><button class="docs-add-cmd-btn" onclick="openDocsCmdModal('d_gpon8_installation')">➕ Add</button><button class="docs-del-toggle-btn" id="delToggle_d_gpon8_installation" onclick="toggleDocsDeleteMode('d_gpon8_installation')">🗑 Delete</button><button class="docs-del-confirm-btn" id="delConfirm_d_gpon8_installation" onclick="deleteSelectedDocsCommands('d_gpon8_installation')">✔ Delete Selected</button></div></div>
                         <div class="docs-search-wrapper"><span class="docs-search-icon">🔍</span><input type="text" class="docs-search-input" id="s_gpon8_in" placeholder="Search installation commands..."></div>
                         <span class="docs-cmd-label">VLAN Add:</span><code class="docs-code">(config)#vlan 748</code>
                         <span class="docs-cmd-label">VLAN Tagg on Uplink port [GE]:</span><code class="docs-code">Dilkusha_GPON-01(config)# interface ge
@@ -1787,6 +1855,22 @@ system\configure# pon on 1 1</code>
 
     <div class="toast" id="toast"></div>
 
+    <!-- ════ ADD COMMAND MODAL (GPON OLT Troubleshoot/Installation) ════ -->
+    <div class="docs-cmd-modal-overlay" id="docsCmdModalOverlay" onclick="if(event.target===this) closeDocsCmdModal();">
+        <div class="docs-cmd-modal">
+            <h3>➕ Add Command</h3>
+            <p class="docs-cmd-modal-sub">This will be added to the current section only.</p>
+            <label for="docsCmdLabelInput">Label / Title</label>
+            <input type="text" id="docsCmdLabelInput" placeholder="e.g. ONU Signal Check">
+            <label for="docsCmdCodeInput">Command(s)</label>
+            <textarea id="docsCmdCodeInput" rows="4" placeholder="e.g. (config-interface-gpon-0/0)# show ont optical-info 1 1"></textarea>
+            <div class="docs-cmd-modal-actions">
+                <button class="docs-cmd-modal-cancel" onclick="closeDocsCmdModal()">Cancel</button>
+                <button class="docs-cmd-modal-save" onclick="saveDocsCommand()">Save Command</button>
+            </div>
+        </div>
+    </div>
+
     <script>
     // ════ RADIO DATA ════
     const radioData = {
@@ -1906,6 +1990,7 @@ system\configure# pon on 1 1</code>
         subnav.classList.add('open');
         if (window.innerWidth <= 700 && backdrop) backdrop.classList.add('open');
         setupAllSearches();
+        initEditableDocsSections();
     }
 
     function switchToRadioTab(btn) {
@@ -2473,7 +2558,7 @@ script += `onu ${onuId} eth ${i} upstream-rate-limit cir ${vsol_bw} pir ${vsol_b
             const nameEsc = escapeHtml(item.name);
             const metaEsc = escapeHtml(`${item.oltType} · PON ${item.pon} · ONU ${item.onuId} · ${dateStr}`);
             return `<div class="onu-saved-item">
-                <div class="osi-info" onclick="loadOnuSaved('${item.id}')" title="Click to load into output">
+                <div class="osi-info" onclick="openOnuScriptView('${item.id}')" title="Click to view full script">
                     <div class="osi-name">${nameEsc}</div>
                     <div class="osi-meta">${metaEsc}</div>
                 </div>
@@ -2483,6 +2568,71 @@ script += `onu ${onuId} eth ${i} upstream-rate-limit cir ${vsol_bw} pir ${vsol_b
                 </div>
             </div>`;
         }).join('');
+    }
+
+    let onuViewCurrentId = null;
+
+    function openOnuScriptView(id) {
+        const item = getOnuSaved().find(s => s.id === id);
+        if (!item) return;
+        onuViewCurrentId = id;
+        document.getElementById('onu-view-mac').textContent = item.name;
+        const d = new Date(item.savedAt);
+        const dateStr = isNaN(d) ? '' : d.toLocaleString();
+        document.getElementById('onu-view-meta').textContent = `${item.oltType} · PON ${item.pon} · ONU ${item.onuId} · ${dateStr}`;
+        const ta = document.getElementById('onu-view-script');
+        ta.value = item.script;
+        ta.readOnly = true;
+        document.getElementById('onu-view-edit-btn').innerHTML = '<span class="material-icons" style="font-size:16px">edit</span> Edit';
+        document.getElementById('onu-script-view-modal').classList.add('open');
+    }
+
+    function closeOnuScriptView() {
+        document.getElementById('onu-script-view-modal').classList.remove('open');
+        onuViewCurrentId = null;
+    }
+
+    function toggleOnuViewEdit() {
+        const ta = document.getElementById('onu-view-script');
+        const btn = document.getElementById('onu-view-edit-btn');
+        if (ta.readOnly) {
+            ta.readOnly = false;
+            ta.focus();
+            btn.innerHTML = '<span class="material-icons" style="font-size:16px">save</span> Save';
+        } else {
+            const list = getOnuSaved();
+            const idx = list.findIndex(s => s.id === onuViewCurrentId);
+            if (idx !== -1) {
+                list[idx].script = ta.value;
+                setOnuSaved(list);
+                renderOnuSaved();
+                showToast('Script updated');
+            }
+            ta.readOnly = true;
+            btn.innerHTML = '<span class="material-icons" style="font-size:16px">edit</span> Edit';
+        }
+    }
+
+    function copyOnuViewScript() {
+        const ta = document.getElementById('onu-view-script');
+        const finish = () => showToast('Copied');
+        if (navigator.clipboard && navigator.clipboard.writeText && window.isSecureContext) {
+            navigator.clipboard.writeText(ta.value).then(finish).catch(() => fallbackCopyText(ta.value, finish));
+        } else {
+            fallbackCopyText(ta.value, finish);
+        }
+    }
+
+    function deleteOnuViewScript() {
+        if (!onuViewCurrentId) return;
+        const list = getOnuSaved();
+        const item = list.find(s => s.id === onuViewCurrentId);
+        if (!item) return;
+        if (!window.confirm(`Delete "${item.name}"?`)) return;
+        setOnuSaved(list.filter(s => s.id !== onuViewCurrentId));
+        renderOnuSaved();
+        closeOnuScriptView();
+        showToast('Deleted');
     }
 
     function escapeHtml(str) {
@@ -2658,6 +2808,177 @@ script += `onu ${onuId} eth ${i} upstream-rate-limit cir ${vsol_bw} pir ${vsol_b
             });
         });
     }
+
+    // ════ GPON OLT DOCS — ADD / REMOVE COMMANDS (checkbox select system) ════
+    const EDITABLE_DOCS_SECTIONS = ['d_cdata_troubleshoot','d_cdata_installation','d_vsol_troubleshoot','d_vsol_installation','d_gpon8_troubleshoot','d_gpon8_installation'];
+    let currentDocsCmdSection = null;
+
+    function docsDeletedKey(sectionId) { return 'docsDeleted_' + sectionId; }
+    function docsCustomKey(sectionId) { return 'docsCustom_' + sectionId; }
+
+    function getDocsDeleted(sectionId) {
+        try { return JSON.parse(localStorage.getItem(docsDeletedKey(sectionId))) || []; } catch (e) { return []; }
+    }
+    function getDocsCustom(sectionId) {
+        try { return JSON.parse(localStorage.getItem(docsCustomKey(sectionId))) || []; } catch (e) { return []; }
+    }
+
+    function buildDocsCmdCheckbox(item) {
+        const chk = document.createElement('input');
+        chk.type = 'checkbox';
+        chk.className = 'docs-cmd-checkbox';
+        chk.onchange = function() { item.classList.toggle('selected-for-delete', chk.checked); };
+        return chk;
+    }
+
+    function buildDocsCmdItem(uid, label, codeText, isCustom) {
+        const item = document.createElement('div');
+        item.className = 'docs-cmd-item';
+        item.dataset.uid = uid;
+        item.dataset.custom = isCustom ? '1' : '0';
+        const lbl = document.createElement('span');
+        lbl.className = 'docs-cmd-label';
+        lbl.textContent = label;
+        const code = document.createElement('code');
+        code.className = 'docs-code';
+        code.textContent = codeText;
+        item.appendChild(lbl);
+        item.appendChild(code);
+        item.appendChild(buildDocsCmdCheckbox(item));
+        return item;
+    }
+
+    function initEditableDocsSections() {
+        EDITABLE_DOCS_SECTIONS.forEach(sectionId => {
+            const section = document.getElementById(sectionId);
+            if (!section) return;
+            const card = section.querySelector('.docs-card');
+            if (!card || card.dataset.docsEditInit === '1') return;
+            card.dataset.docsEditInit = '1';
+
+            // Wrap existing default label/code pairs into selectable items
+            const labels = Array.from(card.querySelectorAll('.docs-cmd-label'));
+            const deleted = getDocsDeleted(sectionId);
+            labels.forEach((lbl, idx) => {
+                const code = lbl.nextElementSibling;
+                if (!code || !code.classList.contains('docs-code')) return;
+                const uid = sectionId + '_d' + idx;
+                const item = document.createElement('div');
+                item.className = 'docs-cmd-item';
+                item.dataset.uid = uid;
+                item.dataset.custom = '0';
+                lbl.parentNode.insertBefore(item, lbl);
+                item.appendChild(lbl);
+                item.appendChild(code);
+                item.appendChild(buildDocsCmdCheckbox(item));
+                if (deleted.includes(uid)) item.style.display = 'none';
+            });
+
+            // Render any previously-added custom commands
+            const customCmds = getDocsCustom(sectionId);
+            customCmds.forEach(entry => {
+                const item = buildDocsCmdItem(entry.uid, entry.label, entry.code, true);
+                card.appendChild(item);
+            });
+        });
+    }
+
+    function openDocsCmdModal(sectionId) {
+        currentDocsCmdSection = sectionId;
+        document.getElementById('docsCmdLabelInput').value = '';
+        document.getElementById('docsCmdCodeInput').value = '';
+        document.getElementById('docsCmdModalOverlay').classList.add('open');
+        setTimeout(() => document.getElementById('docsCmdLabelInput').focus(), 50);
+    }
+
+    function closeDocsCmdModal() {
+        document.getElementById('docsCmdModalOverlay').classList.remove('open');
+        currentDocsCmdSection = null;
+    }
+
+    function saveDocsCommand() {
+        const label = document.getElementById('docsCmdLabelInput').value.trim();
+        const code = document.getElementById('docsCmdCodeInput').value.trim();
+        if (!label || !code) { showToast('Label and Command are required!', 'error'); return; }
+        const sectionId = currentDocsCmdSection;
+        if (!sectionId) return;
+        const uid = sectionId + '_c' + Date.now();
+        const customCmds = getDocsCustom(sectionId);
+        customCmds.push({ uid, label, code });
+        localStorage.setItem(docsCustomKey(sectionId), JSON.stringify(customCmds));
+
+        const card = document.getElementById(sectionId).querySelector('.docs-card');
+        const item = buildDocsCmdItem(uid, label, code, true);
+        card.appendChild(item);
+
+        closeDocsCmdModal();
+        showToast('Command added!');
+    }
+
+    // Toggle checkbox "select to delete" mode for a section
+    function toggleDocsDeleteMode(sectionId) {
+        const card = document.getElementById(sectionId).querySelector('.docs-card');
+        const toggleBtn = document.getElementById('delToggle_' + sectionId);
+        const confirmBtn = document.getElementById('delConfirm_' + sectionId);
+        const active = card.classList.toggle('delete-mode');
+        if (active) {
+            toggleBtn.textContent = '✕ Cancel';
+            toggleBtn.classList.add('active');
+            confirmBtn.classList.add('show');
+            updateDocsDeleteCount(sectionId);
+        } else {
+            toggleBtn.textContent = '🗑 Delete';
+            toggleBtn.classList.remove('active');
+            confirmBtn.classList.remove('show');
+            card.querySelectorAll('.docs-cmd-checkbox').forEach(c => { c.checked = false; });
+            card.querySelectorAll('.docs-cmd-item.selected-for-delete').forEach(i => i.classList.remove('selected-for-delete'));
+        }
+    }
+
+    function updateDocsDeleteCount(sectionId) {
+        const card = document.getElementById(sectionId).querySelector('.docs-card');
+        const confirmBtn = document.getElementById('delConfirm_' + sectionId);
+        const n = card.querySelectorAll('.docs-cmd-checkbox:checked').length;
+        confirmBtn.textContent = n > 0 ? ('✔ Delete Selected (' + n + ')') : '✔ Delete Selected';
+    }
+
+    function deleteSelectedDocsCommands(sectionId) {
+        const card = document.getElementById(sectionId).querySelector('.docs-card');
+        const checked = Array.from(card.querySelectorAll('.docs-cmd-checkbox:checked'));
+        if (checked.length === 0) { showToast('No command selected!', 'error'); return; }
+        if (!confirm('Delete ' + checked.length + ' selected command(s)?')) return;
+
+        const deleted = getDocsDeleted(sectionId);
+        let customCmds = getDocsCustom(sectionId);
+
+        checked.forEach(chk => {
+            const item = chk.closest('.docs-cmd-item');
+            const uid = item.dataset.uid;
+            if (item.dataset.custom === '1') {
+                customCmds = customCmds.filter(c => c.uid !== uid);
+            } else if (!deleted.includes(uid)) {
+                deleted.push(uid);
+            }
+            item.remove();
+        });
+
+        localStorage.setItem(docsDeletedKey(sectionId), JSON.stringify(deleted));
+        localStorage.setItem(docsCustomKey(sectionId), JSON.stringify(customCmds));
+
+        showToast(checked.length + ' command(s) removed!');
+        toggleDocsDeleteMode(sectionId); // exit select mode
+    }
+
+    // Live-update the "Delete Selected" count whenever a checkbox changes, using event delegation
+    document.addEventListener('change', function(e) {
+        if (e.target && e.target.classList && e.target.classList.contains('docs-cmd-checkbox')) {
+            const card = e.target.closest('.docs-card');
+            if (card && card.id !== undefined) {
+                const sectionEl = card.closest('.docs-tab-content');
+                if (sectionEl) updateDocsDeleteCount(sectionEl.id);
+            }
+        }
+    });
 
     // ════ BTS INFO DATA ════
     const btsData = [
