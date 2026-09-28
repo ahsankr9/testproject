@@ -3887,7 +3887,10 @@ script += `onu ${onuId} eth ${i} upstream-rate-limit cir ${vsol_bw} pir ${vsol_b
             renderOltIps();
         }
     };
-    Object.keys(CLOUD).forEach(k => Object.assign(CLOUD[k], { ready: false, dirty: false, timer: null, es: null, pulling: false }));
+    // "Unsent local edits" flag is kept in localStorage so a refresh can never throw away an edit that has not reached the cloud yet.
+    function cloudGetDirty(n) { try { return localStorage.getItem('nms_cloud_dirty_' + n) === '1'; } catch (e) { return false; } }
+    function cloudSetDirty(n, on) { try { if (on) localStorage.setItem('nms_cloud_dirty_' + n, '1'); else localStorage.removeItem('nms_cloud_dirty_' + n); } catch (e) {} }
+    Object.keys(CLOUD).forEach(k => Object.assign(CLOUD[k], { ready: false, dirty: cloudGetDirty(k), timer: null, es: null, pulling: false }));
 
     // Load every collection from this device's storage first, so the first sync never seeds/overwrites with page defaults.
     function loadAllLocal() {
@@ -3924,9 +3927,10 @@ script += `onu ${onuId} eth ${i} upstream-rate-limit cir ${vsol_bw} pir ${vsol_b
         if (c.pulling) { c.repull = true; return; }
         c.pulling = true;
         try {
+            const v0 = c.ver || 0;
             const res = await fetch(cloudUrl(name), { cache: 'no-store' });
             if (!res.ok) { cloudFail(res); return; }
-            if (c.dirty || c.pendingPush) {                 // unsent local edits win: send them first, never overwrite them
+            if (c.dirty || c.pendingPush || (c.ver || 0) !== v0) {   // unsent local edits win: send them first, never overwrite them
                 clearTimeout(c.timer); c.ready = true;
                 await cloudPushNow(name); return;
             }
@@ -3945,6 +3949,7 @@ script += `onu ${onuId} eth ${i} upstream-rate-limit cir ${vsol_bw} pir ${vsol_b
         finally { c.pulling = false; if (c.repull) { c.repull = false; cloudPull(name); } }
     }
 
+    let cloudPushWarned = false;
     async function cloudPushNow(name) {
         const c = CLOUD[name];
         const v = c.ver || 0;
@@ -3955,16 +3960,33 @@ script += `onu ${onuId} eth ${i} upstream-rate-limit cir ${vsol_bw} pir ${vsol_b
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ data: c.local(), updatedAt: Date.now() })
             });
-            if (!res.ok) { c.dirty = true; cloudFail(res); return; }
-            if ((c.ver || 0) === v) c.dirty = false;        // only clear if nothing changed while sending
+            if (!res.ok) { c.dirty = true; cloudFail(res); cloudPushAlert(res.status); return; }
+            if ((c.ver || 0) === v) { c.dirty = false; cloudSetDirty(name, false); }   // only clear if nothing changed while sending
+            cloudPushWarned = false;
             cloudSetStatus('live');
-        } catch (e) { c.dirty = true; cloudFail(null, e); }
+        } catch (e) { c.dirty = true; cloudFail(null, e); cloudPushAlert(0); }
     }
+    function cloudPushAlert(status) {
+        if (cloudPushWarned) return;
+        cloudPushWarned = true;
+        showToast(status === 401 || status === 403 ? 'Cloud REFUSED the save (' + status + ') - check Firebase rules. Saved on this device only.' : 'Cloud save failed - saved on this device, will retry.', 'error');
+    }
+    // If the page is closed/refreshed within the 300ms debounce, fire the save right now.
+    function cloudFlush() {
+        Object.keys(CLOUD).forEach(n => {
+            const c = CLOUD[n];
+            if (!c.pendingPush) return;
+            clearTimeout(c.timer); c.pendingPush = false;
+            try { fetch(cloudUrl(n), { method: 'PUT', keepalive: true, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ data: c.local(), updatedAt: Date.now() }) }).then(r => { if (r.ok) cloudSetDirty(n, false); }).catch(() => {}); } catch (e) {}
+        });
+    }
+    window.addEventListener('pagehide', cloudFlush);
+    document.addEventListener('visibilitychange', () => { if (document.hidden) cloudFlush(); });
 
     function cloudPush(name) {
         const c = CLOUD[name];
         if (!c) return;
-        c.ver = (c.ver || 0) + 1; c.dirty = true;
+        c.ver = (c.ver || 0) + 1; c.dirty = true; cloudSetDirty(name, true);
         if (!c.ready) return;                               // first pull not done yet: it will send this
         c.pendingPush = true;
         clearTimeout(c.timer);
