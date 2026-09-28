@@ -2048,6 +2048,15 @@ system\configure# pon on 1 1</code>
     </div>
 
     <script>
+    // If the host blocks localStorage (sandboxed iframe, some in-app browsers), use memory instead so nothing crashes and the cloud still gets every edit.
+    (function () {
+        try { localStorage.setItem('__t', '1'); localStorage.removeItem('__t'); return; } catch (e) {}
+        const m = {};
+        const mem = { getItem: k => (k in m ? m[k] : null), setItem: (k, v) => { m[k] = String(v); }, removeItem: k => { delete m[k]; },
+                      key: i => Object.keys(m)[i] || null, clear() { for (const k in m) delete m[k]; }, get length() { return Object.keys(m).length; } };
+        try { Object.defineProperty(window, 'localStorage', { value: mem, configurable: true }); } catch (e2) {}
+        window.__memStorage = true;
+    })();
     // ════ RADIO DATA ════
     const radioData = {
         malek: {
@@ -4023,24 +4032,30 @@ script += `onu ${onuId} eth ${i} upstream-rate-limit cir ${vsol_bw} pir ${vsol_b
         log('Page: ' + location.origin + location.pathname + '   (data on this device is kept per web address)');
         let lsOk = false;
         try { localStorage.setItem('nms_t', '1'); lsOk = localStorage.getItem('nms_t') === '1'; localStorage.removeItem('nms_t'); } catch (e) {}
-        log('Device storage: ' + (lsOk ? 'OK' : 'BLOCKED - edits cannot be kept on this device'));
+        log('Device storage: ' + (lsOk && !window.__memStorage ? 'OK' : 'BLOCKED by this host - edits live only in the cloud, so cloud writes MUST work'));
         log('');
+        let bad = false;
         for (const name of Object.keys(CLOUD)) {
             const c = CLOUD[name]; let line = name + ': ';
             try {
                 const g = await fetch(cloudUrl(name), { cache: 'no-store' });
-                if (!g.ok) { line += 'READ FAILED ' + g.status + ' ' + await cloudErrText(g); log(line); continue; }
+                if (!g.ok) { bad = true; line += 'READ FAILED ' + g.status + ' ' + await cloudErrText(g); log(line); continue; }
                 const remote = await g.json();
                 const rc = remote && remote.data !== undefined ? cloudCount(name, c.normalize(remote.data)) : 0;
                 const lc = cloudCount(name, c.normalize(c.local()));
                 line += 'read OK (cloud ' + rc + ', this device ' + lc + ')';
                 const probe = CLOUD_DB_URL + '/' + CLOUD_ROOT + '/' + name + '/_probe.json';
                 const p = await fetch(probe, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(Date.now()) });
-                if (!p.ok) line += ' | WRITE DENIED ' + p.status + ' ' + await cloudErrText(p);
+                if (!p.ok) { bad = true; line += ' | WRITE DENIED ' + p.status + ' ' + await cloudErrText(p); }
                 else { line += ' | write OK'; await fetch(probe, { method: 'DELETE' }).catch(() => {}); }
                 if (c.dirty) line += ' | UNSENT edits on this device';
-            } catch (e) { line += 'network error (' + e.message + ')'; }
+            } catch (e) { bad = true; line += 'network error (' + e.message + ')'; }
             log(line);
+        }
+        if (bad) {
+            log('\nFIX: Firebase console > Build > Realtime Database > Rules, replace with the text below, then press Publish:');
+            log('{ "rules": { "mzr": { ".read": true, ".write": true } } }');
+            log('If it says "network error": the database URL/region in the file is wrong (non-US databases end in .firebasedatabase.app).');
         }
     }
     function closeCloudCheck() { const o = document.getElementById('cloud-check-overlay'); if (o) o.classList.remove('open'); }
