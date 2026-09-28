@@ -1121,6 +1121,9 @@ font-weight: 700; font-weight: 600; color: #1a3a5c; font-size: 13px; }
             .nav-btn, .nav-group-header { min-height: 42px; }
             .radio-client-list { max-height: 60vh; }
         }
+#cloud-badge{position:fixed;right:10px;bottom:calc(10px + env(safe-area-inset-bottom,0px));z-index:1500;display:flex;align-items:center;gap:6px;padding:4px 10px;border-radius:20px;background:rgba(15,23,42,.82);color:#e2e8f0;font:700 11px 'Rajdhani',sans-serif;letter-spacing:.6px;cursor:pointer;box-shadow:0 2px 10px rgba(0,0,0,.25);opacity:.85;-webkit-user-select:none;user-select:none}
+#cloud-badge::before{content:'';width:8px;height:8px;border-radius:50%;background:var(--c,#f59e0b);box-shadow:0 0 6px var(--c,#f59e0b)}
+#cloud-badge:hover{opacity:1}
 </style>
 </head>
 <body>
@@ -1482,23 +1485,13 @@ font-weight: 700; font-weight: 600; color: #1a3a5c; font-size: 13px; }
                 <!-- OLT IPs -->
                 <div id="d_olt_ips" class="docs-tab-content active">
                     <div class="docs-card">
-                        <div class="docs-card-header"><h2 class="docs-card-title">OLT IP Info</h2></div>
+                        <div class="docs-card-header"><h2 class="docs-card-title">OLT IP Info</h2><div class="docs-header-actions"><button class="docs-add-cmd-btn" onclick="openOltIpModal('add')">➕ Add OLT</button></div></div>
                         <div class="olt-filter-wrap">
                             <label class="olt-filter-label">Filter by BTS Location</label>
-                            <select class="docs-olt-select" id="docs-olt-bts-select" onchange="filterDocsOltIps()">
-                                <option value="all">All BTS Info</option>
-                                <option value="Malek Mansion BTS">Malek Mansion BTS</option>
-                                <option value="Dilkusha BTS">Dilkusha BTS</option>
-                                <option value="Jatrabari BTS">Jatrabari BTS</option>
-                                <option value="Wari BTS">Wari BTS</option>
-                                <option value="Segunbagicha BTS">Segunbagicha BTS</option>
-                                <option value="Eskaton BTS">Eskaton BTS</option>
-                                <option value="Imamganj BTS">Imamganj BTS</option>
-                                <option value="Shahjahanpur BTS">Shahjahanpur BTS</option>
-                            </select>
+                            <select class="docs-olt-select" id="docs-olt-bts-select" onchange="filterDocsOltIps()"><option value="all">All BTS Info</option></select>
                         </div>
                         <table class="docs-olt-table">
-                            <thead><tr><th>OLT Name</th><th>OLT IP</th><th>Uplink Port</th></tr></thead>
+                            <thead><tr><th>OLT Name</th><th>OLT IP</th><th>Uplink Port</th><th>Actions</th></tr></thead>
                             <tbody id="docs-olt-ip-tbody">
                                 <tr data-bts="Malek Mansion BTS"><td>Malek_CDATA_1</td><td>10.49.10.162</td><td>100.64.167.14 [Eth1/31]</td></tr>
                                 <tr data-bts="Malek Mansion BTS"><td>Malek_VSOL_2</td><td>10.49.10.166</td><td>100.64.167.14 [Eth1/7]</td></tr>
@@ -1699,7 +1692,7 @@ exit</code>
                 <!-- UTSTAR Troubleshoot -->
                 <div id="d_utstar_troubleshoot" class="docs-tab-content">
                     <div class="docs-card">
-                        <div class="docs-card-header"><h2 class="docs-card-title">EPON UTSTAR Troubleshooting</h2></div>
+                        <div class="docs-card-header"><h2 class="docs-card-title">EPON UTSTAR Troubleshooting</h2><div class="docs-header-actions"><button class="docs-add-cmd-btn" onclick="openDocsCmdModal('d_utstar_troubleshoot')">➕ Add</button><button class="docs-edit-toggle-btn" id="editToggle_d_utstar_troubleshoot" onclick="toggleDocsEditMode('d_utstar_troubleshoot')">✏️ Edit</button><button class="docs-edit-confirm-btn" id="editConfirm_d_utstar_troubleshoot" onclick="confirmDocsEdit('d_utstar_troubleshoot')">✔ Edit Selected</button><button class="docs-del-toggle-btn" id="delToggle_d_utstar_troubleshoot" onclick="toggleDocsDeleteMode('d_utstar_troubleshoot')">🗑 Delete</button><button class="docs-del-confirm-btn" id="delConfirm_d_utstar_troubleshoot" onclick="deleteSelectedDocsCommands('d_utstar_troubleshoot')">✔ Delete Selected</button></div></div>
                         <div class="docs-search-wrapper"><span class="docs-search-icon">🔍</span><input type="text" class="docs-search-input" id="s_utstar_ts" placeholder="Search commands..."></div>
                         <span class="docs-cmd-label">Find unbound ONU:</span><code class="docs-code">(config-t)# show interface epon-olt 1/4 onu-unbound</code>
                         <span class="docs-cmd-label">ONU Status check:</span><code class="docs-code">(config-t)# show interface epon-olt 1/1 onu 63 summary
@@ -1722,7 +1715,7 @@ telnet@Malek_VSOL# (config-mgmt)# save</code>
                 <!-- UTSTAR Installation -->
                 <div id="d_utstar_installation" class="docs-tab-content">
                     <div class="docs-card">
-                        <div class="docs-card-header"><h2 class="docs-card-title">EPON UTSTAR Installation</h2></div>
+                        <div class="docs-card-header"><h2 class="docs-card-title">EPON UTSTAR Installation</h2><div class="docs-header-actions"><button class="docs-add-cmd-btn" onclick="openDocsCmdModal('d_utstar_installation')">➕ Add</button><button class="docs-edit-toggle-btn" id="editToggle_d_utstar_installation" onclick="toggleDocsEditMode('d_utstar_installation')">✏️ Edit</button><button class="docs-edit-confirm-btn" id="editConfirm_d_utstar_installation" onclick="confirmDocsEdit('d_utstar_installation')">✔ Edit Selected</button><button class="docs-del-toggle-btn" id="delToggle_d_utstar_installation" onclick="toggleDocsDeleteMode('d_utstar_installation')">🗑 Delete</button><button class="docs-del-confirm-btn" id="delConfirm_d_utstar_installation" onclick="deleteSelectedDocsCommands('d_utstar_installation')">✔ Delete Selected</button></div></div>
                         <div class="docs-search-wrapper"><span class="docs-search-icon">🔍</span><input type="text" class="docs-search-input" id="s_utstar_in" placeholder="Search installation commands..."></div>
                         <span class="docs-cmd-label">Show Vlan:</span><code class="docs-code">(config-t)# show vlan 291</code>
                         <span class="docs-cmd-label">Vlan Create:</span><code class="docs-code">(config-t)# vlan 291
@@ -1734,7 +1727,7 @@ telnet@Malek_VSOL# (config-mgmt)# save</code>
                 <!-- PHYHOME Troubleshoot -->
                 <div id="d_phyhome_troubleshoot" class="docs-tab-content">
                     <div class="docs-card">
-                        <div class="docs-card-header"><h2 class="docs-card-title">EPON PHYHOME Troubleshooting</h2></div>
+                        <div class="docs-card-header"><h2 class="docs-card-title">EPON PHYHOME Troubleshooting</h2><div class="docs-header-actions"><button class="docs-add-cmd-btn" onclick="openDocsCmdModal('d_phyhome_troubleshoot')">➕ Add</button><button class="docs-edit-toggle-btn" id="editToggle_d_phyhome_troubleshoot" onclick="toggleDocsEditMode('d_phyhome_troubleshoot')">✏️ Edit</button><button class="docs-edit-confirm-btn" id="editConfirm_d_phyhome_troubleshoot" onclick="confirmDocsEdit('d_phyhome_troubleshoot')">✔ Edit Selected</button><button class="docs-del-toggle-btn" id="delToggle_d_phyhome_troubleshoot" onclick="toggleDocsDeleteMode('d_phyhome_troubleshoot')">🗑 Delete</button><button class="docs-del-confirm-btn" id="delConfirm_d_phyhome_troubleshoot" onclick="deleteSelectedDocsCommands('d_phyhome_troubleshoot')">✔ Delete Selected</button></div></div>
                         <div class="docs-search-wrapper"><span class="docs-search-icon">🔍</span><input type="text" class="docs-search-input" id="s_phyhome_ts" placeholder="Search commands..."></div>
                         <span class="docs-cmd-label">Show All ONU in OLT:</span><code class="docs-code">>ont
 ont# display ont-auth-info slotno 1</code>
@@ -1753,7 +1746,7 @@ system\configure# pon on 1 1</code>
                 <!-- PHYHOME Installation -->
                 <div id="d_phyhome_installation" class="docs-tab-content">
                     <div class="docs-card">
-                        <div class="docs-card-header"><h2 class="docs-card-title">EPON PHYHOME Installation</h2></div>
+                        <div class="docs-card-header"><h2 class="docs-card-title">EPON PHYHOME Installation</h2><div class="docs-header-actions"><button class="docs-add-cmd-btn" onclick="openDocsCmdModal('d_phyhome_installation')">➕ Add</button><button class="docs-edit-toggle-btn" id="editToggle_d_phyhome_installation" onclick="toggleDocsEditMode('d_phyhome_installation')">✏️ Edit</button><button class="docs-edit-confirm-btn" id="editConfirm_d_phyhome_installation" onclick="confirmDocsEdit('d_phyhome_installation')">✔ Edit Selected</button><button class="docs-del-toggle-btn" id="delToggle_d_phyhome_installation" onclick="toggleDocsDeleteMode('d_phyhome_installation')">🗑 Delete</button><button class="docs-del-confirm-btn" id="delConfirm_d_phyhome_installation" onclick="deleteSelectedDocsCommands('d_phyhome_installation')">✔ Delete Selected</button></div></div>
                         <div class="docs-search-wrapper"><span class="docs-search-icon">🔍</span><input type="text" class="docs-search-input" id="s_phyhome_in" placeholder="Search installation commands..."></div>
                         <span class="docs-cmd-label">Vlan Check:</span><code class="docs-code">vlan# display vlan-database</code>
                         <span class="docs-cmd-label">Vlan Create:</span><code class="docs-code">vlan#vlan-database data Internet 428 6:1 tagged</code>
@@ -1762,7 +1755,7 @@ system\configure# pon on 1 1</code>
                 <!-- FHNET Troubleshoot -->
                 <div id="d_fhnet_troubleshoot" class="docs-tab-content">
                     <div class="docs-card">
-                        <div class="docs-card-header"><h2 class="docs-card-title">EPON FHNET Troubleshooting</h2></div>
+                        <div class="docs-card-header"><h2 class="docs-card-title">EPON FHNET Troubleshooting</h2><div class="docs-header-actions"><button class="docs-add-cmd-btn" onclick="openDocsCmdModal('d_fhnet_troubleshoot')">➕ Add</button><button class="docs-edit-toggle-btn" id="editToggle_d_fhnet_troubleshoot" onclick="toggleDocsEditMode('d_fhnet_troubleshoot')">✏️ Edit</button><button class="docs-edit-confirm-btn" id="editConfirm_d_fhnet_troubleshoot" onclick="confirmDocsEdit('d_fhnet_troubleshoot')">✔ Edit Selected</button><button class="docs-del-toggle-btn" id="delToggle_d_fhnet_troubleshoot" onclick="toggleDocsDeleteMode('d_fhnet_troubleshoot')">🗑 Delete</button><button class="docs-del-confirm-btn" id="delConfirm_d_fhnet_troubleshoot" onclick="deleteSelectedDocsCommands('d_fhnet_troubleshoot')">✔ Delete Selected</button></div></div>
                         <div class="docs-search-wrapper"><span class="docs-search-icon">🔍</span><input type="text" class="docs-search-input" id="s_fhnet_ts" placeholder="Search commands..."></div>
                         <span class="docs-cmd-label">ONU Discover (Auto Bind) &amp; ONU status Check:</span><code class="docs-code">(config)#show onu-status</code>
                         <span class="docs-cmd-label">ALL interface status:</span><code class="docs-code">(config)# show interface brief</code>
@@ -1781,7 +1774,7 @@ system\configure# pon on 1 1</code>
                 <!-- FHNET Installation -->
                 <div id="d_fhnet_installation" class="docs-tab-content">
                     <div class="docs-card">
-                        <div class="docs-card-header"><h2 class="docs-card-title">EPON FHNET Installation</h2></div>
+                        <div class="docs-card-header"><h2 class="docs-card-title">EPON FHNET Installation</h2><div class="docs-header-actions"><button class="docs-add-cmd-btn" onclick="openDocsCmdModal('d_fhnet_installation')">➕ Add</button><button class="docs-edit-toggle-btn" id="editToggle_d_fhnet_installation" onclick="toggleDocsEditMode('d_fhnet_installation')">✏️ Edit</button><button class="docs-edit-confirm-btn" id="editConfirm_d_fhnet_installation" onclick="confirmDocsEdit('d_fhnet_installation')">✔ Edit Selected</button><button class="docs-del-toggle-btn" id="delToggle_d_fhnet_installation" onclick="toggleDocsDeleteMode('d_fhnet_installation')">🗑 Delete</button><button class="docs-del-confirm-btn" id="delConfirm_d_fhnet_installation" onclick="deleteSelectedDocsCommands('d_fhnet_installation')">✔ Delete Selected</button></div></div>
                         <div class="docs-search-wrapper"><span class="docs-search-icon">🔍</span><input type="text" class="docs-search-input" id="s_fhnet_in" placeholder="Search installation commands..."></div>
                         <span class="docs-cmd-label">Vlan Create:</span><code class="docs-code">(config)# vlan 2000
 (config-if-vlan)#switchport all</code>
@@ -2013,6 +2006,30 @@ system\configure# pon on 1 1</code>
     </main>
 
     <div class="toast" id="toast"></div>
+
+    <!-- OLT IP ADD/EDIT MODAL -->
+    <div class="radio-modal-overlay" id="oltIpModalOverlay">
+        <div class="radio-modal">
+            <div class="radio-modal-header" style="background:linear-gradient(135deg,#00A36C 0%,#00d4ff 100%);">
+                <h3 id="oltIpModalTitle">ADD OLT</h3>
+                <button class="radio-modal-close" onclick="closeOltIpModal()"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="radio-modal-body">
+                <div class="radio-form-row full"><div class="radio-form-group"><label>BTS Location *</label>
+                    <input type="text" id="of-bts" list="of-bts-list" placeholder="e.g. Malek Mansion BTS"><datalist id="of-bts-list"></datalist></div></div>
+                <div class="radio-form-row full"><div class="radio-form-group"><label>OLT Name *</label>
+                    <input type="text" id="of-name" placeholder="e.g. Malek_CDATA_1"></div></div>
+                <div class="radio-form-row"><div class="radio-form-group"><label>OLT IP *</label>
+                    <input type="text" id="of-ip" placeholder="e.g. 10.49.10.162"></div>
+                    <div class="radio-form-group"><label>Uplink Port</label>
+                    <input type="text" id="of-uplink" placeholder="e.g. 100.64.167.14 [Eth1/31]"></div></div>
+            </div>
+            <div class="radio-modal-footer">
+                <button class="radio-modal-btn cancel" onclick="closeOltIpModal()">Cancel</button>
+                <button class="radio-modal-btn save" style="background:linear-gradient(135deg,#00A36C,#00d4ff);" onclick="saveOltIp()"><i class="fa-solid fa-floppy-disk"></i> Save</button>
+            </div>
+        </div>
+    </div>
 
     <!-- ════ ADD COMMAND MODAL (GPON OLT Troubleshoot/Installation) ════ -->
     <div class="docs-cmd-modal-overlay" id="docsCmdModalOverlay" onclick="if(event.target===this) closeDocsCmdModal();">
@@ -3119,21 +3136,7 @@ script += `onu ${onuId} eth ${i} upstream-rate-limit cir ${vsol_bw} pir ${vsol_b
         const ip = (el.dataset.ip || el.textContent).trim();
         if (ip) copyIpToClipboard(ip, el);
     });
-    // Make IPs in the OLT IP table copyable (OLT IP column + the IP inside Uplink Port)
-    function makeOltIpsCopyable() {
-        const rows = document.querySelectorAll('#docs-olt-ip-tbody tr');
-        const ipRe = /(\d{1,3}(?:\.\d{1,3}){3})/;
-        rows.forEach(tr => {
-            [1, 2].forEach(i => {
-                const td = tr.children[i];
-                if (!td || td.querySelector('.ip-copy')) return;
-                const m = td.textContent.match(ipRe);
-                if (!m) return;
-                td.innerHTML = td.innerHTML.replace(m[1], '<span class="ip-copy" data-ip="' + m[1] + '" title="Click to copy">' + m[1] + '</span>');
-            });
-        });
-    }
-    makeOltIpsCopyable();
+    // (IP copy spans for the OLT IP table are built in renderOltIps)
 
     // ════ BOLD COMMAND PROMPTS (text up to and including "#") IN OLT DOCS ════
     function boldDocsPrompts(root) {
@@ -3201,7 +3204,7 @@ script += `onu ${onuId} eth ${i} upstream-rate-limit cir ${vsol_bw} pir ${vsol_b
     }
 
     // ════ GPON OLT DOCS — ADD / REMOVE COMMANDS (checkbox select system) ════
-    const EDITABLE_DOCS_SECTIONS = ['d_cdata_troubleshoot','d_cdata_installation','d_vsol_troubleshoot','d_vsol_installation','d_gpon8_troubleshoot','d_gpon8_installation'];
+    const EDITABLE_DOCS_SECTIONS = ['d_cdata_troubleshoot','d_cdata_installation','d_vsol_troubleshoot','d_vsol_installation','d_gpon8_troubleshoot','d_gpon8_installation','d_utstar_troubleshoot','d_utstar_installation','d_phyhome_troubleshoot','d_phyhome_installation','d_fhnet_troubleshoot','d_fhnet_installation'];
     let currentDocsCmdSection = null;
 
     function docsStore(key, val) { localStorage.setItem(key, val); cloudPush('docsData'); }
@@ -3813,37 +3816,106 @@ script += `onu ${onuId} eth ${i} upstream-rate-limit cir ${vsol_bw} pir ${vsol_b
         });
     }
 
-    // ── OLT IP Info table (seeded from the rows in the page, then cloud is the source of truth) ──
-    let oltIpData = Array.from(document.querySelectorAll('#docs-olt-ip-tbody tr')).map(tr => ({
+    // ── OLT IP Info table: add / edit / delete + live sync ──
+    const OLT_IP_KEY = 'nms_olt_ips_v1';
+    function oltIpNormalize(v) { return cloudToArray(v).map(r => ({ bts: r.bts || '', name: r.name || '', ip: r.ip || '', uplink: r.uplink || '' })); }
+    // seed = the rows written in the page; used only until something is saved locally / in the cloud
+    let oltIpData = oltIpNormalize(Array.from(document.querySelectorAll('#docs-olt-ip-tbody tr')).map(tr => ({
         bts: tr.getAttribute('data-bts') || '',
         name: tr.children[0] ? tr.children[0].textContent.trim() : '',
         ip: tr.children[1] ? tr.children[1].textContent.trim() : '',
         uplink: tr.children[2] ? tr.children[2].textContent.trim() : ''
-    }));
+    })));
+    function saveOltIps() {
+        try { localStorage.setItem(OLT_IP_KEY, JSON.stringify(oltIpData)); } catch (e) {}
+        cloudPush('oltIps');
+    }
+    function loadOltIps() {
+        try { const raw = localStorage.getItem(OLT_IP_KEY); if (raw) { const a = JSON.parse(raw); if (Array.isArray(a)) oltIpData = oltIpNormalize(a); } } catch (e) {}
+    }
+    function oltIpCell(t) {
+        return escapeHtml(t).replace(/(\d{1,3}(?:\.\d{1,3}){3})/, '<span class="ip-copy" data-ip="$1" title="Click to copy">$1</span>');
+    }
+    function renderOltIps() {
+        const tb = document.getElementById('docs-olt-ip-tbody'); if (!tb) return;
+        const sel = document.getElementById('docs-olt-bts-select');
+        if (sel) {
+            const cur = sel.value;
+            const names = [...new Set(oltIpData.map(r => r.bts).filter(Boolean))];
+            sel.innerHTML = '<option value="all">All BTS Info</option>' + names.map(n => '<option value="' + escapeHtml(n) + '">' + escapeHtml(n) + '</option>').join('');
+            sel.value = names.includes(cur) ? cur : 'all';
+        }
+        tb.innerHTML = oltIpData.map((r, i) => '<tr data-bts="' + escapeHtml(r.bts) + '"><td>' + escapeHtml(r.name) + '</td><td>' + oltIpCell(r.ip) + '</td><td>' + oltIpCell(r.uplink) + '</td>'
+            + '<td style="white-space:nowrap"><button class="radio-card-icon-btn edit" style="opacity:1;display:inline-flex;margin-right:4px" title="Edit" onclick="openOltIpModal(\'edit\',' + i + ')"><i class="fa-solid fa-pen"></i></button>'
+            + '<button class="radio-card-icon-btn del" style="opacity:1;display:inline-flex" title="Delete" onclick="deleteOltIp(' + i + ')"><i class="fa-solid fa-trash"></i></button></td></tr>').join('')
+            || '<tr><td colspan="4" style="color:#94a3b8">No OLT added yet</td></tr>';
+        filterDocsOltIps();
+    }
+    let oltIpEditIdx = null;
+    function openOltIpModal(mode, idx) {
+        oltIpEditIdx = (mode === 'edit' && idx !== undefined) ? idx : null;
+        const dl = document.getElementById('of-bts-list');
+        const names = [...new Set(oltIpData.map(r => r.bts).concat(btsData.map(r => r.bts)).filter(Boolean))];
+        dl.innerHTML = names.map(n => '<option value="' + escapeHtml(n) + '"></option>').join('');
+        const r = oltIpEditIdx !== null ? oltIpData[oltIpEditIdx] : { bts: '', name: '', ip: '', uplink: '' };
+        document.getElementById('oltIpModalTitle').textContent = oltIpEditIdx !== null ? 'EDIT OLT' : 'ADD OLT';
+        document.getElementById('of-bts').value = r.bts; document.getElementById('of-name').value = r.name;
+        document.getElementById('of-ip').value = r.ip; document.getElementById('of-uplink').value = r.uplink;
+        document.getElementById('oltIpModalOverlay').classList.add('open');
+    }
+    function closeOltIpModal() { document.getElementById('oltIpModalOverlay').classList.remove('open'); }
+    function saveOltIp() {
+        const rec = { bts: document.getElementById('of-bts').value.trim(), name: document.getElementById('of-name').value.trim(),
+                      ip: document.getElementById('of-ip').value.trim(), uplink: document.getElementById('of-uplink').value.trim() || '-' };
+        if (!rec.bts || !rec.name || !rec.ip) { showToast('BTS, OLT Name and OLT IP are required', 'error'); return; }
+        if (oltIpEditIdx !== null) { oltIpData[oltIpEditIdx] = rec; showToast('OLT updated'); }
+        else { oltIpData.push(rec); showToast('OLT added'); }
+        saveOltIps(); renderOltIps(); closeOltIpModal();
+    }
+    function deleteOltIp(idx) {
+        const r = oltIpData[idx]; if (!r) return;
+        showAppConfirm('Delete OLT?', '"' + r.name + '" (' + r.ip + ') will be removed for everyone. This cannot be undone.', () => {
+            oltIpData.splice(idx, 1); saveOltIps(); renderOltIps(); showToast('OLT deleted');
+        });
+    }
     CLOUD.oltIps = {
         local() { return oltIpData; },
-        normalize(v) { return cloudToArray(v).map(r => ({ bts: r.bts || '', name: r.name || '', ip: r.ip || '', uplink: r.uplink || '' })); },
+        normalize(v) { return oltIpNormalize(v); },
         apply(arr) {
             oltIpData = arr;
-            const tb = document.getElementById('docs-olt-ip-tbody');
-            tb.innerHTML = '';
-            arr.forEach(r => {
-                const tr = document.createElement('tr');
-                tr.setAttribute('data-bts', r.bts);
-                [r.name, r.ip, r.uplink].forEach(t => { const td = document.createElement('td'); td.textContent = t; tr.appendChild(td); });
-                tb.appendChild(tr);
-            });
-            makeOltIpsCopyable();
-            filterDocsOltIps();
+            try { localStorage.setItem(OLT_IP_KEY, JSON.stringify(oltIpData)); } catch (e) {}
+            renderOltIps();
         }
     };
     Object.keys(CLOUD).forEach(k => Object.assign(CLOUD[k], { ready: false, dirty: false, timer: null, es: null, pulling: false }));
 
-    // Sync runs silently in the background; no status badge / no error toasts.
-    function cloudSetStatus() {}
+    // Load every collection from this device's storage first, so the first sync never seeds/overwrites with page defaults.
+    function loadAllLocal() {
+        try { loadRadioDataFromStorage(); loadRadioDeleted(); migrateLegacyDeletedTab(); } catch (e) {}
+        try { loadBtsDataFromStorage(); } catch (e) {}
+        try { loadOltIps(); renderOltIps(); } catch (e) {}
+    }
+    loadAllLocal();
+
+    // Small status badge (bottom-right). Tap it to force a sync.
+    function cloudSetStatus(state) {
+        let b = document.getElementById('cloud-badge');
+        if (!b) {
+            b = document.createElement('div'); b.id = 'cloud-badge';
+            b.onclick = () => { showToast('Syncing…'); cloudSyncNow(); };
+            document.body.appendChild(b);
+        }
+        const map = { live: ['#10b981', 'Live', 'Synced with cloud - tap to refresh'],
+                      offline: ['#f59e0b', 'Offline', 'Cannot reach Firebase - will keep retrying'],
+                      denied: ['#ef4444', 'Cloud blocked', 'Firebase rules deny access. In Firebase console > Realtime Database > Rules allow read/write on "mzr".'] };
+        const m = map[state] || map.offline;
+        b.style.setProperty('--c', m[0]); b.textContent = m[1]; b.title = m[2];
+    }
     function cloudUrl(name) { return CLOUD_DB_URL + '/' + CLOUD_ROOT + '/' + name + '.json'; }
     let cloudWarned = false;
     function cloudFail(res, err) {
+        const denied = !!res && (res.status === 401 || res.status === 403);
+        cloudSetStatus(denied ? 'denied' : 'offline');
         if (!cloudWarned) { cloudWarned = true; console.warn('Cloud sync unavailable (' + (res ? res.status : 'offline') + ') - will keep retrying'); }
     }
 
@@ -3854,40 +3926,47 @@ script += `onu ${onuId} eth ${i} upstream-rate-limit cir ${vsol_bw} pir ${vsol_b
         try {
             const res = await fetch(cloudUrl(name), { cache: 'no-store' });
             if (!res.ok) { cloudFail(res); return; }
-            if (c.ready && c.dirty) { await cloudPushNow(name); return; }   // retry unsent local changes first
+            if (c.dirty || c.pendingPush) {                 // unsent local edits win: send them first, never overwrite them
+                clearTimeout(c.timer); c.ready = true;
+                await cloudPushNow(name); return;
+            }
             const remote = await res.json();
-            if (remote === null) {                       // nothing in the cloud yet -> first device seeds it
+            if (remote === null || remote === undefined) {  // nothing in the cloud yet -> this device seeds it
                 if (!c.ready) { c.ready = true; await cloudPushNow(name); }
-                return;
+                cloudSetStatus('live'); return;
             }
             const value = c.normalize(remote.data);
             const first = !c.ready;
-            c.ready = true; c.dirty = false;
+            c.ready = true;
             const changed = cloudStable(value) !== cloudStable(c.normalize(c.local()));
             if (changed) { c.apply(value); if (!first) showToast('Updated from cloud'); }
-            cloudSetStatus('live', 'Live');
+            cloudSetStatus('live');
         } catch (e) { cloudFail(null, e); }
         finally { c.pulling = false; if (c.repull) { c.repull = false; cloudPull(name); } }
     }
 
     async function cloudPushNow(name) {
         const c = CLOUD[name];
+        const v = c.ver || 0;
+        c.pendingPush = false;
         try {
             const res = await fetch(cloudUrl(name), {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ data: c.local(), updatedAt: Date.now() })
             });
-            if (!res.ok) { cloudFail(res); return; }
-            c.dirty = false;
-            cloudSetStatus('live', 'Live');
+            if (!res.ok) { c.dirty = true; cloudFail(res); return; }
+            if ((c.ver || 0) === v) c.dirty = false;        // only clear if nothing changed while sending
+            cloudSetStatus('live');
         } catch (e) { c.dirty = true; cloudFail(null, e); }
     }
 
     function cloudPush(name) {
         const c = CLOUD[name];
         if (!c) return;
-        if (!c.ready) { c.dirty = true; return; }         // initial pull not finished yet
+        c.ver = (c.ver || 0) + 1; c.dirty = true;
+        if (!c.ready) return;                               // first pull not done yet: it will send this
+        c.pendingPush = true;
         clearTimeout(c.timer);
         c.timer = setTimeout(() => cloudPushNow(name), 300);
     }
