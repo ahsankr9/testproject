@@ -11,7 +11,7 @@
 
     <style>
         :root {
-            --sb-bg: linear-gradient(160deg, #0a0f2c 0%, #16336b 42%, #0f9b8e 85%, #00e0a8 130%);
+            --sb-bg: linear-gradient(160deg, #050b1e 0%, #0a2557 40%, #1451a3 75%, #1f7fd6 100%);
             --sb-border: rgba(0,212,255,0.22);
             --sb-accent: #7dd3fc;
             --sb-accent2: #00d4ff;
@@ -54,6 +54,23 @@
 
         * { margin: 0; padding: 0; box-sizing: border-box; outline: none; -webkit-tap-highlight-color: transparent; }
         html { height: 100%; overscroll-behavior: none; }
+
+        /* ── Smoothness ── */
+        html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+        body { -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; text-rendering: optimizeLegibility; }
+        button, a, label, select, input, .nav-btn, .docs-sub-btn, .nav-group-header { touch-action: manipulation; }
+        button, .btn, .nav-btn, .card, .docs-card, .docs-cmd-item, .onu-saved-item { transition-property: background-color, border-color, color, box-shadow, transform, opacity; transition-duration: .22s; transition-timing-function: cubic-bezier(.4,0,.2,1); }
+        .btn:active, button:active { transform: scale(.97); }
+        .main-content, .docs-content-scroll, .onu-modal-list, .onu-view-body { scroll-behavior: smooth; -webkit-overflow-scrolling: touch; overscroll-behavior: contain; }
+        .onu-modal-overlay { opacity: 0; transition: opacity .2s ease; }
+        .onu-modal-overlay.open { opacity: 1; }
+        .onu-modal-overlay.open .onu-modal-box { animation: modalPop .25s cubic-bezier(.2,.8,.2,1); }
+        @keyframes modalPop { from { opacity: 0; transform: translateY(14px) scale(.98); } to { opacity: 1; transform: none; } }
+        @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; scroll-behavior: auto !important; } }
+        @media (max-width: 700px) {
+            input, select, textarea { font-size: 16px !important; } /* stops iOS zoom-jump on focus */
+            .docs-card, .onu-modal-overlay { backdrop-filter: none !important; -webkit-backdrop-filter: none !important; } /* lighter on phones */
+        }
 
         body {
             font-family: 'Exo 2', sans-serif;
@@ -459,6 +476,27 @@
         .docs-card-title::before { content: ''; display: block; width: 6px; height: 24px; background: linear-gradient(180deg, #00d4ff, #00ff9d); border-radius: 3px; }
         .docs-olt-select, .docs-search-input { width: 100%; padding: 12px 16px; border: 2px solid #cbd5e1; border-radius: 6px; background-color: #fff; color: #334155; font-weight: 600; transition: all 0.3s ease; cursor: pointer; font-family: 'Exo 2', sans-serif; margin-bottom: 10px; font-size: 1rem; }
         .docs-olt-select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%2300ff9d' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 15px top 50%; background-size: 18px auto; }
+        /* Compact layout for OLT IP Info tab */
+        body.docs-mode .docs-content-scroll { padding-top: 12px; }
+        .docs-tab-content .docs-card { padding: 14px 20px 16px; margin-bottom: 16px; }
+        .docs-tab-content .docs-card-header { margin-bottom: 10px; padding-bottom: 8px; }
+        .docs-tab-content .docs-card-title { font-size: 1.15rem; }
+        .docs-tab-content .docs-card-title::before { height: 20px; }
+        .docs-tab-content .docs-search-wrapper { margin-bottom: 10px; }
+        .docs-tab-content .docs-search-input { padding-top: 8px; padding-bottom: 8px; font-size: 0.95rem; }
+        .docs-tab-content .docs-cmd-label { margin-top: 14px; }
+        .docs-tab-content .docs-add-cmd-btn, .docs-tab-content .docs-edit-toggle-btn, .docs-tab-content .docs-del-toggle-btn { padding-top: 4px; padding-bottom: 4px; }
+        /* Compact BTS Info tab */
+        .main-content:has(#app-bts.active) { padding-top: 10px; }
+        #app-bts .app-header { margin-bottom: 8px; }
+        #app-bts .app-header > div:first-child { font-size: 1.4em !important; letter-spacing: 3px !important; line-height: 1.2; }
+        #app-bts .app-subtitle { font-size: 0.72em; margin-top: 0; letter-spacing: 2.5px; }
+        #app-bts > .card { padding: 12px 16px; margin-bottom: 10px !important; }
+        #app-bts > .card > .card-head { margin-bottom: 8px; padding-bottom: 8px; }
+        #app-bts #bts-search-result-count:empty { display: none; }
+        .olt-filter-wrap { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; flex-wrap: wrap; }
+        .olt-filter-label { margin: 0; font-weight: 700; color: #475569; font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.5px; font-family: 'Exo 2', sans-serif; white-space: nowrap; }
+        .olt-filter-wrap .docs-olt-select { flex: 1; min-width: 200px; width: auto; margin-bottom: 0; padding: 8px 14px; font-size: 0.95rem; }
         .docs-olt-select:focus, .docs-search-input:focus { border-color: #00d4ff; box-shadow: 0 0 0 3px rgba(0,212,255,0.1); outline: none; }
         .docs-search-wrapper { position: relative; margin-bottom: 25px; }
         .docs-search-icon { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: #94a3b8; }
@@ -471,6 +509,12 @@
         .docs-cmd-item { position: relative; }
         .docs-cmd-checkbox { display: none; position: absolute; top: 22px; right: 4px; width: 20px; height: 20px; accent-color: #ef4444; cursor: pointer; z-index: 2; }
         .docs-card.delete-mode .docs-cmd-checkbox { display: block; }
+        .docs-cmd-edit-checkbox { display: none; position: absolute; top: 22px; right: 4px; width: 20px; height: 20px; accent-color: #0ea5e9; cursor: pointer; z-index: 2; }
+        .docs-card.edit-mode .docs-cmd-edit-checkbox { display: block; }
+        .docs-card.edit-mode .docs-cmd-item { padding-right: 32px; border-radius: 8px; transition: background 0.15s ease; }
+        .docs-card.edit-mode .docs-cmd-item:hover { background: rgba(14,165,233,0.05); }
+        .docs-cmd-item.selected-for-edit { background: rgba(14,165,233,0.1); }
+        .docs-cmd-item { position: relative; }
         .docs-card.delete-mode .docs-cmd-item { padding-right: 32px; border-radius: 8px; transition: background 0.15s ease; }
         .docs-card.delete-mode .docs-cmd-item:hover { background: rgba(239,68,68,0.05); }
         .docs-cmd-item.selected-for-delete { background: rgba(239,68,68,0.1); }
@@ -483,6 +527,12 @@
         .docs-del-confirm-btn { display: none; align-items: center; gap: 5px; padding: 5px 12px; background: #ef4444; color: #fff; border: 1.5px solid #ef4444; border-radius: 14px; font-weight: 700; font-size: 0.75rem; cursor: pointer; font-family: 'Exo 2', sans-serif; transition: all 0.2s ease; white-space: nowrap; }
         .docs-del-confirm-btn.show { display: inline-flex; }
         .docs-del-confirm-btn:hover { background: #dc2626; }
+        .docs-edit-toggle-btn { display: inline-flex; align-items: center; gap: 5px; padding: 5px 12px; background: transparent; color: #0ea5e9; border: 1.5px solid #0ea5e9; border-radius: 14px; font-weight: 700; font-size: 0.75rem; cursor: pointer; font-family: 'Exo 2', sans-serif; transition: all 0.2s ease; white-space: nowrap; }
+        .docs-edit-toggle-btn:hover { background: #0ea5e9; color: #fff; }
+        .docs-edit-toggle-btn.active { background: #64748b; color: #fff; border-color: #64748b; }
+        .docs-edit-confirm-btn { display: none; align-items: center; gap: 5px; padding: 5px 12px; background: #0ea5e9; color: #fff; border: 1.5px solid #0ea5e9; border-radius: 14px; font-weight: 700; font-size: 0.75rem; cursor: pointer; font-family: 'Exo 2', sans-serif; transition: all 0.2s ease; white-space: nowrap; }
+        .docs-edit-confirm-btn.show { display: inline-flex; }
+        .docs-edit-confirm-btn:hover { background: #0284c7; }
         .docs-cmd-modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); display: none; align-items: center; justify-content: center; z-index: 99999; padding: 20px; }
         .docs-cmd-modal-overlay.open { display: flex; }
         .docs-cmd-modal { background: #fff; border-radius: 10px; padding: 26px; width: 100%; max-width: 480px; box-shadow: 0 12px 40px rgba(0,0,0,0.35); font-family: 'Exo 2', sans-serif; }
@@ -511,7 +561,7 @@
         #app-onu .card-grid { gap: 22px; }
         .onu-modal-overlay { display:none; position:fixed; inset:0; background:rgba(8,10,30,0.72); backdrop-filter:blur(3px); z-index:900; align-items:center; justify-content:center; padding:24px; }
         .onu-modal-overlay.open { display:flex; }
-        .onu-modal-box { background:linear-gradient(160deg,#161c46 0%,#0e1130 100%); border:1px solid rgba(125,211,252,0.22); border-radius:16px; width:100%; max-width:640px; max-height:80vh; display:flex; flex-direction:column; box-shadow:0 20px 60px rgba(0,0,0,0.5); overflow:hidden; }
+        .onu-modal-box { background:var(--sb-bg); border:1px solid var(--sb-border); border-radius:16px; width:100%; max-width:640px; max-height:80vh; display:flex; flex-direction:column; box-shadow:0 20px 60px rgba(0,0,0,0.5); overflow:hidden; }
         .onu-modal-head { display:flex; align-items:center; justify-content:space-between; padding:16px 18px; border-bottom:1px solid rgba(125,211,252,0.14); flex-shrink:0; }
         .onu-modal-close { background:transparent; border:1px solid rgba(125,211,252,0.25); color:#7dd3fc; border-radius:8px; width:32px; height:32px; display:flex; align-items:center; justify-content:center; cursor:pointer; transition:all 0.2s; }
         .onu-modal-close:hover { background:rgba(239,68,68,0.18); border-color:rgba(239,68,68,0.4); color:#f87171; }
@@ -527,14 +577,24 @@
         .onu-saved-empty { font-family:'Rajdhani',sans-serif; font-size:0.85em; color:rgba(125,211,252,0.4); text-align:center; padding:18px 0; }
 
         /* ── ONU saved script floating viewer ── */
-        .onu-script-view-box { background: var(--sb-bg); border: 1px solid rgba(167,139,250,0.32); }
+        .onu-script-view-box { background: var(--sb-bg); border: 1px solid var(--sb-border); }
         .onu-view-meta { font-family:'Space Mono',monospace; font-size:0.75em; color:rgba(125,211,252,0.6); padding:0 18px; }
         .onu-view-body { padding:12px 18px 16px; overflow-y:auto; flex:1; display:flex; flex-direction:column; gap:10px; }
         textarea.onu-view-textarea { flex:1; min-height:220px; background:rgba(0,0,0,0.22); border:1px solid rgba(125,211,252,0.18); border-radius:10px; padding:12px 14px; font-family:'Space Mono',monospace; font-size:0.84em; font-weight:700; line-height:1.75; color:#ede9fe; resize:vertical; outline:none; }
         textarea.onu-view-textarea:read-only { color:#ede9fe; }
         textarea.onu-view-textarea:not(:read-only) { border-color:rgba(0,255,157,0.4); background:rgba(0,0,0,0.32); }
         .onu-view-actions { display:flex; gap:8px; justify-content:flex-end; padding:12px 18px; border-top:1px solid rgba(125,211,252,0.14); flex-shrink:0; }
-        #app-onu .card { padding: 14px 16px; }
+/* ONU modals — simple blue palette */
+        .onu-modal-box .card-head-text { color: #bae6fd !important; letter-spacing: 2px; }
+        .onu-modal-box .ch-icon { background: rgba(125,211,252,0.16) !important; color: #7dd3fc !important; }
+        .onu-saved-item .osi-name { color: #e0f2fe; }
+        .onu-view-meta { color: rgba(186,230,253,0.7); }
+        textarea.onu-view-textarea, textarea.onu-view-textarea:read-only { color: #e0f2fe; }
+        textarea.onu-view-textarea:not(:read-only) { border-color: rgba(125,211,252,0.55); }
+        .onu-view-actions .btn, .onu-view-actions .btn.btn-cpy { background: rgba(125,211,252,0.14) !important; color: #bae6fd !important; box-shadow: none !important; }
+        .onu-view-actions .btn:hover { background: rgba(125,211,252,0.26) !important; }
+        .onu-view-actions .btn.btn-cpy { background: linear-gradient(135deg,#1d4ed8,#3b82f6) !important; color: #fff !important; }
+                #app-onu .card { padding: 14px 16px; }
         #app-onu .card-head { margin-bottom: 10px; padding-bottom: 8px; }
         #app-onu .input-row { gap: 8px; margin-bottom: 8px; }
         #app-onu input, #app-onu select { padding: 6px 10px; font-size: 0.80em; }
@@ -944,7 +1004,7 @@ font-weight: 700; font-weight: 600; color: #1a3a5c; font-size: 13px; }
             .output-wrap { padding: 10px 12px; }
             #bts-info-table { display: none; }
             #bts-cards-mobile { display: block !important; }
-            .docs-card { padding: 16px; }
+            .docs-card { padding: 16px; } .docs-tab-content .docs-card { padding: 12px; } .olt-filter-wrap { flex-direction: column; align-items: stretch; gap: 6px; } .olt-filter-wrap .docs-olt-select { min-width: 0; }
             .docs-card-title { font-size: 1.1rem; }
             .docs-cmd-label { font-size: 0.82rem; padding: 6px 10px; margin-top: 16px; }
             .docs-code { font-size: 0.78rem; padding: 12px; }
@@ -988,7 +1048,7 @@ font-weight: 700; font-weight: 600; color: #1a3a5c; font-size: 13px; }
         <div class="nav-section-label">Tools</div>
         <nav class="nav-group">
 
-            <!-- OLT GROUP — icon changed to device_hub -->
+            <!-- OLT TASK GROUP — icon changed to device_hub -->
             <div class="nav-group-wrapper">
                 <button class="nav-group-header open" id="nav-olt-group" onclick="toggleOltGroup(this)">
                     <div class="nav-btn-glow"></div>
@@ -996,8 +1056,8 @@ font-weight: 700; font-weight: 600; color: #1a3a5c; font-size: 13px; }
                         <i class="material-icons" style="font-size:16px">device_hub</i>
                     </div>
                     <div class="nav-text">
-                        <span class="tab-name">OLT</span>
-                        <span class="tab-desc">Management Tools</span>
+                        <span class="tab-name">OLT TASK</span>
+                        <span class="tab-desc">ONU &amp; Line Profile</span>
                     </div>
                     <span class="nav-group-arrow">▼</span>
                 </button>
@@ -1012,83 +1072,93 @@ font-weight: 700; font-weight: 600; color: #1a3a5c; font-size: 13px; }
                         <div class="nav-child-icon icon-s"><i class="fas fa-cogs" style="font-size:11px"></i></div>
                         <span class="nav-child-name">LINE PROFILE</span>
                     </button>
-                    <!-- OLT DOCS -->
-                    <button class="nav-child-btn" id="nav-docs" onclick="switchToDocsTab(this)">
-                        <div class="nav-child-icon icon-g"><i class="material-icons" style="font-size:13px">menu_book</i></div>
-                        <span class="nav-child-name">OLT DOCS</span>
-                    </button>
-                    <!-- Docs Sub Nav -->
-                    <div class="docs-subnav-backdrop" id="docs-subnav-backdrop" onclick="closeDocsSubnav()"></div>
-                    <div class="docs-subnav" id="docs-subnav">
-                        <div class="docs-subnav-close-btn">
-                            <span>📋 OLT DOCS</span>
-                            <button onclick="closeDocsSubnav()" aria-label="Close">✕</button>
-                        </div>
-                        <div class="docs-subnav-inner">
-                        <div class="docs-subnav-group">
-                            <div class="docs-subnav-header active" onclick="showDocsContent('d_olt_ips', this); closeDocsSubnav();">
-                                <span>📡 OLT IPs</span>
-                            </div>
-                        </div>
-                        <div class="docs-subnav-group">
-                            <div class="docs-subnav-header" onclick="toggleDocsSub(this)">
-                                <span>🔷 GPON OLT</span><span class="sub-arrow">▼</span>
-                            </div>
-                            <div class="docs-subnav-items">
-                                <div class="docs-sub-group">
-                                    <div class="docs-sub-group-header"><span>CDATA GPON 16</span></div>
-                                    <div class="docs-sub-group-items">
-                                        <button class="docs-sub-btn docs-sub-btn-leaf" onclick="showDocsContent('d_cdata_troubleshoot', this); closeDocsSubnav();">Troubleshoot</button>
-                                        <button class="docs-sub-btn docs-sub-btn-leaf" onclick="showDocsContent('d_cdata_installation', this); closeDocsSubnav();">Installation</button>
-                                    </div>
-                                </div>
-                                <div class="docs-sub-group">
-                                    <div class="docs-sub-group-header"><span>VSOL / ATOP</span></div>
-                                    <div class="docs-sub-group-items">
-                                        <button class="docs-sub-btn docs-sub-btn-leaf" onclick="showDocsContent('d_vsol_troubleshoot', this); closeDocsSubnav();">Troubleshoot</button>
-                                        <button class="docs-sub-btn docs-sub-btn-leaf" onclick="showDocsContent('d_vsol_installation', this); closeDocsSubnav();">Installation</button>
-                                    </div>
-                                </div>
-                                <div class="docs-sub-group">
-                                    <div class="docs-sub-group-header"><span>CDATA GPON 8</span></div>
-                                    <div class="docs-sub-group-items">
-                                        <button class="docs-sub-btn docs-sub-btn-leaf" onclick="showDocsContent('d_gpon8_troubleshoot', this); closeDocsSubnav();">Troubleshoot</button>
-                                        <button class="docs-sub-btn docs-sub-btn-leaf" onclick="showDocsContent('d_gpon8_installation', this); closeDocsSubnav();">Installation</button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="docs-subnav-group">
-                            <div class="docs-subnav-header" onclick="toggleDocsSub(this)">
-                                <span>🟢 EPON OLT</span><span class="sub-arrow">▼</span>
-                            </div>
-                            <div class="docs-subnav-items">
-                                <div class="docs-sub-group">
-                                    <div class="docs-sub-group-header"><span>EPON UTSTAR</span></div>
-                                    <div class="docs-sub-group-items">
-                                        <button class="docs-sub-btn docs-sub-btn-leaf" onclick="showDocsContent('d_utstar_troubleshoot', this); closeDocsSubnav();">Troubleshoot</button>
-                                        <button class="docs-sub-btn docs-sub-btn-leaf" onclick="showDocsContent('d_utstar_installation', this); closeDocsSubnav();">Installation</button>
-                                    </div>
-                                </div>
-                                <div class="docs-sub-group">
-                                    <div class="docs-sub-group-header"><span>EPON PHYHOME</span></div>
-                                    <div class="docs-sub-group-items">
-                                        <button class="docs-sub-btn docs-sub-btn-leaf" onclick="showDocsContent('d_phyhome_troubleshoot', this); closeDocsSubnav();">Troubleshoot</button>
-                                        <button class="docs-sub-btn docs-sub-btn-leaf" onclick="showDocsContent('d_phyhome_installation', this); closeDocsSubnav();">Installation</button>
-                                    </div>
-                                </div>
-                                <div class="docs-sub-group">
-                                    <div class="docs-sub-group-header"><span>EPON FHNET</span></div>
-                                    <div class="docs-sub-group-items">
-                                        <button class="docs-sub-btn docs-sub-btn-leaf" onclick="showDocsContent('d_fhnet_troubleshoot', this); closeDocsSubnav();">Troubleshoot</button>
-                                        <button class="docs-sub-btn docs-sub-btn-leaf" onclick="showDocsContent('d_fhnet_installation', this); closeDocsSubnav();">Installation</button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        </div><!-- /docs-subnav-inner -->
-                    </div><!-- /docs-subnav -->
                 </div>
+            </div>
+
+            <!-- OLT DOCS GROUP — standalone top-level group for easy access -->
+            <div class="nav-group-wrapper">
+                <button class="nav-group-header" id="nav-docs-group" onclick="toggleDocsGroup(this)">
+                    <div class="nav-btn-glow"></div>
+                    <div class="nav-icon-wrap icon-g nav-group-icon">
+                        <i class="material-icons" style="font-size:16px">menu_book</i>
+                    </div>
+                    <div class="nav-text">
+                        <span class="tab-name">OLT DOCS</span>
+                        <span class="tab-desc">Commands &amp; IPs</span>
+                    </div>
+                    <span class="nav-group-arrow">▼</span>
+                </button>
+                <!-- Docs Sub Nav -->
+                <div class="docs-subnav-backdrop" id="docs-subnav-backdrop" onclick="closeDocsSubnav()"></div>
+                <div class="docs-subnav" id="docs-subnav">
+                    <div class="docs-subnav-close-btn">
+                        <span>📋 OLT DOCS</span>
+                        <button onclick="closeDocsSubnav()" aria-label="Close">✕</button>
+                    </div>
+                    <div class="docs-subnav-inner">
+                    <div class="docs-subnav-group">
+                        <div class="docs-subnav-header active" onclick="showDocsContent('d_olt_ips', this); closeDocsSubnav();">
+                            <span>📡 OLT IPs</span>
+                        </div>
+                    </div>
+                    <div class="docs-subnav-group">
+                        <div class="docs-subnav-header" onclick="toggleDocsSub(this)">
+                            <span>🔷 GPON OLT</span><span class="sub-arrow">▼</span>
+                        </div>
+                        <div class="docs-subnav-items">
+                            <div class="docs-sub-group">
+                                <div class="docs-sub-group-header"><span>CDATA GPON 16</span></div>
+                                <div class="docs-sub-group-items">
+                                    <button class="docs-sub-btn docs-sub-btn-leaf" onclick="showDocsContent('d_cdata_troubleshoot', this); closeDocsSubnav();">Troubleshoot</button>
+                                    <button class="docs-sub-btn docs-sub-btn-leaf" onclick="showDocsContent('d_cdata_installation', this); closeDocsSubnav();">Installation</button>
+                                </div>
+                            </div>
+                            <div class="docs-sub-group">
+                                <div class="docs-sub-group-header"><span>VSOL / ATOP</span></div>
+                                <div class="docs-sub-group-items">
+                                    <button class="docs-sub-btn docs-sub-btn-leaf" onclick="showDocsContent('d_vsol_troubleshoot', this); closeDocsSubnav();">Troubleshoot</button>
+                                    <button class="docs-sub-btn docs-sub-btn-leaf" onclick="showDocsContent('d_vsol_installation', this); closeDocsSubnav();">Installation</button>
+                                </div>
+                            </div>
+                            <div class="docs-sub-group">
+                                <div class="docs-sub-group-header"><span>CDATA GPON 8</span></div>
+                                <div class="docs-sub-group-items">
+                                    <button class="docs-sub-btn docs-sub-btn-leaf" onclick="showDocsContent('d_gpon8_troubleshoot', this); closeDocsSubnav();">Troubleshoot</button>
+                                    <button class="docs-sub-btn docs-sub-btn-leaf" onclick="showDocsContent('d_gpon8_installation', this); closeDocsSubnav();">Installation</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="docs-subnav-group">
+                        <div class="docs-subnav-header" onclick="toggleDocsSub(this)">
+                            <span>🟢 EPON OLT</span><span class="sub-arrow">▼</span>
+                        </div>
+                        <div class="docs-subnav-items">
+                            <div class="docs-sub-group">
+                                <div class="docs-sub-group-header"><span>EPON UTSTAR</span></div>
+                                <div class="docs-sub-group-items">
+                                    <button class="docs-sub-btn docs-sub-btn-leaf" onclick="showDocsContent('d_utstar_troubleshoot', this); closeDocsSubnav();">Troubleshoot</button>
+                                    <button class="docs-sub-btn docs-sub-btn-leaf" onclick="showDocsContent('d_utstar_installation', this); closeDocsSubnav();">Installation</button>
+                                </div>
+                            </div>
+                            <div class="docs-sub-group">
+                                <div class="docs-sub-group-header"><span>EPON PHYHOME</span></div>
+                                <div class="docs-sub-group-items">
+                                    <button class="docs-sub-btn docs-sub-btn-leaf" onclick="showDocsContent('d_phyhome_troubleshoot', this); closeDocsSubnav();">Troubleshoot</button>
+                                    <button class="docs-sub-btn docs-sub-btn-leaf" onclick="showDocsContent('d_phyhome_installation', this); closeDocsSubnav();">Installation</button>
+                                </div>
+                            </div>
+                            <div class="docs-sub-group">
+                                <div class="docs-sub-group-header"><span>EPON FHNET</span></div>
+                                <div class="docs-sub-group-items">
+                                    <button class="docs-sub-btn docs-sub-btn-leaf" onclick="showDocsContent('d_fhnet_troubleshoot', this); closeDocsSubnav();">Troubleshoot</button>
+                                    <button class="docs-sub-btn docs-sub-btn-leaf" onclick="showDocsContent('d_fhnet_installation', this); closeDocsSubnav();">Installation</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    </div><!-- /docs-subnav-inner -->
+                </div><!-- /docs-subnav -->
             </div>
 
             <!-- RADIO — icon changed to settings_input_antenna -->
@@ -1156,16 +1226,16 @@ font-weight: 700; font-weight: 600; color: #1a3a5c; font-size: 13px; }
                         </div>
                     </div>
                     <div class="input-row col-3">
-                        <div class="field"><label for="slot">Slot</label><input type="number" id="slot" value="0"></div>
-                        <div class="field"><label for="pon">PON Port</label><input type="number" id="pon" placeholder="PON"></div>
-                        <div class="field"><label for="onu-id">ONU ID</label><input type="number" id="onu-id" placeholder="ID"></div>
+                        <div class="field"><label for="slot">Slot</label><input type="number" id="slot" value="0" inputmode="numeric" pattern="[0-9]*" enterkeyhint="next" autocomplete="off"></div>
+                        <div class="field"><label for="pon">PON Port</label><input type="number" id="pon" placeholder="PON" inputmode="numeric" pattern="[0-9]*" enterkeyhint="next" autocomplete="off"></div>
+                        <div class="field"><label for="onu-id">ONU ID</label><input type="number" id="onu-id" placeholder="ID" inputmode="numeric" pattern="[0-9]*" enterkeyhint="next" autocomplete="off"></div>
                     </div>
                     <div class="input-row col-2">
                         <div class="field"><label for="onu-mac">ONU MAC Address</label><input type="text" id="onu-mac" placeholder="e.g. AABBCCDDEEFF"></div>
-                        <div class="field"><label for="line-profile">Line Profile ID</label><input type="number" id="line-profile" value="5"></div>
+                        <div class="field"><label for="line-profile">Line Profile ID</label><input type="number" id="line-profile" value="5" inputmode="numeric" pattern="[0-9]*" enterkeyhint="next" autocomplete="off"></div>
                     </div>
                     <div class="input-row col-2">
-                        <div class="field"><label for="gem-id">GEM ID</label><input type="number" id="gem-id" value="1"></div>
+                        <div class="field"><label for="gem-id">GEM ID</label><input type="number" id="gem-id" value="1" inputmode="numeric" pattern="[0-9]*" enterkeyhint="next" autocomplete="off"></div>
                         <div class="field"><label for="bandwidth">Bandwidth Rate</label>
                             <select id="bandwidth">
                                 <option value="100">100 / 100 Mbps</option>
@@ -1178,10 +1248,10 @@ font-weight: 700; font-weight: 600; color: #1a3a5c; font-size: 13px; }
                     </div>
                     <div class="section-chip"><i class="material-icons" style="font-size:0.95em">tag</i> VLAN IDs</div>
                     <div class="input-row col-4">
-                        <div class="field"><input type="text" id="vlan1" placeholder="VLAN 1"></div>
-                        <div class="field"><input type="text" id="vlan2" placeholder="VLAN 2"></div>
-                        <div class="field"><input type="text" id="vlan3" placeholder="VLAN 3"></div>
-                        <div class="field"><input type="text" id="vlan4" placeholder="VLAN 4"></div>
+                        <div class="field"><input type="text" id="vlan1" placeholder="VLAN 1" inputmode="numeric" pattern="[0-9]*" enterkeyhint="next" autocomplete="off"></div>
+                        <div class="field"><input type="text" id="vlan2" placeholder="VLAN 2" inputmode="numeric" pattern="[0-9]*" enterkeyhint="next" autocomplete="off"></div>
+                        <div class="field"><input type="text" id="vlan3" placeholder="VLAN 3" inputmode="numeric" pattern="[0-9]*" enterkeyhint="next" autocomplete="off"></div>
+                        <div class="field"><input type="text" id="vlan4" placeholder="VLAN 4" inputmode="numeric" pattern="[0-9]*" enterkeyhint="next" autocomplete="off"></div>
                     </div>
                     <div class="btn-row">
                         <button class="btn btn-gen" onclick="generateOnuScript(true)"><span class="material-icons" style="font-size:16px">play_arrow</span> Generate</button>
@@ -1285,15 +1355,15 @@ font-weight: 700; font-weight: 600; color: #1a3a5c; font-size: 13px; }
                         </div>
                     </div>
                     <div class="input-row col-2">
-                        <div class="field"><label for="profileId">Line Profile ID</label><input type="text" id="profileId" placeholder="e.g., 10"></div>
-                        <div class="field" id="lp-gemmap-field"><label for="gemMap">Gem Map</label><input type="number" id="gemMap" min="1" max="8" value="1"></div>
+                        <div class="field"><label for="profileId">Line Profile ID</label><input type="text" id="profileId" placeholder="e.g., 10" inputmode="numeric" pattern="[0-9]*" enterkeyhint="next" autocomplete="off"></div>
+                        <div class="field" id="lp-gemmap-field"><label for="gemMap">Gem Map</label><input type="number" id="gemMap" min="1" max="8" value="1" inputmode="numeric" pattern="[0-9]*" enterkeyhint="next" autocomplete="off"></div>
                     </div>
                     <div class="section-chip"><i class="material-icons" style="font-size:0.95em">tag</i> VLAN IDs (up to 4)</div>
                     <div class="input-row col-2">
-                        <div class="field"><input type="text" id="lp-vlan1" placeholder="VLAN 1"></div>
-                        <div class="field"><input type="text" id="lp-vlan2" placeholder="VLAN 2"></div>
-                        <div class="field"><input type="text" id="lp-vlan3" placeholder="VLAN 3"></div>
-                        <div class="field"><input type="text" id="lp-vlan4" placeholder="VLAN 4"></div>
+                        <div class="field"><input type="text" id="lp-vlan1" placeholder="VLAN 1" inputmode="numeric" pattern="[0-9]*" enterkeyhint="next" autocomplete="off"></div>
+                        <div class="field"><input type="text" id="lp-vlan2" placeholder="VLAN 2" inputmode="numeric" pattern="[0-9]*" enterkeyhint="next" autocomplete="off"></div>
+                        <div class="field"><input type="text" id="lp-vlan3" placeholder="VLAN 3" inputmode="numeric" pattern="[0-9]*" enterkeyhint="next" autocomplete="off"></div>
+                        <div class="field"><input type="text" id="lp-vlan4" placeholder="VLAN 4" inputmode="numeric" pattern="[0-9]*" enterkeyhint="next" autocomplete="off"></div>
                     </div>
                     <div class="btn-row" style="margin-top:16px">
                         <button class="btn btn-gen" onclick="generateLineProfile()"><i class="fas fa-cogs" style="font-size:14px"></i> Generate</button>
@@ -1326,8 +1396,8 @@ font-weight: 700; font-weight: 600; color: #1a3a5c; font-size: 13px; }
                 <div id="d_olt_ips" class="docs-tab-content active">
                     <div class="docs-card">
                         <div class="docs-card-header"><h2 class="docs-card-title">OLT IP Info</h2></div>
-                        <div style="margin-bottom:20px;">
-                            <label style="display:block;margin-bottom:8px;font-weight:700;color:#475569;font-size:0.85rem;text-transform:uppercase;letter-spacing:0.5px;font-family:'Exo 2',sans-serif;">Filter by BTS Location</label>
+                        <div class="olt-filter-wrap">
+                            <label class="olt-filter-label">Filter by BTS Location</label>
                             <select class="docs-olt-select" id="docs-olt-bts-select" onchange="filterDocsOltIps()">
                                 <option value="all">All BTS Info</option>
                                 <option value="Malek Mansion BTS">Malek Mansion BTS</option>
@@ -1369,7 +1439,7 @@ font-weight: 700; font-weight: 600; color: #1a3a5c; font-size: 13px; }
                 <!-- CDATA GPON Troubleshoot -->
                 <div id="d_cdata_troubleshoot" class="docs-tab-content">
                     <div class="docs-card">
-                        <div class="docs-card-header"><h2 class="docs-card-title">CDATA GPON Troubleshooting</h2><div class="docs-header-actions"><button class="docs-add-cmd-btn" onclick="openDocsCmdModal('d_cdata_troubleshoot')">➕ Add</button><button class="docs-del-toggle-btn" id="delToggle_d_cdata_troubleshoot" onclick="toggleDocsDeleteMode('d_cdata_troubleshoot')">🗑 Delete</button><button class="docs-del-confirm-btn" id="delConfirm_d_cdata_troubleshoot" onclick="deleteSelectedDocsCommands('d_cdata_troubleshoot')">✔ Delete Selected</button></div></div>
+                        <div class="docs-card-header"><h2 class="docs-card-title">CDATA GPON Troubleshooting</h2><div class="docs-header-actions"><button class="docs-add-cmd-btn" onclick="openDocsCmdModal('d_cdata_troubleshoot')">➕ Add</button><button class="docs-edit-toggle-btn" id="editToggle_d_cdata_troubleshoot" onclick="toggleDocsEditMode('d_cdata_troubleshoot')">✏️ Edit</button><button class="docs-edit-confirm-btn" id="editConfirm_d_cdata_troubleshoot" onclick="confirmDocsEdit('d_cdata_troubleshoot')">✔ Edit Selected</button><button class="docs-del-toggle-btn" id="delToggle_d_cdata_troubleshoot" onclick="toggleDocsDeleteMode('d_cdata_troubleshoot')">🗑 Delete</button><button class="docs-del-confirm-btn" id="delConfirm_d_cdata_troubleshoot" onclick="deleteSelectedDocsCommands('d_cdata_troubleshoot')">✔ Delete Selected</button></div></div>
                         <div class="docs-search-wrapper"><span class="docs-search-icon">🔍</span><input type="text" class="docs-search-input" id="s_cdata_ts" placeholder="Search commands..."></div>
                         <span class="docs-cmd-label">ONU Discover check:</span><code class="docs-code">(config)# show ont autofind all brief sn-format string 
 (config)# show ont autofind all
@@ -1401,7 +1471,7 @@ font-weight: 700; font-weight: 600; color: #1a3a5c; font-size: 13px; }
                 <!-- CDATA GPON Installation -->
                 <div id="d_cdata_installation" class="docs-tab-content">
                     <div class="docs-card">
-                        <div class="docs-card-header"><h2 class="docs-card-title">CDATA GPON Installation</h2><div class="docs-header-actions"><button class="docs-add-cmd-btn" onclick="openDocsCmdModal('d_cdata_installation')">➕ Add</button><button class="docs-del-toggle-btn" id="delToggle_d_cdata_installation" onclick="toggleDocsDeleteMode('d_cdata_installation')">🗑 Delete</button><button class="docs-del-confirm-btn" id="delConfirm_d_cdata_installation" onclick="deleteSelectedDocsCommands('d_cdata_installation')">✔ Delete Selected</button></div></div>
+                        <div class="docs-card-header"><h2 class="docs-card-title">CDATA GPON Installation</h2><div class="docs-header-actions"><button class="docs-add-cmd-btn" onclick="openDocsCmdModal('d_cdata_installation')">➕ Add</button><button class="docs-edit-toggle-btn" id="editToggle_d_cdata_installation" onclick="toggleDocsEditMode('d_cdata_installation')">✏️ Edit</button><button class="docs-edit-confirm-btn" id="editConfirm_d_cdata_installation" onclick="confirmDocsEdit('d_cdata_installation')">✔ Edit Selected</button><button class="docs-del-toggle-btn" id="delToggle_d_cdata_installation" onclick="toggleDocsDeleteMode('d_cdata_installation')">🗑 Delete</button><button class="docs-del-confirm-btn" id="delConfirm_d_cdata_installation" onclick="deleteSelectedDocsCommands('d_cdata_installation')">✔ Delete Selected</button></div></div>
                         <div class="docs-search-wrapper"><span class="docs-search-icon">🔍</span><input type="text" class="docs-search-input" id="s_cdata_in" placeholder="Search installation commands..."></div>
                         <span class="docs-cmd-label">VLAN Check:</span><code class="docs-code">(config)# show vlan all
 (config)# show vlan 100</code>
@@ -1435,7 +1505,7 @@ exit</code>
                 <!-- VSOL Troubleshoot -->
                 <div id="d_vsol_troubleshoot" class="docs-tab-content">
                     <div class="docs-card">
-                        <div class="docs-card-header"><h2 class="docs-card-title">VSOL &amp; ATOP Troubleshooting</h2><div class="docs-header-actions"><button class="docs-add-cmd-btn" onclick="openDocsCmdModal('d_vsol_troubleshoot')">➕ Add</button><button class="docs-del-toggle-btn" id="delToggle_d_vsol_troubleshoot" onclick="toggleDocsDeleteMode('d_vsol_troubleshoot')">🗑 Delete</button><button class="docs-del-confirm-btn" id="delConfirm_d_vsol_troubleshoot" onclick="deleteSelectedDocsCommands('d_vsol_troubleshoot')">✔ Delete Selected</button></div></div>
+                        <div class="docs-card-header"><h2 class="docs-card-title">VSOL &amp; ATOP Troubleshooting</h2><div class="docs-header-actions"><button class="docs-add-cmd-btn" onclick="openDocsCmdModal('d_vsol_troubleshoot')">➕ Add</button><button class="docs-edit-toggle-btn" id="editToggle_d_vsol_troubleshoot" onclick="toggleDocsEditMode('d_vsol_troubleshoot')">✏️ Edit</button><button class="docs-edit-confirm-btn" id="editConfirm_d_vsol_troubleshoot" onclick="confirmDocsEdit('d_vsol_troubleshoot')">✔ Edit Selected</button><button class="docs-del-toggle-btn" id="delToggle_d_vsol_troubleshoot" onclick="toggleDocsDeleteMode('d_vsol_troubleshoot')">🗑 Delete</button><button class="docs-del-confirm-btn" id="delConfirm_d_vsol_troubleshoot" onclick="deleteSelectedDocsCommands('d_vsol_troubleshoot')">✔ Delete Selected</button></div></div>
                         <div class="docs-search-wrapper"><span class="docs-search-icon">🔍</span><input type="text" class="docs-search-input" id="s_vsol_ts" placeholder="Search commands..."></div>
                         <span class="docs-cmd-label">ONU Discover Check:</span><code class="docs-code">(config-pon-0/1)# show onu auto-find</code>
                         <span class="docs-cmd-label">ONU Config Check:</span><code class="docs-code">(config-pon-0/1)# show running-config onu 10</code>
@@ -1467,7 +1537,7 @@ exit</code>
                 <!-- VSOL Installation -->
                 <div id="d_vsol_installation" class="docs-tab-content">
                     <div class="docs-card">
-                        <div class="docs-card-header"><h2 class="docs-card-title">VSOL &amp; ATOP Installation</h2><div class="docs-header-actions"><button class="docs-add-cmd-btn" onclick="openDocsCmdModal('d_vsol_installation')">➕ Add</button><button class="docs-del-toggle-btn" id="delToggle_d_vsol_installation" onclick="toggleDocsDeleteMode('d_vsol_installation')">🗑 Delete</button><button class="docs-del-confirm-btn" id="delConfirm_d_vsol_installation" onclick="deleteSelectedDocsCommands('d_vsol_installation')">✔ Delete Selected</button></div></div>
+                        <div class="docs-card-header"><h2 class="docs-card-title">VSOL &amp; ATOP Installation</h2><div class="docs-header-actions"><button class="docs-add-cmd-btn" onclick="openDocsCmdModal('d_vsol_installation')">➕ Add</button><button class="docs-edit-toggle-btn" id="editToggle_d_vsol_installation" onclick="toggleDocsEditMode('d_vsol_installation')">✏️ Edit</button><button class="docs-edit-confirm-btn" id="editConfirm_d_vsol_installation" onclick="confirmDocsEdit('d_vsol_installation')">✔ Edit Selected</button><button class="docs-del-toggle-btn" id="delToggle_d_vsol_installation" onclick="toggleDocsDeleteMode('d_vsol_installation')">🗑 Delete</button><button class="docs-del-confirm-btn" id="delConfirm_d_vsol_installation" onclick="deleteSelectedDocsCommands('d_vsol_installation')">✔ Delete Selected</button></div></div>
                         <div class="docs-search-wrapper"><span class="docs-search-icon">🔍</span><input type="text" class="docs-search-input" id="s_vsol_in" placeholder="Search installation commands..."></div>
                         <span class="docs-cmd-label">Show Vlan:</span><code class="docs-code">(config)# show vlan 500</code>
                         <span class="docs-cmd-label">Vlan Create:</span><code class="docs-code">(config)# vlan 500</code>
@@ -1500,7 +1570,7 @@ commit</code>
                 <!-- GPON 8 Troubleshoot -->
                 <div id="d_gpon8_troubleshoot" class="docs-tab-content">
                     <div class="docs-card">
-                        <div class="docs-card-header"><h2 class="docs-card-title">GPON 8 Port Troubleshooting</h2><div class="docs-header-actions"><button class="docs-add-cmd-btn" onclick="openDocsCmdModal('d_gpon8_troubleshoot')">➕ Add</button><button class="docs-del-toggle-btn" id="delToggle_d_gpon8_troubleshoot" onclick="toggleDocsDeleteMode('d_gpon8_troubleshoot')">🗑 Delete</button><button class="docs-del-confirm-btn" id="delConfirm_d_gpon8_troubleshoot" onclick="deleteSelectedDocsCommands('d_gpon8_troubleshoot')">✔ Delete Selected</button></div></div>
+                        <div class="docs-card-header"><h2 class="docs-card-title">GPON 8 Port Troubleshooting</h2><div class="docs-header-actions"><button class="docs-add-cmd-btn" onclick="openDocsCmdModal('d_gpon8_troubleshoot')">➕ Add</button><button class="docs-edit-toggle-btn" id="editToggle_d_gpon8_troubleshoot" onclick="toggleDocsEditMode('d_gpon8_troubleshoot')">✏️ Edit</button><button class="docs-edit-confirm-btn" id="editConfirm_d_gpon8_troubleshoot" onclick="confirmDocsEdit('d_gpon8_troubleshoot')">✔ Edit Selected</button><button class="docs-del-toggle-btn" id="delToggle_d_gpon8_troubleshoot" onclick="toggleDocsDeleteMode('d_gpon8_troubleshoot')">🗑 Delete</button><button class="docs-del-confirm-btn" id="delConfirm_d_gpon8_troubleshoot" onclick="deleteSelectedDocsCommands('d_gpon8_troubleshoot')">✔ Delete Selected</button></div></div>
                         <div class="docs-search-wrapper"><span class="docs-search-icon">🔍</span><input type="text" class="docs-search-input" id="s_gpon8_ts" placeholder="Search commands..."></div>
                         <span class="docs-cmd-label">ONU Discover:</span><code class="docs-code">(config-interface-gpon)# show ont autofind all</code>
                         <span class="docs-cmd-label">ALL ONU Details:</span><code class="docs-code">(config)# show saved-config</code>
@@ -1521,7 +1591,7 @@ commit</code>
                 <!-- GPON 8 Installation -->
                 <div id="d_gpon8_installation" class="docs-tab-content">
                     <div class="docs-card">
-                        <div class="docs-card-header"><h2 class="docs-card-title">GPON 8 Port Installation</h2><div class="docs-header-actions"><button class="docs-add-cmd-btn" onclick="openDocsCmdModal('d_gpon8_installation')">➕ Add</button><button class="docs-del-toggle-btn" id="delToggle_d_gpon8_installation" onclick="toggleDocsDeleteMode('d_gpon8_installation')">🗑 Delete</button><button class="docs-del-confirm-btn" id="delConfirm_d_gpon8_installation" onclick="deleteSelectedDocsCommands('d_gpon8_installation')">✔ Delete Selected</button></div></div>
+                        <div class="docs-card-header"><h2 class="docs-card-title">GPON 8 Port Installation</h2><div class="docs-header-actions"><button class="docs-add-cmd-btn" onclick="openDocsCmdModal('d_gpon8_installation')">➕ Add</button><button class="docs-edit-toggle-btn" id="editToggle_d_gpon8_installation" onclick="toggleDocsEditMode('d_gpon8_installation')">✏️ Edit</button><button class="docs-edit-confirm-btn" id="editConfirm_d_gpon8_installation" onclick="confirmDocsEdit('d_gpon8_installation')">✔ Edit Selected</button><button class="docs-del-toggle-btn" id="delToggle_d_gpon8_installation" onclick="toggleDocsDeleteMode('d_gpon8_installation')">🗑 Delete</button><button class="docs-del-confirm-btn" id="delConfirm_d_gpon8_installation" onclick="deleteSelectedDocsCommands('d_gpon8_installation')">✔ Delete Selected</button></div></div>
                         <div class="docs-search-wrapper"><span class="docs-search-icon">🔍</span><input type="text" class="docs-search-input" id="s_gpon8_in" placeholder="Search installation commands..."></div>
                         <span class="docs-cmd-label">VLAN Add:</span><code class="docs-code">(config)#vlan 748</code>
                         <span class="docs-cmd-label">VLAN Tagg on Uplink port [GE]:</span><code class="docs-code">Dilkusha_GPON-01(config)# interface ge
@@ -1858,8 +1928,8 @@ system\configure# pon on 1 1</code>
     <!-- ════ ADD COMMAND MODAL (GPON OLT Troubleshoot/Installation) ════ -->
     <div class="docs-cmd-modal-overlay" id="docsCmdModalOverlay" onclick="if(event.target===this) closeDocsCmdModal();">
         <div class="docs-cmd-modal">
-            <h3>➕ Add Command</h3>
-            <p class="docs-cmd-modal-sub">This will be added to the current section only.</p>
+            <h3 id="docsCmdModalTitle">➕ Add Command</h3>
+            <p class="docs-cmd-modal-sub" id="docsCmdModalSub">This will be added to the current section only.</p>
             <label for="docsCmdLabelInput">Label / Title</label>
             <input type="text" id="docsCmdLabelInput" placeholder="e.g. ONU Signal Check">
             <label for="docsCmdCodeInput">Command(s)</label>
@@ -1953,11 +2023,12 @@ system\configure# pon on 1 1</code>
     document.getElementById('docs-subnav').classList.remove('open');
     document.getElementById('olt-children').classList.remove('open');
     document.getElementById('nav-olt-group').classList.remove('open');
+    document.getElementById('nav-docs-group').classList.remove('open');
         const mc = document.getElementById('main-content');
         mc.style.cssText = '';
         document.querySelectorAll('.app-wrapper').forEach(a => a.classList.remove('active'));
         document.getElementById(id).classList.add('active');
-        document.querySelectorAll('.nav-btn, .nav-child-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.nav-btn, .nav-child-btn, .nav-group-header').forEach(b => b.classList.remove('active'));
         if (btn) btn.classList.add('active');
     }
 
@@ -1968,13 +2039,29 @@ system\configure# pon on 1 1</code>
     header.classList.toggle('open', !isOpen);
     if (!isOpen) {
         document.getElementById('docs-subnav').classList.remove('open');
+        document.getElementById('nav-docs-group').classList.remove('open');
     }
 }
+
+    function toggleDocsGroup(header) {
+        const subnav = document.getElementById('docs-subnav');
+        const isOpen = subnav.classList.contains('open') && document.body.classList.contains('docs-mode');
+        if (isOpen) {
+            subnav.classList.remove('open');
+            header.classList.remove('open');
+            document.getElementById('docs-subnav-backdrop')?.classList.remove('open');
+        } else {
+            document.getElementById('olt-children').classList.remove('open');
+            document.getElementById('nav-olt-group').classList.remove('open');
+            switchToDocsTab(header);
+            header.classList.add('open');
+        }
+    }
 
     function switchToDocsTab(btn) {
         document.querySelectorAll('.app-wrapper').forEach(a => a.classList.remove('active'));
         document.getElementById('app-docs').classList.add('active');
-        document.querySelectorAll('.nav-btn, .nav-child-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.nav-btn, .nav-child-btn, .nav-group-header').forEach(b => b.classList.remove('active'));
         if (btn) btn.classList.add('active');
         document.body.classList.add('docs-mode');
         document.body.classList.remove('radio-mode');
@@ -1996,10 +2083,11 @@ system\configure# pon on 1 1</code>
     function switchToRadioTab(btn) {
     document.querySelectorAll('.app-wrapper').forEach(a => a.classList.remove('active'));
     document.getElementById('app-radio').classList.add('active');
-    document.querySelectorAll('.nav-btn, .nav-child-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.nav-btn, .nav-child-btn, .nav-group-header').forEach(b => b.classList.remove('active'));
     if (btn) btn.classList.add('active');
     document.getElementById('olt-children').classList.remove('open');
     document.getElementById('nav-olt-group').classList.remove('open');
+    document.getElementById('nav-docs-group').classList.remove('open');
     closeDocsSubnav();
         document.body.classList.add('radio-mode');
         document.body.classList.remove('docs-mode');
@@ -2347,6 +2435,8 @@ initRadio();
         const backdrop = document.getElementById('docs-subnav-backdrop');
         if (subnav) subnav.classList.remove('open');
         if (backdrop) backdrop.classList.remove('open');
+        const docsGroupHeader = document.getElementById('nav-docs-group');
+        if (docsGroupHeader && window.innerWidth <= 700) docsGroupHeader.classList.remove('open');
     }
 
     function toggleDocsSub(header) {
@@ -2822,6 +2912,10 @@ script += `onu ${onuId} eth ${i} upstream-rate-limit cir ${vsol_bw} pir ${vsol_b
     function getDocsCustom(sectionId) {
         try { return JSON.parse(localStorage.getItem(docsCustomKey(sectionId))) || []; } catch (e) { return []; }
     }
+    function docsEditedKey(sectionId) { return 'docsEdited_' + sectionId; }
+    function getDocsEdited(sectionId) {
+        try { return JSON.parse(localStorage.getItem(docsEditedKey(sectionId))) || []; } catch (e) { return []; }
+    }
 
     function buildDocsCmdCheckbox(item) {
         const chk = document.createElement('input');
@@ -2831,7 +2925,27 @@ script += `onu ${onuId} eth ${i} upstream-rate-limit cir ${vsol_bw} pir ${vsol_b
         return chk;
     }
 
-    function buildDocsCmdItem(uid, label, codeText, isCustom) {
+    function buildDocsCmdEditCheckbox(item, sectionId) {
+        const chk = document.createElement('input');
+        chk.type = 'checkbox';
+        chk.className = 'docs-cmd-edit-checkbox';
+        chk.onchange = function() {
+            if (chk.checked) {
+                // Single-select: uncheck any other selected item in this section
+                const card = item.closest('.docs-card');
+                card.querySelectorAll('.docs-cmd-edit-checkbox').forEach(other => {
+                    if (other !== chk) {
+                        other.checked = false;
+                        other.closest('.docs-cmd-item').classList.remove('selected-for-edit');
+                    }
+                });
+            }
+            item.classList.toggle('selected-for-edit', chk.checked);
+        };
+        return chk;
+    }
+
+    function buildDocsCmdItem(uid, label, codeText, isCustom, sectionId) {
         const item = document.createElement('div');
         item.className = 'docs-cmd-item';
         item.dataset.uid = uid;
@@ -2845,6 +2959,7 @@ script += `onu ${onuId} eth ${i} upstream-rate-limit cir ${vsol_bw} pir ${vsol_b
         item.appendChild(lbl);
         item.appendChild(code);
         item.appendChild(buildDocsCmdCheckbox(item));
+        item.appendChild(buildDocsCmdEditCheckbox(item, sectionId));
         return item;
     }
 
@@ -2859,10 +2974,13 @@ script += `onu ${onuId} eth ${i} upstream-rate-limit cir ${vsol_bw} pir ${vsol_b
             // Wrap existing default label/code pairs into selectable items
             const labels = Array.from(card.querySelectorAll('.docs-cmd-label'));
             const deleted = getDocsDeleted(sectionId);
+            const edited = getDocsEdited(sectionId);
             labels.forEach((lbl, idx) => {
                 const code = lbl.nextElementSibling;
                 if (!code || !code.classList.contains('docs-code')) return;
                 const uid = sectionId + '_d' + idx;
+                const override = edited.find(e => e.uid === uid);
+                if (override) { lbl.textContent = override.label; code.textContent = override.code; }
                 const item = document.createElement('div');
                 item.className = 'docs-cmd-item';
                 item.dataset.uid = uid;
@@ -2871,22 +2989,43 @@ script += `onu ${onuId} eth ${i} upstream-rate-limit cir ${vsol_bw} pir ${vsol_b
                 item.appendChild(lbl);
                 item.appendChild(code);
                 item.appendChild(buildDocsCmdCheckbox(item));
+                item.appendChild(buildDocsCmdEditCheckbox(item, sectionId));
                 if (deleted.includes(uid)) item.style.display = 'none';
             });
 
             // Render any previously-added custom commands
             const customCmds = getDocsCustom(sectionId);
             customCmds.forEach(entry => {
-                const item = buildDocsCmdItem(entry.uid, entry.label, entry.code, true);
+                const item = buildDocsCmdItem(entry.uid, entry.label, entry.code, true, sectionId);
                 card.appendChild(item);
             });
         });
     }
 
+    let currentDocsEditItem = null;
+
     function openDocsCmdModal(sectionId) {
         currentDocsCmdSection = sectionId;
+        currentDocsEditItem = null;
+        document.getElementById('docsCmdModalTitle').textContent = '➕ Add Command';
+        document.getElementById('docsCmdModalSub').textContent = 'This will be added to the current section only.';
+        document.getElementById('docsCmdModalOverlay').querySelector('.docs-cmd-modal-save').textContent = 'Save Command';
         document.getElementById('docsCmdLabelInput').value = '';
         document.getElementById('docsCmdCodeInput').value = '';
+        document.getElementById('docsCmdModalOverlay').classList.add('open');
+        setTimeout(() => document.getElementById('docsCmdLabelInput').focus(), 50);
+    }
+
+    function openEditDocsCmdModal(item, sectionId) {
+        currentDocsCmdSection = sectionId;
+        currentDocsEditItem = item;
+        const lbl = item.querySelector('.docs-cmd-label');
+        const code = item.querySelector('.docs-code');
+        document.getElementById('docsCmdModalTitle').textContent = '✏️ Edit Command';
+        document.getElementById('docsCmdModalSub').textContent = 'Update the label or command text for this entry.';
+        document.getElementById('docsCmdModalOverlay').querySelector('.docs-cmd-modal-save').textContent = 'Save Changes';
+        document.getElementById('docsCmdLabelInput').value = lbl ? lbl.textContent : '';
+        document.getElementById('docsCmdCodeInput').value = code ? code.textContent : '';
         document.getElementById('docsCmdModalOverlay').classList.add('open');
         setTimeout(() => document.getElementById('docsCmdLabelInput').focus(), 50);
     }
@@ -2894,6 +3033,7 @@ script += `onu ${onuId} eth ${i} upstream-rate-limit cir ${vsol_bw} pir ${vsol_b
     function closeDocsCmdModal() {
         document.getElementById('docsCmdModalOverlay').classList.remove('open');
         currentDocsCmdSection = null;
+        currentDocsEditItem = null;
     }
 
     function saveDocsCommand() {
@@ -2902,13 +3042,41 @@ script += `onu ${onuId} eth ${i} upstream-rate-limit cir ${vsol_bw} pir ${vsol_b
         if (!label || !code) { showToast('Label and Command are required!', 'error'); return; }
         const sectionId = currentDocsCmdSection;
         if (!sectionId) return;
+
+        if (currentDocsEditItem) {
+            // Editing an existing (default or custom) entry
+            const item = currentDocsEditItem;
+            const uid = item.dataset.uid;
+            const lbl = item.querySelector('.docs-cmd-label');
+            const code_el = item.querySelector('.docs-code');
+            if (lbl) lbl.textContent = label;
+            if (code_el) code_el.textContent = code;
+
+            if (item.dataset.custom === '1') {
+                let customCmds = getDocsCustom(sectionId);
+                customCmds = customCmds.map(c => c.uid === uid ? { uid, label, code } : c);
+                localStorage.setItem(docsCustomKey(sectionId), JSON.stringify(customCmds));
+            } else {
+                let edited = getDocsEdited(sectionId);
+                edited = edited.filter(e => e.uid !== uid);
+                edited.push({ uid, label, code });
+                localStorage.setItem(docsEditedKey(sectionId), JSON.stringify(edited));
+            }
+
+            closeDocsCmdModal();
+            showToast('Command updated!');
+            const card = document.getElementById(sectionId).querySelector('.docs-card');
+            if (card && card.classList.contains('edit-mode')) toggleDocsEditMode(sectionId);
+            return;
+        }
+
         const uid = sectionId + '_c' + Date.now();
         const customCmds = getDocsCustom(sectionId);
         customCmds.push({ uid, label, code });
         localStorage.setItem(docsCustomKey(sectionId), JSON.stringify(customCmds));
 
         const card = document.getElementById(sectionId).querySelector('.docs-card');
-        const item = buildDocsCmdItem(uid, label, code, true);
+        const item = buildDocsCmdItem(uid, label, code, true, sectionId);
         card.appendChild(item);
 
         closeDocsCmdModal();
@@ -2920,6 +3088,12 @@ script += `onu ${onuId} eth ${i} upstream-rate-limit cir ${vsol_bw} pir ${vsol_b
         const card = document.getElementById(sectionId).querySelector('.docs-card');
         const toggleBtn = document.getElementById('delToggle_' + sectionId);
         const confirmBtn = document.getElementById('delConfirm_' + sectionId);
+        // Turn off edit mode if it's on
+        const editToggleBtn = document.getElementById('editToggle_' + sectionId);
+        if (card.classList.contains('edit-mode')) {
+            card.classList.remove('edit-mode');
+            if (editToggleBtn) { editToggleBtn.textContent = '✏️ Edit'; editToggleBtn.classList.remove('active'); }
+        }
         const active = card.classList.toggle('delete-mode');
         if (active) {
             toggleBtn.textContent = '✕ Cancel';
@@ -2933,6 +3107,38 @@ script += `onu ${onuId} eth ${i} upstream-rate-limit cir ${vsol_bw} pir ${vsol_b
             card.querySelectorAll('.docs-cmd-checkbox').forEach(c => { c.checked = false; });
             card.querySelectorAll('.docs-cmd-item.selected-for-delete').forEach(i => i.classList.remove('selected-for-delete'));
         }
+    }
+
+    // Toggle "select an entry to edit" mode for a section
+    function toggleDocsEditMode(sectionId) {
+        const card = document.getElementById(sectionId).querySelector('.docs-card');
+        const editToggleBtn = document.getElementById('editToggle_' + sectionId);
+        const editConfirmBtn = document.getElementById('editConfirm_' + sectionId);
+        // Turn off delete mode if it's on
+        if (card.classList.contains('delete-mode')) {
+            toggleDocsDeleteMode(sectionId);
+        }
+        const active = card.classList.toggle('edit-mode');
+        if (active) {
+            editToggleBtn.textContent = '✕ Cancel';
+            editToggleBtn.classList.add('active');
+            if (editConfirmBtn) editConfirmBtn.classList.add('show');
+        } else {
+            editToggleBtn.textContent = '✏️ Edit';
+            editToggleBtn.classList.remove('active');
+            if (editConfirmBtn) editConfirmBtn.classList.remove('show');
+            card.querySelectorAll('.docs-cmd-edit-checkbox').forEach(c => { c.checked = false; });
+            card.querySelectorAll('.docs-cmd-item.selected-for-edit').forEach(i => i.classList.remove('selected-for-edit'));
+        }
+    }
+
+    // Open the edit modal for whichever entry is checked in edit-mode
+    function confirmDocsEdit(sectionId) {
+        const card = document.getElementById(sectionId).querySelector('.docs-card');
+        const checked = card.querySelector('.docs-cmd-edit-checkbox:checked');
+        if (!checked) { showToast('Select an entry to edit first!', 'error'); return; }
+        const item = checked.closest('.docs-cmd-item');
+        openEditDocsCmdModal(item, sectionId);
     }
 
     function updateDocsDeleteCount(sectionId) {
@@ -2950,20 +3156,23 @@ script += `onu ${onuId} eth ${i} upstream-rate-limit cir ${vsol_bw} pir ${vsol_b
 
         const deleted = getDocsDeleted(sectionId);
         let customCmds = getDocsCustom(sectionId);
+        let edited = getDocsEdited(sectionId);
 
         checked.forEach(chk => {
             const item = chk.closest('.docs-cmd-item');
             const uid = item.dataset.uid;
             if (item.dataset.custom === '1') {
                 customCmds = customCmds.filter(c => c.uid !== uid);
-            } else if (!deleted.includes(uid)) {
-                deleted.push(uid);
+            } else {
+                if (!deleted.includes(uid)) deleted.push(uid);
+                edited = edited.filter(e => e.uid !== uid);
             }
             item.remove();
         });
 
         localStorage.setItem(docsDeletedKey(sectionId), JSON.stringify(deleted));
         localStorage.setItem(docsCustomKey(sectionId), JSON.stringify(customCmds));
+        localStorage.setItem(docsEditedKey(sectionId), JSON.stringify(edited));
 
         showToast(checked.length + ' command(s) removed!');
         toggleDocsDeleteMode(sectionId); // exit select mode
@@ -3213,17 +3422,18 @@ document.addEventListener('keydown', function(e) {
 });
 
 document.addEventListener('click', function(e) {
-    const wrapper = document.querySelector('.nav-group-wrapper');
+    const insideAnyGroupWrapper = !!e.target.closest('.nav-group-wrapper');
     const children = document.getElementById('olt-children');
     const docsSubnav = document.getElementById('docs-subnav');
     const backdrop = document.getElementById('docs-subnav-backdrop');
-    if (!wrapper) return;
-    if (!wrapper.contains(e.target) && (!backdrop || !backdrop.contains(e.target)) && (!docsSubnav || !docsSubnav.contains(e.target))) {
-        children.classList.remove('open');
-        document.getElementById('nav-olt-group').classList.remove('open');
-        // Only auto-close subnav on desktop (mobile has backdrop for that)
-        if (window.innerWidth > 700) closeDocsSubnav();
+    if (insideAnyGroupWrapper || (backdrop && backdrop.contains(e.target)) || (docsSubnav && docsSubnav.contains(e.target))) {
+        return;
     }
+    children.classList.remove('open');
+    document.getElementById('nav-olt-group').classList.remove('open');
+    document.getElementById('nav-docs-group').classList.remove('open');
+    // Only auto-close subnav on desktop (mobile has backdrop for that)
+    if (window.innerWidth > 700) closeDocsSubnav();
 });
 
     // Mobile: dynamically position child panel below the sidebar tab row
