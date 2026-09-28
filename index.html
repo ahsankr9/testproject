@@ -3905,12 +3905,12 @@ script += `onu ${onuId} eth ${i} upstream-rate-limit cir ${vsol_bw} pir ${vsol_b
         let b = document.getElementById('cloud-badge');
         if (!b) {
             b = document.createElement('div'); b.id = 'cloud-badge';
-            b.onclick = () => { showToast('Syncing…'); cloudSyncNow(); };
+            b.onclick = () => openCloudCheck();
             document.body.appendChild(b);
         }
-        const map = { live: ['#10b981', 'Live', 'Synced with cloud - tap to refresh'],
-                      offline: ['#f59e0b', 'Offline', 'Cannot reach Firebase - will keep retrying'],
-                      denied: ['#ef4444', 'Cloud blocked', 'Firebase rules deny access. In Firebase console > Realtime Database > Rules allow read/write on "mzr".'] };
+        const map = { live: ['#10b981', 'Live', 'Synced with cloud - tap for Cloud check'],
+                      offline: ['#f59e0b', 'Offline · tap', 'Cannot reach Firebase - will keep retrying'],
+                      denied: ['#ef4444', '⚠ Not saving · tap', 'Firebase rules deny access. In Firebase console > Realtime Database > Rules allow read/write on "mzr".'] };
         const m = map[state] || map.offline;
         b.style.setProperty('--c', m[0]); b.textContent = m[1]; b.title = m[2];
     }
@@ -3935,8 +3935,8 @@ script += `onu ${onuId} eth ${i} upstream-rate-limit cir ${vsol_bw} pir ${vsol_b
                 await cloudPushNow(name); return;
             }
             const remote = await res.json();
-            if (remote === null || remote === undefined) {  // nothing in the cloud yet -> this device seeds it
-                if (!c.ready) { c.ready = true; await cloudPushNow(name); }
+            if (remote === null || remote === undefined || (remote.updatedAt === undefined && remote.data === undefined)) {  // nothing in the cloud yet -> this device seeds it
+                if (!c.ready) { c.ready = true; await cloudPushNow(name, true); }
                 cloudSetStatus('live'); return;
             }
             const value = c.normalize(remote.data);
@@ -3950,7 +3950,7 @@ script += `onu ${onuId} eth ${i} upstream-rate-limit cir ${vsol_bw} pir ${vsol_b
     }
 
     let cloudPushWarned = false;
-    async function cloudPushNow(name) {
+    async function cloudPushNow(name, quiet) {
         const c = CLOUD[name];
         const v = c.ver || 0;
         c.pendingPush = false;
@@ -3964,6 +3964,7 @@ script += `onu ${onuId} eth ${i} upstream-rate-limit cir ${vsol_bw} pir ${vsol_b
             if ((c.ver || 0) === v) { c.dirty = false; cloudSetDirty(name, false); }   // only clear if nothing changed while sending
             cloudPushWarned = false;
             cloudSetStatus('live');
+            if (!quiet) showToast('Saved to cloud ☁');
         } catch (e) { c.dirty = true; cloudFail(null, e); cloudPushAlert(0); }
     }
     function cloudPushAlert(status) {
@@ -4006,6 +4007,75 @@ script += `onu ${onuId} eth ${i} upstream-rate-limit cir ${vsol_bw} pir ${vsol_b
     }
 
     function cloudSyncNow() { Object.keys(CLOUD).forEach(n => cloudPull(n)); }
+
+    // ════ CLOUD CHECK (tap the badge): tells exactly why data is / is not reaching Firebase ════
+    const BUILD_ID = 'r4-2026-09-28';
+    async function cloudErrText(res) {
+        try { const t = await res.text(); try { const j = JSON.parse(t); return j.error || t; } catch (e) { return String(t).slice(0, 120); } } catch (e) { return ''; }
+    }
+    function cloudCount(name, v) {
+        if (!v) return 0;
+        if (name === 'docsData') return Object.values(v).reduce((n, x) => n + cloudToArray(x.custom).length + cloudToArray(x.edited).length + cloudToArray(x.deleted).length, 0);
+        return cloudToArray(v).length;
+    }
+    async function cloudDiagnose(log) {
+        log('Build: ' + BUILD_ID + '   (if this is not the latest build, the browser/host is serving an OLD file)');
+        log('Page: ' + location.origin + location.pathname + '   (data on this device is kept per web address)');
+        let lsOk = false;
+        try { localStorage.setItem('nms_t', '1'); lsOk = localStorage.getItem('nms_t') === '1'; localStorage.removeItem('nms_t'); } catch (e) {}
+        log('Device storage: ' + (lsOk ? 'OK' : 'BLOCKED - edits cannot be kept on this device'));
+        log('');
+        for (const name of Object.keys(CLOUD)) {
+            const c = CLOUD[name]; let line = name + ': ';
+            try {
+                const g = await fetch(cloudUrl(name), { cache: 'no-store' });
+                if (!g.ok) { line += 'READ FAILED ' + g.status + ' ' + await cloudErrText(g); log(line); continue; }
+                const remote = await g.json();
+                const rc = remote && remote.data !== undefined ? cloudCount(name, c.normalize(remote.data)) : 0;
+                const lc = cloudCount(name, c.normalize(c.local()));
+                line += 'read OK (cloud ' + rc + ', this device ' + lc + ')';
+                const probe = CLOUD_DB_URL + '/' + CLOUD_ROOT + '/' + name + '/_probe.json';
+                const p = await fetch(probe, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(Date.now()) });
+                if (!p.ok) line += ' | WRITE DENIED ' + p.status + ' ' + await cloudErrText(p);
+                else { line += ' | write OK'; await fetch(probe, { method: 'DELETE' }).catch(() => {}); }
+                if (c.dirty) line += ' | UNSENT edits on this device';
+            } catch (e) { line += 'network error (' + e.message + ')'; }
+            log(line);
+        }
+    }
+    function closeCloudCheck() { const o = document.getElementById('cloud-check-overlay'); if (o) o.classList.remove('open'); }
+    function openCloudCheck() {
+        let ov = document.getElementById('cloud-check-overlay');
+        if (!ov) {
+            ov = document.createElement('div'); ov.id = 'cloud-check-overlay'; ov.className = 'radio-modal-overlay';
+            ov.innerHTML = '<div class="radio-modal"><div class="radio-modal-header" style="background:linear-gradient(135deg,#0f172a,#1e40af)"><h3>CLOUD CHECK</h3><button class="radio-modal-close" onclick="closeCloudCheck()"><i class="fa-solid fa-xmark"></i></button></div>'
+                + '<div class="radio-modal-body"><pre id="cloud-check-log" style="white-space:pre-wrap;word-break:break-word;font:600 12px \'Space Mono\',monospace;color:#1e293b;background:#f1f5f9;border-radius:8px;padding:12px;max-height:46vh;overflow:auto"></pre></div>'
+                + '<div class="radio-modal-footer" style="flex-wrap:wrap"><button class="radio-modal-btn cancel" onclick="cloudForceDown()">⬇ Cloud → this device</button><button class="radio-modal-btn save" style="background:#0ea5e9" onclick="cloudForceUp()">⬆ This device → cloud</button><button class="radio-modal-btn save" onclick="openCloudCheck()">↻ Re-check</button></div></div>';
+            document.body.appendChild(ov);
+            ov.addEventListener('click', e => { if (e.target === ov) closeCloudCheck(); });
+        }
+        ov.classList.add('open');
+        const box = document.getElementById('cloud-check-log'); box.textContent = 'Checking…\n\n';
+        cloudDiagnose(t => { box.textContent += t + '\n'; }).then(() => { box.textContent += '\nDone.'; });
+    }
+    async function cloudForceUp() {
+        if (!confirm("Overwrite the CLOUD with this device's data? Every other device will receive it.")) return;
+        for (const n of Object.keys(CLOUD)) { CLOUD[n].ready = true; await cloudPushNow(n, true); }
+        showToast(cloudPushWarned ? 'Upload failed - see Cloud check' : 'Uploaded to cloud ✓', cloudPushWarned ? 'error' : 'success');
+        openCloudCheck();
+    }
+    async function cloudForceDown() {
+        if (!confirm("Replace this device's data with the cloud copy?")) return;
+        for (const n of Object.keys(CLOUD)) {
+            const c = CLOUD[n];
+            try {
+                const r = await fetch(cloudUrl(n), { cache: 'no-store' }); if (!r.ok) continue;
+                const remote = await r.json();
+                if (remote && remote.data !== undefined) { c.apply(c.normalize(remote.data)); c.dirty = false; cloudSetDirty(n, false); c.ready = true; }
+            } catch (e) {}
+        }
+        showToast('Downloaded from cloud ✓'); openCloudCheck();
+    }
 
     (function startCloudSync() {
         const go = () => {
