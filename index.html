@@ -6680,28 +6680,44 @@ document.addEventListener('click', function(e) {
 })();
 </script>
 <script>
-/* MOBILE ONLY - BTS INFO: IP-r upor DOUBLE TAP = Termius e SSH2 (port 22) khule, Termius nijei username & password chaibe.
-   Single tap = copy (age jemon chhilo). */
+/* MOBILE ONLY - BTS INFO: IP-r upor SINGLE TAP = copy, HOLD 1 second = Termius e SSH2 (port 22) khule. */
 (function () {
-    var lastEl = null, lastT = 0, GAP = 380;
+    var timer = null, fired = false, sx = 0, sy = 0;
     var st = document.createElement('style');
-    st.textContent = '#app-bts .ip-copy{touch-action:manipulation;-webkit-user-select:none;user-select:none}';
+    st.textContent = '#app-bts .ip-copy{touch-action:manipulation;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}';
     document.head.appendChild(st);
-    document.addEventListener('click', function (e) {
-        if (window.innerWidth > 700) return;
-        var el = e.target.closest && e.target.closest('#app-bts .ip-copy');
-        if (!el) return;
+    function btsIpEl(t) {
+        if (window.innerWidth > 700) return null;            // web view: normal click-to-copy
+        var el = t && t.closest && t.closest('#app-bts .ip-copy');
+        if (!el) return null;
         var tb = el.closest('#bts-table-body, #bts-cards-mobile');
-        if (tb && (tb.classList.contains('mode-edit') || tb.classList.contains('mode-del'))) return;
-        var ip = (el.dataset.ip || el.textContent).trim();
+        if (tb && (tb.classList.contains('mode-edit') || tb.classList.contains('mode-del'))) return null;
+        return el;
+    }
+    function ipOf(el) { return (el.dataset.ip || el.textContent).trim(); }
+    document.addEventListener('pointerdown', function (e) {
+        var el = btsIpEl(e.target); if (!el) return;
+        var ip = ipOf(el);
+        fired = false; sx = e.clientX; sy = e.clientY; clearTimeout(timer);
         if (!/^\d{1,3}(\.\d{1,3}){3}$/.test(ip)) return;
-        var now = Date.now();
-        if (lastEl === el && now - lastT < GAP) {
-            lastEl = null; lastT = 0;
-            e.stopImmediatePropagation(); e.preventDefault();
+        timer = setTimeout(function () {
+            fired = true;
+            if (navigator.vibrate) { try { navigator.vibrate(40); } catch (x) {} }
             if (typeof showToast === 'function') showToast('Termius SSH: ahsanul.kabir@' + ip);
             window.location.href = 'ssh://ahsanul.kabir@' + ip + ':22';
-        } else { lastEl = el; lastT = now; }
+        }, 1000);
+    }, true);
+    ['pointerup', 'pointercancel', 'pointerleave'].forEach(function (n) {
+        document.addEventListener(n, function () { clearTimeout(timer); }, true);
+    });
+    document.addEventListener('pointermove', function (e) {
+        if (Math.abs(e.clientX - sx) > 10 || Math.abs(e.clientY - sy) > 10) clearTimeout(timer);
+    }, true);
+    document.addEventListener('contextmenu', function (e) { if (btsIpEl(e.target)) e.preventDefault(); }, true);
+    document.addEventListener('click', function (e) {
+        if (!btsIpEl(e.target)) return;
+        if (fired) { fired = false; e.stopImmediatePropagation(); e.preventDefault(); }  // long-press: no copy
+        // otherwise: normal single tap -> existing global handler copies the IP
     }, true);
 })();
 </script>
