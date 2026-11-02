@@ -6699,8 +6699,8 @@ document.addEventListener('click', function(e) {
         if (lastEl === el && now - lastT < GAP) {
             lastEl = null; lastT = 0;
             e.stopImmediatePropagation(); e.preventDefault();
-            if (typeof showToast === 'function') showToast('Termius SSH: ' + ip + ':22');
-            window.location.href = 'ssh://' + ip + ':22';
+            if (typeof showToast === 'function') showToast('Termius SSH: ahsanul.kabir@' + ip);
+            window.location.href = 'ssh://ahsanul.kabir@' + ip + ':22';
         } else { lastEl = el; lastT = now; }
     }, true);
 })();
