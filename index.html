@@ -6051,7 +6051,7 @@ document.addEventListener('click', function(e) {
         else { last.docs = now; docsSingle(); }
     });
 })();
-/* MOBILE ONLY - OLT IP column: TAP = open Termius (telnet://IP), HOLD 1 sec = copy the IP. (Web view: single click copies, as before) */
+/* MOBILE ONLY - OLT IP column: TAP = open Termius (telnet://dhaka@IP), HOLD 1 sec = copy the IP. (Web view: single click copies, as before) */
 (function () {
     var timer = null, fired = false, sx = 0, sy = 0;
     function oltIpEl(t) {
@@ -6086,7 +6086,7 @@ document.addEventListener('click', function(e) {
         e.stopImmediatePropagation(); e.preventDefault();          // no copy on a plain tap
         if (fired) { fired = false; return; }                      // it was a long-press (already copied)
         var ip = ipOf(el);
-        if (/^\d{1,3}(\.\d{1,3}){3}$/.test(ip)) window.location.href = 'telnet://' + ip;
+        if (/^\d{1,3}(\.\d{1,3}){3}$/.test(ip)) { if (typeof showToast === 'function') showToast('Termius: dhaka@' + ip); window.location.href = 'telnet://dhaka@' + ip; }
     }, true);
 })();
 </script>
@@ -6680,7 +6680,7 @@ document.addEventListener('click', function(e) {
 })();
 </script>
 <script>
-/* MOBILE ONLY - BTS INFO: IP-r upor SINGLE TAP = copy, HOLD 1 second = Termius e SSH2 (port 22) khule. */
+/* MOBILE ONLY - BTS INFO: IP-r upor TAP = Termius e SSH2 (ahsanul.kabir@IP:22), HOLD 1 second = copy. */
 (function () {
     var timer = null, fired = false, sx = 0, sy = 0;
     var st = document.createElement('style');
@@ -6697,14 +6697,11 @@ document.addEventListener('click', function(e) {
     function ipOf(el) { return (el.dataset.ip || el.textContent).trim(); }
     document.addEventListener('pointerdown', function (e) {
         var el = btsIpEl(e.target); if (!el) return;
-        var ip = ipOf(el);
         fired = false; sx = e.clientX; sy = e.clientY; clearTimeout(timer);
-        if (!/^\d{1,3}(\.\d{1,3}){3}$/.test(ip)) return;
         timer = setTimeout(function () {
             fired = true;
             if (navigator.vibrate) { try { navigator.vibrate(40); } catch (x) {} }
-            if (typeof showToast === 'function') showToast('Termius SSH: ahsanul.kabir@' + ip);
-            window.location.href = 'ssh://ahsanul.kabir@' + ip + ':22';
+            copyIpToClipboard(ipOf(el), el);
         }, 1000);
     }, true);
     ['pointerup', 'pointercancel', 'pointerleave'].forEach(function (n) {
@@ -6715,9 +6712,14 @@ document.addEventListener('click', function(e) {
     }, true);
     document.addEventListener('contextmenu', function (e) { if (btsIpEl(e.target)) e.preventDefault(); }, true);
     document.addEventListener('click', function (e) {
-        if (!btsIpEl(e.target)) return;
-        if (fired) { fired = false; e.stopImmediatePropagation(); e.preventDefault(); }  // long-press: no copy
-        // otherwise: normal single tap -> existing global handler copies the IP
+        var el = btsIpEl(e.target); if (!el) return;
+        e.stopImmediatePropagation(); e.preventDefault();          // no copy on a plain tap
+        if (fired) { fired = false; return; }                      // long-press (already copied)
+        var ip = ipOf(el);
+        if (/^\d{1,3}(\.\d{1,3}){3}$/.test(ip)) {
+            if (typeof showToast === 'function') showToast('Termius SSH: ahsanul.kabir@' + ip);
+            window.location.href = 'ssh://ahsanul.kabir@' + ip + ':22';
+        }
     }, true);
 })();
 </script>
