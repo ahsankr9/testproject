@@ -6051,7 +6051,7 @@ document.addEventListener('click', function(e) {
         else { last.docs = now; docsSingle(); }
     });
 })();
-/* MOBILE ONLY - OLT IP column: TAP = open Termius (telnet://dhaka@IP), HOLD 1 sec = copy the IP. (Web view: single click copies, as before) */
+/* MOBILE ONLY - OLT IP column: TAP = open Termius (telnet://IP), HOLD 1 sec = copy the IP. (Web view: single click copies, as before) */
 (function () {
     var timer = null, fired = false, sx = 0, sy = 0;
     function oltIpEl(t) {
@@ -6086,7 +6086,7 @@ document.addEventListener('click', function(e) {
         e.stopImmediatePropagation(); e.preventDefault();          // no copy on a plain tap
         if (fired) { fired = false; return; }                      // it was a long-press (already copied)
         var ip = ipOf(el);
-        if (/^\d{1,3}(\.\d{1,3}){3}$/.test(ip)) { if (typeof showToast === 'function') showToast('Termius: dhaka@' + ip); window.location.href = 'telnet://dhaka@' + ip; }
+        if (/^\d{1,3}(\.\d{1,3}){3}$/.test(ip)) window.location.href = 'telnet://' + ip;
     }, true);
 })();
 </script>
